@@ -146,3 +146,8 @@ for backend i need each module and each route endpoint and all plan about backen
 i need top to bottom architechure in here step by step plan for implement
 
 give me the write in the each md file
+
+
+
+
+complete top to bottom design with the given architechture and provide each pages details and atractive design more modern layout and more nice design give me all and top to bottom page and mainain the flow of full frontend page and route and requirment atchitecure each of this
