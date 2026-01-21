@@ -1701,31 +1701,122 @@ SETTINGS PAGE
 
 #### Color Palette
 
-```
-Primary Colors:
-  - Brand Blue: #0066FF (primary CTA)
-  - Accent Teal: #00D9FF (secondary elements)
-  - Dark: #1A1A2E (background)
+# Modern Color Palette - Light & Dark Mode
 
-Status Colors:
-  - Positive/Good: #10B981 (green)
-  - Neutral: #F3F4F6 (gray)
-  - Warning: #F59E0B (amber)
-  - Critical/Bad: #EF4444 (red)
-  - Info: #3B82F6 (blue)
+## Light Mode
 
-Sentiment Colors:
-  - Positive: #10B981
-  - Negative: #EF4444
-  - Neutral: #94A3B8
+### Primary Colors
 
-Stability Index:
-  - Excellent (8-10): #065F46 (deep green)
-  - Good (6-8): #10B981 (green)
-  - Fair (4-6): #F59E0B (amber)
-  - Poor (2-4): #EA580C (orange)
-  - Critical (0-2): #EF4444 (red)
-```
+- Primary Purple: #8B5CF6 (main brand, CTAs)
+- Secondary Violet: #A78BFA (secondary elements)
+- Accent Coral: #FF6B9D (highlights, important actions)
+- Background: #FAFBFC (main background)
+- Surface: #FFFFFF (cards, panels)
+
+### Text Colors
+
+- Primary Text: #0F172A (headings, important text)
+- Secondary Text: #475569 (body text)
+- Tertiary Text: #94A3B8 (labels, captions)
+
+### Status Colors
+
+- Success: #10B981 (green - positive actions)
+- Warning: #F59E0B (amber - caution)
+- Error: #EF4444 (red - critical)
+- Info: #3B82F6 (blue - informational)
+
+### Sentiment Colors
+
+- Positive: #10B981 (green)
+- Negative: #F87171 (red)
+- Neutral: #94A3B8 (gray)
+
+### Stability Index (Light Mode)
+
+- Excellent (8-10): #059669 (emerald)
+- Good (6-8): #10B981 (green)
+- Fair (4-6): #F59E0B (amber)
+- Poor (2-4): #F97316 (orange)
+- Critical (0-2): #EF4444 (red)
+
+### UI Elements
+
+- Border: #E2E8F0
+- Divider: #F1F5F9
+- Hover: #F8FAFC
+- Disabled: #CBD5E1
+
+---
+
+## Dark Mode
+
+### Primary Colors
+
+- Primary Purple: #A78BFA (main brand, CTAs)
+- Secondary Violet: #C4B5FD (secondary elements)
+- Accent Coral: #FF6B9D (highlights, important actions)
+- Background: #0F172A (main background)
+- Surface: #1E293B (cards, panels)
+
+### Text Colors
+
+- Primary Text: #F8FAFC (headings, important text)
+- Secondary Text: #CBD5E1 (body text)
+- Tertiary Text: #64748B (labels, captions)
+
+### Status Colors
+
+- Success: #34D399 (green - positive actions)
+- Warning: #FBBF24 (amber - caution)
+- Error: #F87171 (red - critical)
+- Info: #60A5FA (blue - informational)
+
+### Sentiment Colors
+
+- Positive: #34D399 (green)
+- Negative: #F87171 (red)
+- Neutral: #94A3B8 (gray)
+
+### Stability Index (Dark Mode)
+
+- Excellent (8-10): #10B981 (green)
+- Good (6-8): #34D399 (emerald)
+- Fair (4-6): #FBBF24 (amber)
+- Poor (2-4): #FB923C (orange)
+- Critical (0-2): #F87171 (red)
+
+### UI Elements
+
+- Border: #334155
+- Divider: #1E293B
+- Hover: #334155
+- Disabled: #475569
+
+---
+
+## Alternative Modern Palette (Teal/Cyan Focus)
+
+### Light Mode Alternative
+
+- Primary Teal: #14B8A6 (main brand)
+- Secondary Cyan: #06B6D4 (secondary)
+- Accent Orange: #FF8A3D (highlights)
+
+### Dark Mode Alternative
+
+- Primary Teal: #2DD4BF (main brand)
+- Secondary Cyan: #22D3EE (secondary)
+- Accent Orange: #FF8A3D (highlights)
+
+---
+
+## Gradient Options (Modern Touch)
+
+- Purple Gradient: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)
+- Coral Gradient: linear-gradient(135deg, #FF6B9D 0%, #FFA3C7 100%)
+- Teal Gradient: linear-gradient(135deg, #14B8A6 0%, #06B6D4 100%)
+- Success Gradient: linear-gradient(135deg, #10B981 0%, #34D399 100%)
 
 #### Typography
 
