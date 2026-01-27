@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>In-Depth Article Intelligence Analysis | NewsScope</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#895af6",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#151022",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Inter', sans-serif; }
+        .highlight-person { background-color: rgba(137, 90, 246, 0.2); border-bottom: 2px solid #895af6; cursor: pointer; }
+        .highlight-org { background-color: rgba(59, 130, 246, 0.2); border-bottom: 2px solid #3b82f6; cursor: pointer; }
+        .gauge-bar { transition: width 1s ease-in-out; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+<div class="max-w-[1440px] mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-xl">analytics</span>
+</div>
+<h2 class="text-lg font-bold tracking-tight">NewsScope</h2>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium text-primary" href="#">Intelligence</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Archive</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="bg-slate-100 dark:bg-slate-800 border-none rounded-lg pl-9 pr-4 py-2 text-sm w-64 focus:ring-2 focus:ring-primary/50" placeholder="Search entities..." type="text"/>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-xs font-bold transition-colors">
+<span class="material-symbols-outlined text-lg">bookmark</span>
+                        Save
+                    </button>
+<button class="flex items-center gap-2 px-3 py-2 bg-primary text-white hover:bg-primary/90 rounded-lg text-xs font-bold transition-colors">
+<span class="material-symbols-outlined text-lg">share</span>
+                        Share
+                    </button>
+</div>
+<div class="w-8 h-8 rounded-full bg-slate-300 dark:bg-slate-700 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9bvTCM_I0gdv9-7AGke9kByOt7YcI9OIzwCzjTaRndwVIwGwop6vW_Ir-rHY2zcvGNPtJMKyZF9TZ36N5WqfeQq-PKeiEJMP7ljdnWifA2DaTaM9RwTq4TllBc2jnaBpSwN8QDtzLhhp0W_BbihwLwXzOMO0sgdv_pHP4zbm0XE-TkozUScVrzpxL-ooGaGI28vtg0NAH74V2FsPCwRkpUcK9xLz7Q4MeksF9GTxiC8Md4-GaqZjpkkigFwoP5IFVcWGVFtcTgEw"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto px-6 py-8">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-2 text-sm text-slate-500 mb-6">
+<a class="hover:text-primary transition-colors" href="#">Global News</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Economics</a>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-slate-900 dark:text-slate-100 font-medium">Article Analysis</span>
+</div>
+<!-- Page Heading -->
+<div class="flex flex-col lg:flex-row justify-between items-start gap-6 mb-8">
+<div class="max-w-4xl">
+<h1 class="text-3xl md:text-4xl font-black tracking-tight mb-4 leading-tight">
+                    The Silent Shift: How Global Supply Chains are Relocating from East to Southeast Asia
+                </h1>
+<div class="flex flex-wrap items-center gap-4 text-sm text-slate-500">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">source</span>
+<span>Reuters • Market Intelligence</span>
+</div>
+<span>•</span>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-base">schedule</span>
+<span>8 min read • Updated 2h ago</span>
+</div>
+<span>•</span>
+<div class="flex items-center gap-1.5 bg-green-500/10 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full font-medium">
+<span class="material-symbols-outlined text-base">verified</span>
+<span>High Credibility</span>
+</div>
+</div>
+</div>
+<button class="flex items-center gap-2 px-4 py-2.5 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined">download</span>
+                Export Report PDF
+            </button>
+</div>
+<div class="flex flex-col lg:flex-row gap-8">
+<!-- Left Column: Article Content -->
+<div class="flex-1 min-w-0">
+<div class="bg-white dark:bg-slate-900/50 rounded-xl p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+<!-- Tabs -->
+<div class="flex border-b border-slate-200 dark:border-slate-800 mb-8 overflow-x-auto">
+<button class="px-6 py-4 text-sm font-bold border-b-2 border-primary text-primary whitespace-nowrap">Article Content</button>
+<button class="px-6 py-4 text-sm font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 whitespace-nowrap">AI Metadata</button>
+<button class="px-6 py-4 text-sm font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 whitespace-nowrap">Source History</button>
+<button class="px-6 py-4 text-sm font-bold text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 whitespace-nowrap">Raw Data</button>
+</div>
+<!-- Article Text Area -->
+<article class="prose prose-slate dark:prose-invert max-w-none text-lg leading-relaxed text-slate-700 dark:text-slate-300">
+<div class="mb-6 flex gap-3">
+<span class="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span> Entity Insight Enabled
+                            </span>
+</div>
+<p class="mb-6">
+                            Recent data from the <span class="highlight-org px-1 rounded-sm" title="Organization: WTO">World Trade Organization</span> suggests a massive structural pivot in manufacturing. Analysts at <span class="highlight-org px-1 rounded-sm" title="Organization: Goldman Sachs">Goldman Sachs</span> have noted that while the primary hubs remain influential, the diversification into <span class="highlight-person px-1 rounded-sm" title="Topic Context: Southeast Asian Leaders">regional neighbors</span> is accelerating faster than predicted.
+                        </p>
+<p class="mb-6">
+                            Speaking at the Global Economic Summit in Singapore, <span class="highlight-person px-1 rounded-sm" title="Person: Dr. Sarah Chen">Dr. Sarah Chen</span>, Chief Economist at the <span class="highlight-org px-1 rounded-sm" title="Organization: Global Trade Institute">Global Trade Institute</span>, emphasized that this isn't just a temporary reaction to logistical bottlenecks. "What we are witnessing is the decadal reorganization of wealth and production capacity," Chen stated during her keynote.
+                        </p>
+<div class="my-10 p-6 bg-slate-50 dark:bg-slate-800/50 border-l-4 border-primary rounded-r-lg">
+<p class="italic text-xl font-medium text-slate-900 dark:text-slate-100">
+                                "The resilience of a supply chain is no longer measured by its speed, but by its geographical redundancy."
+                            </p>
+</div>
+<p class="mb-6">
+                            Major tech giants, including <span class="highlight-org px-1 rounded-sm" title="Organization: Apple Inc.">Apple Inc.</span> and <span class="highlight-org px-1 rounded-sm" title="Organization: Samsung Electronics">Samsung Electronics</span>, have already begun shifting significant percentages of their assembly lines to Vietnam and India. According to <span class="highlight-person px-1 rounded-sm" title="Person: Tim Cook">Tim Cook</span>, the goal is to create a more resilient ecosystem that can withstand future geopolitical tremors.
+                        </p>
+<p class="mb-6">
+                            The <span class="highlight-org px-1 rounded-sm" title="Organization: European Union">European Union</span> has also signaled its support for this diversification through several new trade agreements aimed at strengthening ties with emerging markets in the APAC region.
+                        </p>
+</article>
+</div>
+</div>
+<!-- Right Column: AI Analysis Sidebar -->
+<aside class="w-full lg:w-96 flex flex-col gap-6">
+<!-- Analysis HUD Card -->
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
+<div class="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50">
+<h3 class="font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">psychology</span>
+                            AI Analysis HUD
+                        </h3>
+<p class="text-xs text-slate-500 mt-1">Confidence Score: 94.8%</p>
+</div>
+<div class="p-6 flex flex-col gap-8">
+<!-- Sentiment Breakdown -->
+<div>
+<div class="flex justify-between items-center mb-3">
+<label class="text-sm font-semibold">Sentiment Breakdown</label>
+<span class="text-xs font-bold text-primary">Positive</span>
+</div>
+<div class="h-4 w-full bg-slate-100 dark:bg-slate-800 rounded-full flex overflow-hidden">
+<div class="h-full bg-green-500" style="width: 65%" title="65% Positive"></div>
+<div class="h-full bg-slate-300 dark:bg-slate-600" style="width: 25%" title="25% Neutral"></div>
+<div class="h-full bg-red-400" style="width: 10%" title="10% Negative"></div>
+</div>
+<div class="flex justify-between mt-2 text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+<span>Positive 65%</span>
+<span>Neutral 25%</span>
+<span>Negative 10%</span>
+</div>
+</div>
+<!-- Bias Score -->
+<div>
+<div class="flex justify-between items-center mb-3">
+<label class="text-sm font-semibold">Bias Score</label>
+<span class="text-xs font-bold text-slate-500">Center-Right</span>
+</div>
+<div class="relative pt-2">
+<div class="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full"></div>
+<div class="absolute top-1 left-[70%] -translate-x-1/2 flex flex-col items-center">
+<div class="w-4 h-4 bg-primary rounded-full border-2 border-white dark:border-slate-900 shadow-md"></div>
+</div>
+<div class="flex justify-between mt-2 text-[10px] uppercase font-bold text-slate-400">
+<span>Left</span>
+<span>Center</span>
+<span>Right</span>
+</div>
+</div>
+</div>
+<!-- Credibility Meter -->
+<div class="bg-slate-50 dark:bg-slate-800/30 p-4 rounded-lg border border-slate-100 dark:border-slate-800">
+<div class="flex items-center justify-between mb-4">
+<label class="text-sm font-semibold">Credibility Ranking</label>
+<span class="text-xs bg-primary/20 text-primary px-2 py-1 rounded">Rank #14</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative flex items-center justify-center">
+<svg class="w-16 h-16 transform -rotate-90">
+<circle class="text-slate-200 dark:text-slate-700" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-width="6"></circle>
+<circle class="text-primary" cx="32" cy="32" fill="transparent" r="28" stroke="currentColor" stroke-dasharray="175.9" stroke-dashoffset="17.5" stroke-width="6"></circle>
+</svg>
+<span class="absolute text-sm font-black">92</span>
+</div>
+<div class="flex-1">
+<p class="text-xs font-medium">High Trust Factor</p>
+<p class="text-[11px] text-slate-500 mt-1 leading-tight">Based on source history, fact-checking overlap, and author authority.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Entity Sidebar Shortcuts -->
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 shadow-sm">
+<h3 class="font-bold text-sm mb-4">Key Entities</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold border border-primary/20 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">person</span>
+                            Dr. Sarah Chen
+                        </span>
+<span class="px-3 py-1.5 rounded-full bg-blue-500/10 text-blue-500 text-xs font-bold border border-blue-500/20 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">business</span>
+                            Apple Inc.
+                        </span>
+<span class="px-3 py-1.5 rounded-full bg-blue-500/10 text-blue-500 text-xs font-bold border border-blue-500/20 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">business</span>
+                            WTO
+                        </span>
+<span class="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-bold border border-primary/20 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm">person</span>
+                            Tim Cook
+                        </span>
+</div>
+</div>
+</aside>
+</div>
+<!-- Related Stories Carousel Section -->
+<section class="mt-12">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined">auto_awesome</span>
+                    Related Intelligence
+                </h2>
+<div class="flex gap-2">
+<button class="w-8 h-8 flex items-center justify-center rounded-full border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-full border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Related Story 1 -->
+<div class="group cursor-pointer bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+<div class="aspect-video w-full bg-slate-200 dark:bg-slate-800 relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Logistics and shipping port" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXaCBU-kjT3z-vE7iESejwDbWNKpsIRENIW1HoXC9oFpBhGiryOn241l8CpkzyCKfRPQsVPQ1F3I6Hr_WguL4mpBNFQQSCu8uG1BpDLZfA9u0fnF3HAEfegtBfV8VQSHofIRgZDuEPXRCKBEvhhuHNJe8DjhdaoVT4ttKMZKrt-o02X30BvBf-fKYuKNmbhZ2-3iIztVs6snGujHJXA7E033iJxM9Z1OxHXb0iNIE8v7U1Ql-AF-xrUwj92w08JDtEYppFEWSLwwM"/>
+<div class="absolute top-2 right-2 bg-primary text-white text-[10px] font-black px-2 py-1 rounded">98% MATCH</div>
+</div>
+<div class="p-4">
+<div class="text-[10px] font-bold text-primary mb-2 uppercase tracking-tighter">Manufacturing</div>
+<h4 class="font-bold text-sm leading-snug group-hover:text-primary transition-colors">The Semiconductor Race: Vietnam's New Role in Global Tech</h4>
+<div class="flex items-center gap-2 mt-4 text-[10px] text-slate-500 font-medium">
+<span>Bloomberg</span>
+<span>•</span>
+<span>4h ago</span>
+</div>
+</div>
+</div>
+<!-- Related Story 2 -->
+<div class="group cursor-pointer bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+<div class="aspect-video w-full bg-slate-200 dark:bg-slate-800 relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Financial charts and currency" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAyqH28yNxHizW2QJkg58RjbXaO5VIc1dzTuwW4GZ41-5f8ijjLIp9i6AaxpgIz3yeFNZMgjfgZwYE1CdqEq7qoUkreyXN8yNSQNwgZWxMOdPsTTh_3ya5scCTks6YY74ZHKI1QArhNJbM09EYVmV0bH1mYBhangn47auv6L4FfVAoiPSTlPqeSkDObOyJp6qwzb01h8JsO33DjuDhozD6zfgF1OQXNvP2b0R8cqvpCaTTMbJMtj5l_HDOQ_FWR0EqHsFo_RjcBqsI"/>
+<div class="absolute top-2 right-2 bg-primary text-white text-[10px] font-black px-2 py-1 rounded">85% MATCH</div>
+</div>
+<div class="p-4">
+<div class="text-[10px] font-bold text-primary mb-2 uppercase tracking-tighter">Macroeconomics</div>
+<h4 class="font-bold text-sm leading-snug group-hover:text-primary transition-colors">Currency Volatility Impacting Emerging Market Trade</h4>
+<div class="flex items-center gap-2 mt-4 text-[10px] text-slate-500 font-medium">
+<span>The Economist</span>
+<span>•</span>
+<span>Yesterday</span>
+</div>
+</div>
+</div>
+<!-- Related Story 3 -->
+<div class="group cursor-pointer bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+<div class="aspect-video w-full bg-slate-200 dark:bg-slate-800 relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Data visualization dashboard" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_w1FhKjdpj2fVhf8mldrD41mcSb7DWvnHYN0kxkeU4oaCNZFk7mCnHQ-y1lYSVy8OTbimqUDxoDZG3wVqGXFhEqPuMpDkh1Z0LxgX28So2MFUZ3c2RgMksvLuCFW_pngixFQAh-auwa-VC-XKaFeG3a3AJF7LuDprKplrBTOuZly1x4gjP2Kwqsp5LPOSVIwIqgEyQfd5pRF2HC1z1Rtxs1cgH_Ahibfe8Q9zDJnBWa-ZAdv7Jhq8cdCqXeR25xBMXRgZwX8TlRY"/>
+<div class="absolute top-2 right-2 bg-primary text-white text-[10px] font-black px-2 py-1 rounded">72% MATCH</div>
+</div>
+<div class="p-4">
+<div class="text-[10px] font-bold text-primary mb-2 uppercase tracking-tighter">Tech Policy</div>
+<h4 class="font-bold text-sm leading-snug group-hover:text-primary transition-colors">Big Tech's India Strategy: Navigating New Regulations</h4>
+<div class="flex items-center gap-2 mt-4 text-[10px] text-slate-500 font-medium">
+<span>WSJ</span>
+<span>•</span>
+<span>2d ago</span>
+</div>
+</div>
+</div>
+<!-- Related Story 4 -->
+<div class="group cursor-pointer bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+<div class="aspect-video w-full bg-slate-200 dark:bg-slate-800 relative">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Collaborative meeting space" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJ9lf40yvLr4hYMIe-60jUYmdz1v31X4PhbnATPL__7oDk47sEpaaQu2mnSdApwnWkWMaNZyi6VboBUxEqpU3tPW6CZJ0XJpEk1QpuWSN5x3WvmJvfFeeicdEp971NJSiNvbeVxq9F6UxlIln0OiC2N8GRHRk1ZgMneORmDcVLPkdvlECmKxetoLCfU8djaw9od-9UFC9_gV19zmLp2eshOKReHBw7INayBdox9NR3ovm335e-XD-SMP10dZ0OQdu-FtLHY2DEly8"/>
+<div class="absolute top-2 right-2 bg-primary text-white text-[10px] font-black px-2 py-1 rounded">64% MATCH</div>
+</div>
+<div class="p-4">
+<div class="text-[10px] font-bold text-primary mb-2 uppercase tracking-tighter">Governance</div>
+<h4 class="font-bold text-sm leading-snug group-hover:text-primary transition-colors">ASEAN Trade Minister Council: Unified Policy Framework</h4>
+<div class="flex items-center gap-2 mt-4 text-[10px] text-slate-500 font-medium">
+<span>Nikkei Asia</span>
+<span>•</span>
+<span>12h ago</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="mt-20 border-t border-slate-200 dark:border-slate-800 py-12 bg-white dark:bg-slate-900">
+<div class="max-w-[1440px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 bg-primary/20 text-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-sm">analytics</span>
+</div>
+<span class="text-sm font-bold opacity-70">NewsScope Analytics v4.2</span>
+</div>
+<div class="flex gap-8 text-xs font-bold text-slate-500 uppercase tracking-widest">
+<a class="hover:text-primary transition-colors" href="#">API Access</a>
+<a class="hover:text-primary transition-colors" href="#">Methodology</a>
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+</div>
+<div class="text-xs text-slate-400">
+                © 2024 NewsScope Intelligence Systems. All rights reserved.
+            </div>
+</div>
+</footer>
+</body></html>

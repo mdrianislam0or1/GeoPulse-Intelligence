@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Comparative Country Intelligence Analyzer - NewsScope</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#895af6",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#151022",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .gauge-conic {
+            background: conic-gradient(from 180deg at 50% 100%, #895af6 0deg, #e5e7eb 180deg);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#131118] transition-colors duration-200">
+<div class="relative flex h-auto min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#f1f0f5] bg-white dark:bg-background-dark dark:border-white/10 px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-6">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+<path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-[#131118] dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">NewsScope Analytics</h2>
+</div>
+<div class="flex items-center gap-6">
+<a class="text-[#131118] dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-primary text-sm font-bold leading-normal border-b-2 border-primary" href="#">Intelligence</a>
+<a class="text-[#131118] dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Alerts</a>
+<a class="text-[#131118] dark:text-gray-300 text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Reports</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal">
+<span>Account</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 border border-gray-200" data-alt="User profile avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCJ80YRey6VrWqNLZNqg1B3Ed95mEmsJ0xdDMA9nbXz5A9KQ-Wepzok8mCZCU8_hMJQUwGVStoEj2O7GMsujXntHMn4KGeiQZtFt5SDoVo5h5Oe1tXiwOLa527wekUb-bwgtUHlwyRIXFFkiUXbOWrM7xVVsZ7FQPFyGdz9uDa7rBvNa9apR-LZ6ubzh-yxa6nXNRk3X3Gx-LUBX_wDnVxQQtVsmaeih0DA2Ui3-MVwvbZyv336BqY5gLzhdzmmZ1hOfQzHGnCUCYI");'></div>
+</div>
+</header>
+<main class="flex-1 flex flex-col px-10 py-8 max-w-[1400px] mx-auto w-full gap-8">
+<!-- Page Heading & Selection -->
+<div class="flex flex-col gap-6">
+<div>
+<h1 class="text-[#131118] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Country Intelligence Analyzer</h1>
+<p class="text-[#6d608a] dark:text-gray-400 text-base font-normal leading-normal">Comparative side-by-side benchmarking of geopolitical stability and economic trends.</p>
+</div>
+<!-- Multi-select Search Component -->
+<div class="bg-white dark:bg-background-dark/50 p-4 rounded-xl border border-[#f1f0f5] dark:border-white/10 shadow-sm flex flex-col md:flex-row gap-4 items-center">
+<div class="flex-1 w-full">
+<label class="flex flex-col h-12 w-full">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full">
+<div class="text-[#6d608a] flex border-none bg-[#f1f0f5] dark:bg-white/5 items-center justify-center pl-4 rounded-l-lg" data-icon="search">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 border-none bg-[#f1f0f5] dark:bg-white/5 focus:outline-0 focus:ring-0 text-[#131118] dark:text-white placeholder:text-[#6d608a] px-4 text-base font-normal leading-normal" placeholder="Search countries to add... (max 3)" value=""/>
+<div class="flex items-center justify-center rounded-r-lg bg-[#f1f0f5] dark:bg-white/5 pr-4">
+<span class="material-symbols-outlined text-[#6d608a] cursor-pointer">cancel</span>
+</div>
+</div>
+</label>
+</div>
+<!-- Chips for Selected Countries -->
+<div class="flex gap-2 flex-wrap">
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/10 border border-primary/20 pl-3 pr-2">
+<span class="text-sm font-semibold text-primary">United States</span>
+<span class="material-symbols-outlined text-primary text-lg cursor-pointer">close</span>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/10 border border-primary/20 pl-3 pr-2">
+<span class="text-sm font-semibold text-primary">Germany</span>
+<span class="material-symbols-outlined text-primary text-lg cursor-pointer">close</span>
+</div>
+<div class="flex h-10 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/10 border border-primary/20 pl-3 pr-2">
+<span class="text-sm font-semibold text-primary">Japan</span>
+<span class="material-symbols-outlined text-primary text-lg cursor-pointer">close</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Comparison Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Country Column 1: USA -->
+<div class="bg-white dark:bg-background-dark/80 rounded-xl border border-[#f1f0f5] dark:border-white/10 shadow-sm flex flex-col overflow-hidden">
+<div class="p-6 border-b border-[#f1f0f5] dark:border-white/10 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-6 bg-blue-800 rounded-sm relative overflow-hidden" data-alt="US Flag placeholder">
+<div class="absolute inset-0 bg-gradient-to-r from-red-600 via-white to-blue-800 opacity-20"></div>
+</div>
+<h3 class="font-bold text-lg dark:text-white">United States</h3>
+</div>
+<button class="text-[#6d608a] hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="p-6 space-y-8">
+<!-- Stability Index -->
+<div class="flex flex-col items-center text-center gap-2">
+<p class="text-xs font-bold uppercase tracking-wider text-[#6d608a]">Stability Index</p>
+<div class="relative w-40 h-20 overflow-hidden">
+<div class="absolute bottom-0 left-0 w-40 h-40 rounded-full gauge-conic"></div>
+<div class="absolute bottom-0 left-4 w-32 h-32 rounded-full bg-white dark:bg-background-dark"></div>
+<div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center">
+<span class="text-3xl font-black text-primary">82</span>
+</div>
+</div>
+<div class="flex items-center gap-1 text-green-600 text-sm font-bold">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>+1.2% Trend</span>
+</div>
+</div>
+<!-- Economic Indicators -->
+<div class="space-y-4">
+<p class="text-xs font-bold uppercase tracking-wider text-[#6d608a]">Economic Indicators</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-3 bg-background-light dark:bg-white/5 rounded-lg">
+<p class="text-[10px] text-[#6d608a]">GDP Growth</p>
+<p class="text-lg font-bold dark:text-white">2.1%</p>
+</div>
+<div class="p-3 bg-background-light dark:bg-white/5 rounded-lg">
+<p class="text-[10px] text-[#6d608a]">Inflation</p>
+<p class="text-lg font-bold dark:text-white">3.4%</p>
+</div>
+</div>
+</div>
+<!-- Sentiment Analysis -->
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<p class="text-xs font-bold uppercase tracking-wider text-[#6d608a]">Sentiment Analysis</p>
+<span class="text-[10px] text-[#6d608a]">Last 24h</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative size-16">
+<svg class="size-16 -rotate-90" viewbox="0 0 36 36">
+<circle class="stroke-gray-200 dark:stroke-gray-700" cx="18" cy="18" fill="none" r="16" stroke-width="4"></circle>
+<circle class="stroke-primary" cx="18" cy="18" fill="none" r="16" stroke-dasharray="65, 100" stroke-width="4"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center text-[10px] font-bold dark:text-white">65%</div>
+</div>
+<div class="flex-1 flex flex-col gap-1">
+<div class="flex justify-between text-[10px]">
+<span class="dark:text-gray-300">Positive</span>
+<span class="font-bold dark:text-white">65%</span>
+</div>
+<div class="h-1 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[65%]"></div>
+</div>
+<div class="flex justify-between text-[10px] mt-1">
+<span class="dark:text-gray-300">Negative</span>
+<span class="font-bold dark:text-white">12%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Crisis Alerts -->
+<div class="space-y-4">
+<p class="text-xs font-bold uppercase tracking-wider text-[#6d608a]">Recent Alerts</p>
+<div class="space-y-3">
+<div class="p-3 border-l-4 border-yellow-500 bg-yellow-50 dark:bg-yellow-500/10 rounded-r-lg">
+<h4 class="text-xs font-bold text-yellow-800 dark:text-yellow-400">Policy Shift Warning</h4>
+<p class="text-[10px] text-yellow-700 dark:text-yellow-300/80 mt-1">New trade regulations announced for semiconductor exports.</p>
+</div>
+<div class="p-3 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-500/10 rounded-r-lg">
+<h4 class="text-xs font-bold text-blue-800 dark:text-blue-400">Market Correction</h4>
+<p class="text-[10px] text-blue-700 dark:text-blue-300/80 mt-1">Tech sector sees 2% intraday dip following earnings reports.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Country Column 2: Germany -->
+<div class="bg-white dark:bg-background-dark/80 rounded-xl border border-[#f1f0f5] dark:border-white/10 shadow-sm flex flex-col overflow-hidden">
+<div class="p-6 border-b border-[#f1f0f5] dark:border-white/10 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-6 bg-black rounded-sm relative overflow-hidden" data-alt="Germany Flag placeholder">
+<div class="absolute h-1/3 w-full bg-black top-0"></div>
+<div class="absolute h-1/3 w-full bg-red-600 top-1/3"></div>
+<div class="absolute h-1/3 w-full bg-yellow-400 bottom-0"></div>
+</div>
+<h3 class="font-bold text-lg dark:text-white">Germany</h3>
+</div>
+<button class="text-[#6d608a] hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="p-6 space-y-8">
+<div class="flex flex-col items-center text-center gap-2">
+<p class="text-xs font-bold uppercase tracking-wider text-[#6d608a]">Stability Index</p>
+<div class="relative w-40 h-20 overflow-hidden">
+<div class="absolute bottom-0 left-0 w-40 h-40 rounded-full bg-gradient-to-t from-primary/60 to-primary"></div>
+<div class="absolute bottom-0 left-4 w-32 h-32 rounded-full bg-white dark:bg-background-dark"></div>
+<div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center">
+<span class="text-3xl font-black text-primary">76</span>
+</div>
+</div>
+<div class="flex items-center gap-1 text-red-600 text-sm font-bold">
+<span class="material-symbols-outlined text-sm">trending_down</span>
+<span>-0.5% Trend</span>
+</div>
+</div>
+<div class="space-y-4">
+<p class="text-xs font-bold uppercase tracking-wider text-[#6d608a]">Economic Indicators</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-3 bg-background-light dark:bg-white/5 rounded-lg">
+<p class="text-[10px] text-[#6d608a]">GDP Growth</p>
+<p class="text-lg font-bold dark:text-white">-0.1%</p>
+</div>
+<div class="p-3 bg-background-light dark:bg-white/5 rounded-lg">
+<p class="text-[10px] text-[#6d608a]">Inflation</p>
+<p class="text-lg font-bold dark:text-white">2.9%</p>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<p class="text-xs font-bold uppercase tracking-wider text-[#6d608a]">Sentiment Analysis</p>
+<span class="text-[10px] text-[#6d608a]">Last 24h</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative size-16">
+<svg class="size-16 -rotate-90" viewbox="0 0 36 36">
+<circle class="stroke-gray-200 dark:stroke-gray-700" cx="18" cy="18" fill="none" r="16" stroke-width="4"></circle>
+<circle class="stroke-primary" cx="18" cy="18" fill="none" r="16" stroke-dasharray="48, 100" stroke-width="4"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center text-[10px] font-bold dark:text-white">48%</div>
+</div>
+<div class="flex-1 flex flex-col gap-1">
+<div class="flex justify-between text-[10px]">
+<span class="dark:text-gray-300">Positive</span>
+<span class="font-bold dark:text-white">48%</span>
+</div>
+<div class="h-1 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[48%]"></div>
+</div>
+<div class="flex justify-between text-[10px] mt-1">
+<span class="dark:text-gray-300">Negative</span>
+<span class="font-bold dark:text-white">31%</span>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<p class="text-xs font-bold uppercase tracking-wider text-[#6d608a]">Recent Alerts</p>
+<div class="space-y-3">
+<div class="p-3 border-l-4 border-red-500 bg-red-50 dark:bg-red-500/10 rounded-r-lg">
+<h4 class="text-xs font-bold text-red-800 dark:text-red-400">Energy Price Surge</h4>
+<p class="text-[10px] text-red-700 dark:text-red-300/80 mt-1">Natural gas futures jump 5% following pipeline maintenance update.</p>
+</div>
+<div class="p-3 border-l-4 border-gray-500 bg-gray-50 dark:bg-white/10 rounded-r-lg">
+<h4 class="text-xs font-bold text-gray-800 dark:text-gray-400">Manufacturing Index</h4>
+<p class="text-[10px] text-gray-700 dark:text-gray-300/80 mt-1">Industrial output shows modest recovery in automotive sector.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Country Column 3: Japan -->
+<div class="bg-white dark:bg-background-dark/80 rounded-xl border border-[#f1f0f5] dark:border-white/10 shadow-sm flex flex-col overflow-hidden">
+<div class="p-6 border-b border-[#f1f0f5] dark:border-white/10 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-6 bg-white border border-gray-100 rounded-sm relative overflow-hidden flex items-center justify-center" data-alt="Japan Flag placeholder">
+<div class="size-3 bg-red-600 rounded-full"></div>
+</div>
+<h3 class="font-bold text-lg dark:text-white">Japan</h3>
+</div>
+<button class="text-[#6d608a] hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="p-6 space-y-8">
+<div class="flex flex-col items-center text-center gap-2">
+<p class="text-xs font-bold uppercase tracking-wider text-[#6d608a]">Stability Index</p>
+<div class="relative w-40 h-20 overflow-hidden">
+<div class="absolute bottom-0 left-0 w-40 h-40 rounded-full bg-gradient-to-t from-primary/80 to-primary"></div>
+<div class="absolute bottom-0 left-4 w-32 h-32 rounded-full bg-white dark:bg-background-dark"></div>
+<div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex flex-col items-center">
+<span class="text-3xl font-black text-primary">89</span>
+</div>
+</div>
+<div class="flex items-center gap-1 text-[#6d608a] text-sm font-bold">
+<span class="material-symbols-outlined text-sm">remove</span>
+<span>Stable Trend</span>
+</div>
+</div>
+<div class="space-y-4">
+<p class="text-xs font-bold uppercase tracking-wider text-[#6d608a]">Economic Indicators</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-3 bg-background-light dark:bg-white/5 rounded-lg">
+<p class="text-[10px] text-[#6d608a]">GDP Growth</p>
+<p class="text-lg font-bold dark:text-white">1.2%</p>
+</div>
+<div class="p-3 bg-background-light dark:bg-white/5 rounded-lg">
+<p class="text-[10px] text-[#6d608a]">Inflation</p>
+<p class="text-lg font-bold dark:text-white">2.5%</p>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<p class="text-xs font-bold uppercase tracking-wider text-[#6d608a]">Sentiment Analysis</p>
+<span class="text-[10px] text-[#6d608a]">Last 24h</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative size-16">
+<svg class="size-16 -rotate-90" viewbox="0 0 36 36">
+<circle class="stroke-gray-200 dark:stroke-gray-700" cx="18" cy="18" fill="none" r="16" stroke-width="4"></circle>
+<circle class="stroke-primary" cx="18" cy="18" fill="none" r="16" stroke-dasharray="72, 100" stroke-width="4"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center text-[10px] font-bold dark:text-white">72%</div>
+</div>
+<div class="flex-1 flex flex-col gap-1">
+<div class="flex justify-between text-[10px]">
+<span class="dark:text-gray-300">Positive</span>
+<span class="font-bold dark:text-white">72%</span>
+</div>
+<div class="h-1 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[72%]"></div>
+</div>
+<div class="flex justify-between text-[10px] mt-1">
+<span class="dark:text-gray-300">Negative</span>
+<span class="font-bold dark:text-white">8%</span>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<p class="text-xs font-bold uppercase tracking-wider text-[#6d608a]">Recent Alerts</p>
+<div class="space-y-3">
+<div class="p-3 border-l-4 border-primary bg-primary/5 dark:bg-primary/10 rounded-r-lg">
+<h4 class="text-xs font-bold text-primary">BOJ Update</h4>
+<p class="text-[10px] text-primary/80 mt-1">Bank of Japan maintains short-term interest rate target.</p>
+</div>
+<div class="p-3 border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-500/10 rounded-r-lg">
+<h4 class="text-xs font-bold text-blue-800 dark:text-blue-400">Export Growth</h4>
+<p class="text-[10px] text-blue-700 dark:text-blue-300/80 mt-1">Logistics and electronics exports show quarterly gain of 4.5%.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Unified Historical Chart -->
+<div class="bg-white dark:bg-background-dark/80 rounded-xl border border-[#f1f0f5] dark:border-white/10 shadow-sm p-6 flex flex-col gap-6">
+<div class="flex flex-wrap justify-between items-end gap-4">
+<div class="flex flex-col gap-1">
+<h3 class="font-bold text-lg dark:text-white">Historical Stability Benchmarking</h3>
+<p class="text-sm text-[#6d608a]">Stability index comparison over the last 12 months</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-2">
+<div class="size-3 rounded-full bg-primary"></div>
+<span class="text-xs font-medium dark:text-gray-300">USA</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-3 rounded-full bg-indigo-400"></div>
+<span class="text-xs font-medium dark:text-gray-300">Germany</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="size-3 rounded-full bg-violet-300"></div>
+<span class="text-xs font-medium dark:text-gray-300">Japan</span>
+</div>
+</div>
+</div>
+<!-- Mock Line Chart Visualization -->
+<div class="relative h-64 w-full flex items-end justify-between px-2 pt-8 group">
+<!-- Grid Lines -->
+<div class="absolute inset-0 flex flex-col justify-between opacity-10 pointer-events-none">
+<div class="border-t border-gray-400 w-full"></div>
+<div class="border-t border-gray-400 w-full"></div>
+<div class="border-t border-gray-400 w-full"></div>
+<div class="border-t border-gray-400 w-full"></div>
+<div class="border-t border-gray-400 w-full"></div>
+</div>
+<!-- Chart SVG -->
+<svg class="absolute inset-0 w-full h-full" preserveaspectratio="none">
+<!-- Path USA -->
+<path d="M 0 60 Q 150 40 300 80 T 600 50 T 900 70 T 1400 40" fill="none" stroke="#895af6" stroke-width="3"></path>
+<!-- Path Germany -->
+<path d="M 0 100 Q 150 120 300 90 T 600 110 T 900 130 T 1400 100" fill="none" stroke="#818cf8" stroke-dasharray="4" stroke-width="2"></path>
+<!-- Path Japan -->
+<path d="M 0 40 Q 150 50 300 30 T 600 40 T 900 20 T 1400 30" fill="none" stroke="#c4b5fd" stroke-width="2"></path>
+</svg>
+<!-- Time Labels -->
+<div class="flex w-full justify-between mt-auto pt-4 text-[10px] text-[#6d608a] font-bold">
+<span>JAN</span><span>FEB</span><span>MAR</span><span>APR</span><span>MAY</span><span>JUN</span>
+<span>JUL</span><span>AUG</span><span>SEP</span><span>OCT</span><span>NOV</span><span>DEC</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Info -->
+<footer class="mt-auto py-6 px-10 border-t border-[#f1f0f5] dark:border-white/10 bg-white dark:bg-background-dark/50">
+<div class="max-w-[1400px] mx-auto flex justify-between items-center text-[#6d608a] text-xs">
+<p>© 2024 NewsScope Intelligence Platform. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="hover:text-primary" href="#">Documentation</a>
+<a class="hover:text-primary" href="#">API Access</a>
+<a class="hover:text-primary" href="#">Contact Analyst</a>
+</div>
+</div>
+</footer>
+</div>
+</body></html>

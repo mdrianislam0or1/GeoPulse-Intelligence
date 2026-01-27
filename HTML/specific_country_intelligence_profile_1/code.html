@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Specific Country Intelligence Profile | NewsScope Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#895af6",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#151022",
+                        "surface-dark": "#1d172e",
+                        "border-dark": "#2d2839",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-border-dark px-10 py-3 bg-background-dark sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-white">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+<path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-tight">NewsScope</h2>
+</div>
+<nav class="flex items-center gap-6">
+<a class="text-white text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-primary text-sm font-medium" href="#">Global Map</a>
+<a class="text-white text-sm font-medium hover:text-primary transition-colors" href="#">Intelligence Hub</a>
+<a class="text-white text-sm font-medium hover:text-primary transition-colors" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<label class="flex flex-col min-w-40 h-10 max-w-xs relative">
+<div class="flex w-full items-center rounded-lg bg-border-dark px-3 gap-2">
+<span class="material-symbols-outlined text-slate-400 text-lg">search</span>
+<input class="w-full border-none bg-transparent text-white focus:ring-0 placeholder:text-slate-500 text-sm py-2" placeholder="Search countries, crises, or trends..."/>
+</div>
+</label>
+<div class="flex gap-4">
+<button class="text-slate-400 hover:text-white"><span class="material-symbols-outlined">notifications</span></button>
+<div class="size-9 rounded-full bg-cover bg-center border border-border-dark" data-alt="User avatar placeholder" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDUBUdLuKGZ8afeN6swj0O-K-IDQ4gqxLz_Kiar8HiUHykkDEw_v6x0bZfJaJD7kbrJ-U7FZCNJ3XDQLuI6Iag_rxon74JFBjhBUzFlKNVfXb47cVH6_SeDIPL8BoPCZYo_UlxqgezRIGKphaSnKfxfej4xDgO33WURtKcUjIRhgZ3b1nIRaZqVOojTXIxF-UWxBoP8XNVOttW451ohp3XOEoCCMVFsEZPmMMhJ6azd-rcdog38S8o6Qaghlw345YWJSiOf4TwEdbc");'></div>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto px-10 py-6 grid grid-cols-12 gap-8">
+<!-- Left & Center Column (8 Units) -->
+<div class="col-span-9 flex flex-col gap-6">
+<!-- Breadcrumbs -->
+<div class="flex items-center gap-2 text-sm">
+<a class="text-slate-400 hover:text-primary flex items-center gap-1" href="#"><span class="material-symbols-outlined text-base">public</span> Regions</a>
+<span class="text-slate-600">/</span>
+<a class="text-slate-400 hover:text-primary" href="#">North America</a>
+<span class="text-slate-600">/</span>
+<span class="text-white font-semibold">United States</span>
+</div>
+<!-- Page Heading -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-5">
+<div class="size-16 rounded-lg bg-surface-dark border border-border-dark flex items-center justify-center overflow-hidden">
+<img alt="USA Flag" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWuuaj9Gdk77-UfncsmmUzO0aWHpEHFb0rj1i16k8LOuqCNL6Bo0XBQzxwfskC_hEwQBdrl75tCGTtT2vMiWeT7VUhMbA6eo6Cg9aa1e_kT09qHxPvVHziGvI2a-7PQplneelGF4qID6f8DoMZW6ot4UDbbS1dySPzX9KyGf-T8xGtdz5Ta4qNPQbErpMS-NCPXgk2zZc4h5xGy_Jo7jNt4-5NY-9RY_yO03HsRxsynnLxnLSvpOynjYM-cnl_1-H026bwM4Y3Zuk"/>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-3">
+<h1 class="text-4xl font-black tracking-tight text-white">United States</h1>
+<span class="px-3 py-1 bg-green-500/10 text-green-400 border border-green-500/20 rounded-full text-xs font-bold uppercase tracking-widest">Stable</span>
+</div>
+<p class="text-slate-400 text-sm mt-1">
+                            Intelligence Profile • <span class="text-slate-300">Last updated 12m ago</span> • Local Time: <span class="text-slate-100">10:42 AM EST</span>
+</p>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 border border-border-dark rounded-lg text-sm font-semibold hover:bg-surface-dark transition-colors">
+<span class="material-symbols-outlined text-sm">share</span> Share
+                    </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-bold hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-sm">download</span> Intelligence Briefing
+                    </button>
+</div>
+</div>
+<!-- Tabs Navigation -->
+<div class="border-b border-border-dark flex gap-10">
+<a class="pb-4 border-b-2 border-primary text-primary text-sm font-bold flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-sm">grid_view</span> Overview
+                </a>
+<a class="pb-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 text-sm font-bold flex items-center gap-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">newspaper</span> News <span class="bg-primary/20 text-primary text-[10px] px-1.5 rounded">12 New</span>
+</a>
+<a class="pb-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 text-sm font-bold flex items-center gap-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">trending_up</span> Trends
+                </a>
+<a class="pb-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 text-sm font-bold flex items-center gap-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">warning</span> Crisis Center
+                </a>
+<a class="pb-4 border-b-2 border-transparent text-slate-400 hover:text-slate-200 text-sm font-bold flex items-center gap-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-sm">bar_chart</span> Economic Data
+                </a>
+</div>
+<!-- Dashboard Content: Grid Layout -->
+<div class="grid grid-cols-2 gap-6">
+<!-- Map Widget -->
+<div class="col-span-2 lg:col-span-1 bg-surface-dark border border-border-dark rounded-xl p-5 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<h3 class="text-lg font-bold">Geopolitical Hotspots</h3>
+<button class="text-primary text-xs font-bold hover:underline">Full 3D Map</button>
+</div>
+<div class="aspect-video w-full rounded-lg relative bg-slate-800 overflow-hidden border border-border-dark" data-location="United States" style="">
+<div class="absolute inset-0 bg-cover bg-center opacity-70" data-alt="3D styled world map focusing on North America" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDUvw_QeM9CHQbyMrUu_wLiy-K1rYzf7yfL5ld0fz9-LhtxgAxEfWqSy3osF7wUGkuHUjA4PSRiktQ2p5GqGE9jHhiUK0XOdYu8iXoN6cw7vaS6JH_ogTNbReXtnO9MCfeRS665tZDywXtQYSlY66wyxQalOLvufC-EzmpzfpDRCLTsRSoHs0hPnkrYJM-juU92-97G5Inj2_eEIk7nNcW_lHHb7Ri0KG3pon6K24qgUSGvCwNRTdVuxnlR8o5mjBkWCClT7mTE1Tk');"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background-dark/80 to-transparent"></div>
+<!-- UI Overlays for Map -->
+<div class="absolute bottom-4 left-4 flex flex-col gap-2">
+<div class="bg-background-dark/80 backdrop-blur-md p-2 rounded-lg border border-border-dark text-[10px] flex items-center gap-2">
+<span class="size-2 bg-red-500 rounded-full animate-pulse"></span>
+                                Active Border Surveillance
+                            </div>
+<div class="bg-background-dark/80 backdrop-blur-md p-2 rounded-lg border border-border-dark text-[10px] flex items-center gap-2">
+<span class="size-2 bg-primary rounded-full"></span>
+                                Logistics Hub Active
+                            </div>
+</div>
+</div>
+</div>
+<!-- Economic Grid -->
+<div class="col-span-2 lg:col-span-1 grid grid-cols-2 gap-4">
+<div class="bg-surface-dark border border-border-dark rounded-xl p-5 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<p class="text-slate-400 text-xs font-bold uppercase tracking-wider">GDP Growth</p>
+<span class="material-symbols-outlined text-green-400">trending_up</span>
+</div>
+<div class="mt-4">
+<h4 class="text-3xl font-black text-white">+2.4%</h4>
+<p class="text-green-400 text-xs mt-1">Exceeding Forecast</p>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-xl p-5 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Inflation</p>
+<span class="material-symbols-outlined text-amber-400">analytics</span>
+</div>
+<div class="mt-4">
+<h4 class="text-3xl font-black text-white">3.1%</h4>
+<p class="text-amber-400 text-xs mt-1">Slight Elevation</p>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-xl p-5 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<p class="text-slate-400 text-xs font-bold uppercase tracking-wider">USD Index</p>
+<span class="material-symbols-outlined text-primary text-xl">payments</span>
+</div>
+<div class="mt-4">
+<h4 class="text-3xl font-black text-white">104.2</h4>
+<p class="text-slate-500 text-xs mt-1">Stable vs Basket</p>
+</div>
+</div>
+<div class="bg-surface-dark border border-border-dark rounded-xl p-5 flex flex-col justify-between">
+<div class="flex justify-between items-start">
+<p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Trade Balance</p>
+<span class="material-symbols-outlined text-blue-400">balance</span>
+</div>
+<div class="mt-4">
+<h4 class="text-3xl font-black text-white">-$67B</h4>
+<p class="text-slate-500 text-xs mt-1">Monthly Average</p>
+</div>
+</div>
+</div>
+<!-- Timeline Section -->
+<div class="col-span-2 bg-surface-dark border border-border-dark rounded-xl p-6">
+<div class="flex items-center justify-between mb-8">
+<h3 class="text-lg font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">history</span> 
+                            Major Events Timeline
+                        </h3>
+<div class="flex gap-2">
+<button class="px-3 py-1 bg-border-dark rounded text-xs hover:bg-slate-700">All</button>
+<button class="px-3 py-1 text-slate-500 rounded text-xs hover:bg-slate-700">Political</button>
+<button class="px-3 py-1 text-slate-500 rounded text-xs hover:bg-slate-700">Crisis</button>
+</div>
+</div>
+<div class="relative pl-8 border-l border-border-dark flex flex-col gap-10 ml-4">
+<!-- Timeline Item 1 -->
+<div class="relative">
+<div class="absolute -left-[41px] top-0 size-5 bg-primary border-4 border-background-dark rounded-full shadow-[0_0_10px_rgba(137,90,246,0.5)]"></div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3">
+<span class="text-xs font-black text-primary tracking-widest uppercase">Nov 04, 2024</span>
+<span class="px-2 py-0.5 bg-primary/20 text-primary text-[10px] rounded font-bold">CRITICAL</span>
+</div>
+<h4 class="text-md font-bold text-white">National General Election Commencement</h4>
+<p class="text-slate-400 text-sm max-w-2xl">High-volume polling station activity across major urban centers. Internal security level elevated to Amber. Markets currently pricing in moderate volatility.</p>
+<div class="flex gap-4 mt-2">
+<div class="text-[11px] text-slate-500 flex items-center gap-1"><span class="material-symbols-outlined text-xs">source</span> Reuters, AP</div>
+<div class="text-[11px] text-slate-500 flex items-center gap-1"><span class="material-symbols-outlined text-xs">monitoring</span> Sentiment: Neutral</div>
+</div>
+</div>
+</div>
+<!-- Timeline Item 2 -->
+<div class="relative">
+<div class="absolute -left-[41px] top-0 size-5 bg-slate-600 border-4 border-background-dark rounded-full"></div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3">
+<span class="text-xs font-black text-slate-500 tracking-widest uppercase">Oct 30, 2024</span>
+</div>
+<h4 class="text-md font-bold text-white">Federal Reserve Policy Update</h4>
+<p class="text-slate-400 text-sm max-w-2xl">Interest rates held steady. Chair Powell suggests long-term data normalization. Energy exports to EU projected to increase by 5%.</p>
+</div>
+</div>
+<!-- Timeline Item 3 -->
+<div class="relative">
+<div class="absolute -left-[41px] top-0 size-5 bg-amber-500 border-4 border-background-dark rounded-full"></div>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-3">
+<span class="text-xs font-black text-amber-500 tracking-widest uppercase">Oct 22, 2024</span>
+<span class="px-2 py-0.5 bg-amber-500/20 text-amber-500 text-[10px] rounded font-bold">DIPLOMATIC</span>
+</div>
+<h4 class="text-md font-bold text-white">G7 Trade Corridor Agreement Signed</h4>
+<p class="text-slate-400 text-sm max-w-2xl">New maritime security initiative finalized with UK and France to protect Atlantic shipping lanes against asymmetric threats.</p>
+</div>
+</div>
+</div>
+<button class="mt-8 w-full py-3 border border-dashed border-border-dark rounded-lg text-slate-500 text-sm font-medium hover:text-slate-300 hover:border-slate-600 transition-all">
+                        Load Historical Events (2020 - 2023)
+                    </button>
+</div>
+</div>
+</div>
+<!-- Sidebar (3 Units) -->
+<aside class="col-span-3 flex flex-col gap-6">
+<!-- Quick Actions -->
+<div class="bg-surface-dark border border-border-dark rounded-xl p-5 flex flex-col gap-4">
+<h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Quick Actions</h3>
+<div class="flex flex-col gap-2">
+<button class="w-full flex items-center justify-between px-4 py-3 bg-primary/10 border border-primary/20 text-primary rounded-lg text-sm font-bold hover:bg-primary/20 transition-all group">
+                        Add to Intelligence Watchlist
+                        <span class="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">star</span>
+</button>
+<button class="w-full flex items-center justify-between px-4 py-3 bg-border-dark border border-border-dark text-white rounded-lg text-sm font-bold hover:bg-slate-700 transition-all">
+                        Generate PDF Report
+                        <span class="material-symbols-outlined text-lg">description</span>
+</button>
+<button class="w-full flex items-center justify-between px-4 py-3 bg-border-dark border border-border-dark text-white rounded-lg text-sm font-bold hover:bg-slate-700 transition-all">
+                        Export RAW JSON/CSV
+                        <span class="material-symbols-outlined text-lg">database</span>
+</button>
+</div>
+</div>
+<!-- Risk Profile Gauge (Custom implementation) -->
+<div class="bg-surface-dark border border-border-dark rounded-xl p-5 flex flex-col gap-6">
+<div class="flex items-center justify-between">
+<h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Risk Assessment</h3>
+<span class="material-symbols-outlined text-slate-500">info</span>
+</div>
+<div class="flex flex-col items-center gap-4 py-2">
+<div class="relative size-32 flex items-center justify-center">
+<!-- SVG Circle Gauge -->
+<svg class="size-full -rotate-90">
+<circle class="text-border-dark" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="290" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-2xl font-black text-white">18</span>
+<span class="text-[10px] text-slate-500 font-bold uppercase">Low Risk</span>
+</div>
+</div>
+<div class="w-full flex flex-col gap-2 mt-2">
+<div class="flex justify-between items-center text-xs">
+<span class="text-slate-400">Political Stability</span>
+<span class="text-green-400 font-bold">Excellent</span>
+</div>
+<div class="w-full h-1 bg-border-dark rounded-full">
+<div class="h-full bg-green-500 rounded-full w-[92%]"></div>
+</div>
+<div class="flex justify-between items-center text-xs mt-2">
+<span class="text-slate-400">Economic Risk</span>
+<span class="text-amber-400 font-bold">Moderate</span>
+</div>
+<div class="w-full h-1 bg-border-dark rounded-full">
+<div class="h-full bg-amber-500 rounded-full w-[35%]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Related Alerts -->
+<div class="bg-surface-dark border border-border-dark rounded-xl p-5 flex flex-col gap-4">
+<h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Active Alerts</h3>
+<div class="flex flex-col gap-3">
+<div class="p-3 bg-red-500/10 border-l-2 border-red-500 rounded-r-lg">
+<p class="text-[11px] font-black text-red-500 uppercase tracking-widest">Cybersecurity</p>
+<p class="text-xs text-white mt-1 leading-relaxed">Attempted intrusion detected on Atlantic fiber gateway.</p>
+<p class="text-[10px] text-slate-500 mt-2">45m ago • Intelligence Bureau</p>
+</div>
+<div class="p-3 bg-blue-500/10 border-l-2 border-blue-500 rounded-r-lg">
+<p class="text-[11px] font-black text-blue-500 uppercase tracking-widest">Trade Policy</p>
+<p class="text-xs text-white mt-1 leading-relaxed">Tariff exemption for semiconductor imports extended.</p>
+<p class="text-[10px] text-slate-500 mt-2">3h ago • Treasury Dept</p>
+</div>
+</div>
+<button class="text-primary text-[11px] font-bold text-center hover:underline mt-2">View Alert Command Center</button>
+</div>
+<!-- Key Contacts -->
+<div class="bg-surface-dark border border-border-dark rounded-xl p-5 flex flex-col gap-4">
+<h3 class="text-sm font-bold uppercase tracking-wider text-slate-500">Regional Directors</h3>
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-cover bg-center" data-alt="Director headshot" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBZzsZPa_KDsIYBjKpxdnxH1O_eQqDZ46pfUMrV1za6JPnxdo7g3xdmsS5HAUjO7ou3KoQt1a0Ml52zIN4-icBjUeikEnwGbCP20uX61CuQ32dgiBPlFYj39IHFQVFoDaY3SOOkV2JmYjFisXX7Hz4ObGVabq2C-2OgNDgRU7osvK-UYJaZqo7CreM5eklCU26bGABeK77wRKVbGZ46snO6fFH24ixz0vFTonvFtFgGdl3u3Tip_D_eqt56Sqyfp6L0G-jLU7kAvKY');"></div>
+<div>
+<p class="text-xs font-bold text-white">David Miller</p>
+<p class="text-[10px] text-slate-500">Chief Analyst, N.A.</p>
+</div>
+<button class="ml-auto text-slate-400 hover:text-primary"><span class="material-symbols-outlined text-sm">mail</span></button>
+</div>
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-cover bg-center" data-alt="Director headshot" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCf-eCAQg4MxauOXzXGqE_yQBWM6DeQB8JCXDvIXNrvp4eMESY4w77dKfvbmRg9vqtzK5mOh74Y687BdqpkjZrkT8N7JFYFUufRfcL6ji9xoMo_xo3JbT08hP8ekCkyZapxsyVmIe2OW9bwEWlIH6qRsPgvdr45mXMilPLudr-sOQQZv8qz2jlTZtO0tSz-J2hTPcbV8A0JiYWH4Q5C6PbZt9U5Dl_o43n_gVMgsQMrej5f_hpwSjPF6YxUT6r9ipWcvtBlgcPruN4');"></div>
+<div>
+<p class="text-xs font-bold text-white">Sarah Chen</p>
+<p class="text-[10px] text-slate-500">Economic Lead</p>
+</div>
+<button class="ml-auto text-slate-400 hover:text-primary"><span class="material-symbols-outlined text-sm">mail</span></button>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<!-- Footer Meta -->
+<footer class="max-w-[1440px] mx-auto px-10 py-10 border-t border-border-dark text-slate-600 text-xs flex justify-between">
+<div>© 2024 NewsScope Intelligence Systems. Confidential Proprietary Data.</div>
+<div class="flex gap-6">
+<a class="hover:text-slate-400" href="#">Security Protocols</a>
+<a class="hover:text-slate-400" href="#">Data Sources</a>
+<a class="hover:text-slate-400" href="#">API Documentation</a>
+</div>
+</footer>
+</body></html>

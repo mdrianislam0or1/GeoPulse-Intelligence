@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Global News Intelligence Feed | NewsScope</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#895af6",
+                        "background-main": "#FAFBFC",
+                        "card-border": "#E2E8F0",
+                        "headline-text": "#0F172A",
+                        "body-text": "#475569",
+                        "success-sentiment": "#10B981",
+                        "error-sentiment": "#EF4444",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-background-main text-body-text;
+            }
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .sidebar-item-active {
+            background-color: rgba(137, 90, 246, 0.1);
+            color: #895af6;
+            border-right: 3px solid #895af6;
+        }
+        .news-card {
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+        }
+    </style>
+</head>
+<body class="font-display min-h-screen">
+<div class="flex">
+<aside class="fixed left-0 top-0 h-screen w-64 bg-white border-r border-slate-200 z-50">
+<div class="flex flex-col h-full p-4">
+<div class="flex items-center gap-3 mb-10 px-2">
+<div class="bg-primary rounded-lg p-2 flex items-center justify-center">
+<span class="material-symbols-outlined text-white">analytics</span>
+</div>
+<div class="flex flex-col">
+<h1 class="text-headline-text text-lg font-bold leading-none">NewsScope</h1>
+<p class="text-body-text text-xs font-normal">Analytics Platform</p>
+</div>
+</div>
+<nav class="flex flex-col gap-1 grow">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-body-text hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="sidebar-item-active flex items-center gap-3 px-4 py-3 rounded-lg transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">rss_feed</span>
+<span class="text-sm font-bold">News Feed</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-body-text hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="text-sm font-medium">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-body-text hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined">bookmark</span>
+<span class="text-sm font-medium">Bookmarks</span>
+</a>
+<div class="my-4 border-t border-slate-100"></div>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-body-text hover:bg-slate-50 transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+</nav>
+<div class="p-4 bg-slate-50 rounded-xl flex items-center gap-3">
+<div class="size-10 rounded-full bg-cover bg-center border border-primary/20" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCwMCwtguemoyZRrccWGad_mpEoyeGqliJgE8tuROL64Z4SY50iWp5wr4hYCMREBtaLDIQEH8_znY-wPY7RrYfkG-UQ2NLgu2NVQRrjpYC4dup7hiKp_5UMIjsq52so5Ab9GXJ5uTHGOG45brJwDOAA-RQpzS47UMyIbcn4TGFLuJpa-3Hg_YexlRDWqrq_1gA1SsDaoCYUrm6vzeEaAPYSRKFhacPWEj31ZGzGBpDkHB2q6XVBy1UpneHHQeKwAYgr7MSKIH0bb2g')"></div>
+<div class="overflow-hidden">
+<p class="text-sm font-bold text-headline-text truncate">Alex Chen</p>
+<p class="text-xs text-body-text">Pro Analyst</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="ml-64 flex-1 min-h-screen">
+<header class="p-8 pb-0">
+<div class="flex flex-wrap justify-between items-start gap-4">
+<div class="flex flex-col gap-1">
+<h2 class="text-headline-text text-4xl font-black leading-tight tracking-tight">Global News Intelligence</h2>
+<p class="text-body-text text-base font-normal">Real-time updates from 200+ global sources</p>
+</div>
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary/10 text-primary border border-primary/20 text-sm font-bold hover:bg-primary/20 transition-all">
+<span class="material-symbols-outlined text-sm">refresh</span>
+<span>12 Updates available</span>
+</button>
+</div>
+<div class="mt-8 flex flex-col gap-4">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+<div class="lg:col-span-6">
+<label class="relative block h-12">
+<span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
+<span class="material-symbols-outlined">search</span>
+</span>
+<input class="w-full h-full bg-white border border-card-border rounded-xl pl-12 pr-4 focus:ring-2 focus:ring-primary/20 focus:border-primary text-headline-text placeholder:text-slate-400 transition-all outline-none" placeholder="Search news headlines, keywords, or entities..." type="text"/>
+</label>
+</div>
+<div class="lg:col-span-3">
+<div class="relative h-12">
+<select class="w-full h-full bg-white border border-card-border rounded-xl px-4 appearance-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-headline-text text-sm outline-none">
+<option>All Countries</option>
+<option>United States</option>
+<option>European Union</option>
+<option>China</option>
+<option>India</option>
+</select>
+<span class="absolute inset-y-0 right-4 flex items-center pointer-events-none text-slate-400">
+<span class="material-symbols-outlined">expand_more</span>
+</span>
+</div>
+</div>
+<div class="lg:col-span-3">
+<div class="relative h-12">
+<button class="w-full h-full bg-white border border-card-border rounded-xl px-4 flex items-center justify-between text-body-text text-sm hover:border-primary/30 transition-all">
+<span>Last 24 Hours</span>
+<span class="material-symbols-outlined">calendar_month</span>
+</button>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-primary px-5 text-white shadow-lg shadow-primary/20">
+<span class="text-sm font-semibold">Politics</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white px-5 text-body-text border border-card-border hover:border-primary/50 transition-all">
+<span class="text-sm font-medium">Technology</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white px-5 text-body-text border border-card-border hover:border-primary/50 transition-all">
+<span class="text-sm font-medium">Economy</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white px-5 text-body-text border border-card-border hover:border-primary/50 transition-all">
+<span class="text-sm font-medium">Health</span>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white px-5 text-body-text border border-card-border hover:border-primary/50 transition-all">
+<span class="text-sm font-medium">Science</span>
+</button>
+<div class="h-6 w-px bg-slate-200 mx-2"></div>
+<button class="flex items-center gap-1 text-primary text-sm font-bold">
+<span class="material-symbols-outlined text-lg">filter_list</span>
+                        More Filters
+                    </button>
+</div>
+</div>
+</header>
+<section class="p-8">
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+<div class="news-card group rounded-xl overflow-hidden flex flex-col hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
+<div class="relative h-48 overflow-hidden">
+<div class="absolute top-3 left-3 z-10">
+<span class="bg-black/70 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Reuters</span>
+</div>
+<div class="absolute top-3 right-3 z-10">
+<span class="bg-success-sentiment text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-xs">trending_up</span> Positive
+                            </span>
+</div>
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfnwBaa051gDc16jvUmasmN4zq8Rp6W6ZWC7CQ3JrQMOMdBF_uUmjzLOBJPga6gCLXAK_cjEzCrpexE2BM1K6u0nNgnlnDeu2AY9XoNAMJBtnpJovI6h3BLStaZMKieNp0_hJXEeouXelXBu2sBjzK10ACvpvZYghrj86520BNUGxlsOpoWkYzOFEe9W7A0o_7Uh0pMqIRlvZCQFq4zubF48pFDkN1wl1ABtOIZjIDJ-yXGZUnP9RwgvWLIRpusKAtL1lgMCj13PE"/>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-headline-text text-lg font-bold leading-snug mb-3 group-hover:text-primary transition-colors">Global Markets Rally as Inflation Data Beats Expectations</h3>
+<p class="text-body-text text-sm line-clamp-3 mb-4">Federal Reserve officials signaled potential rate cuts following cooler-than-expected CPI reports, sparking broad gains in tech and energy sectors across APAC and EMEA markets.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-3 text-xs text-slate-400 font-medium">
+<span>2m ago</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>4 min read</span>
+</div>
+<button class="size-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-all">
+<span class="material-symbols-outlined">insights</span>
+</button>
+</div>
+</div>
+</div>
+<div class="news-card group rounded-xl overflow-hidden flex flex-col hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
+<div class="relative h-48 overflow-hidden">
+<div class="absolute top-3 left-3 z-10">
+<span class="bg-black/70 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">BBC News</span>
+</div>
+<div class="absolute top-3 right-3 z-10">
+<span class="bg-slate-500 text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-xs">drag_handle</span> Neutral
+                            </span>
+</div>
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBDKk1p9VdRgj14t93CFPGTK9hW6ANdIRH_Zba4Rlgle0QAUBBSp1ralIxUz0O9d1f4-M7QObnLqWnOla4U_hJjwnjVWcS5JPToQUupFbiqH_pGynq2sadrVPYh1MRd7ZgxmSNGJ-MSMd0rxxU4jqJLzoenMFL9X-Nukoe7BqFAOatXAALFXykjoph64MV6yVw1M4b-OlE86AEkqIb9x2u58ONL7rh8qT2-ihRcwUxiFMmkv8iMncUNT5v1VVCpsx_pfSJp-_R8Upc"/>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-headline-text text-lg font-bold leading-snug mb-3 group-hover:text-primary transition-colors">UN Proposes New Ethical Guidelines for Generative AI</h3>
+<p class="text-body-text text-sm line-clamp-3 mb-4">A new framework aims to establish international cooperation on AI safety and intellectual property rights, amid rapid advancements in LLM capabilities.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-3 text-xs text-slate-400 font-medium">
+<span>15m ago</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>6 min read</span>
+</div>
+<button class="size-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-all">
+<span class="material-symbols-outlined">insights</span>
+</button>
+</div>
+</div>
+</div>
+<div class="news-card group rounded-xl overflow-hidden flex flex-col hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
+<div class="relative h-48 overflow-hidden">
+<div class="absolute top-3 left-3 z-10">
+<span class="bg-black/70 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Al Jazeera</span>
+</div>
+<div class="absolute top-3 right-3 z-10">
+<span class="bg-error-sentiment text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-xs">trending_down</span> Negative
+                            </span>
+</div>
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWWskSod4gL0uBPAaBL_YD3qKtX3B9gVJO6rpmA1VcbvDUjtsTUw_uYdlpcAhXGd-lYOThi8jGCi_5XUCLj2kavtxfdducDw87l7cXIAGxWzJQWER8DeWr7Yapv81_0QBq5-YpFFSqJwhCMIwiCQ3gbnX0YjqKaFBiers_toFLiuQIdy7dw9iD5XT4w6lgXdbj4PjFLkqN_vegqvwMhGAN8c40c3fsJZAkOpqwpt9hMLgzjjgGTUrl--96ORgHC8FHScAkzZ5vqVc"/>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-headline-text text-lg font-bold leading-snug mb-3 group-hover:text-primary transition-colors">Coastal Cities Brace for Record-Breaking Storm Season</h3>
+<p class="text-body-text text-sm line-clamp-3 mb-4">Meteorologists warn of unprecedented weather patterns in the Atlantic, prompting emergency evacuations and significant infrastructure concerns across the Caribbean.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-3 text-xs text-slate-400 font-medium">
+<span>34m ago</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>3 min read</span>
+</div>
+<button class="size-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-all">
+<span class="material-symbols-outlined">insights</span>
+</button>
+</div>
+</div>
+</div>
+<div class="news-card group rounded-xl overflow-hidden flex flex-col hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
+<div class="relative h-48 overflow-hidden">
+<div class="absolute top-3 left-3 z-10">
+<span class="bg-black/70 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">TechCrunch</span>
+</div>
+<div class="absolute top-3 right-3 z-10">
+<span class="bg-success-sentiment text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-xs">trending_up</span> Positive
+                            </span>
+</div>
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm6hOGo0m32WSWg9p3Cj8kxfaQ2byjdDKhXfDkL9TrnY7SybhbQe1XDDF32tYVLGuAGRKqQAN2V7LGSvOMceR9BgP8D9jruOv6L3zDSEduAjxeGiuQFEB5pndiP-BbUbItXAkY7klU8fbQfr6LwWGOi295VTtf_4oMndDI_a5SZX007k3eaEPZ95e2yGqCGZIm3c-QPg2zXpHupqeSynQ0elmQFWreyVuKQdazeA2d99YAdyy1pqOrk_0vy5akj-uphwbLxwTwBv0"/>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-headline-text text-lg font-bold leading-snug mb-3 group-hover:text-primary transition-colors">Next-Gen Solid State Batteries Enter Mass Production Phase</h3>
+<p class="text-body-text text-sm line-clamp-3 mb-4">A major breakthrough in energy storage technology promises 2x range for electric vehicles with charging times under 10 minutes, set to hit markets by 2025.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-3 text-xs text-slate-400 font-medium">
+<span>1h ago</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>5 min read</span>
+</div>
+<button class="size-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-all">
+<span class="material-symbols-outlined">insights</span>
+</button>
+</div>
+</div>
+</div>
+<div class="news-card group rounded-xl overflow-hidden flex flex-col hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
+<div class="relative h-48 overflow-hidden">
+<div class="absolute top-3 left-3 z-10">
+<span class="bg-black/70 backdrop-blur-md text-white text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Bloomberg</span>
+</div>
+<div class="absolute top-3 right-3 z-10">
+<span class="bg-slate-500 text-white text-[10px] font-bold px-2 py-1 rounded-full flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-xs">drag_handle</span> Neutral
+                            </span>
+</div>
+<img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQshrDpMC-cszGBvwi_ih36cd3gQfBK0E4aE2Drrjw0DZi8i0G02CdZSJ4OE7w9UCNJNAKBpCUzMs1v1WlaXiZQauWCZk6cKtmYRmdiO6oBru6JBG3ITHHqIC8qNWH9VvvATfdAq7VLo-n8NT4dvAA2kEf5urvjuvgoa4NRvDb9w44DJ-Yt0tzfIpUTXj8MFlaA1EGlx73Hl3Ef27rJvxBnnzRAYkOIe3VPRmwv7E7hyz1BFnSKiiXctYSn6pojROUGx5cpir4IqM"/>
+</div>
+<div class="p-5 flex flex-col flex-1">
+<h3 class="text-headline-text text-lg font-bold leading-snug mb-3 group-hover:text-primary transition-colors">Digital Currency Pilot Programs Expand to 15 New Central Banks</h3>
+<p class="text-body-text text-sm line-clamp-3 mb-4">CBDC adoption enters a new phase as major economies test retail digital currencies for cross-border settlements and financial inclusion initiatives.</p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex items-center gap-3 text-xs text-slate-400 font-medium">
+<span>2h ago</span>
+<span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+<span>7 min read</span>
+</div>
+<button class="size-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-all">
+<span class="material-symbols-outlined">insights</span>
+</button>
+</div>
+</div>
+</div>
+<div class="news-card rounded-xl overflow-hidden flex flex-col border-dashed opacity-60">
+<div class="h-48 bg-slate-100 animate-pulse"></div>
+<div class="p-5 space-y-3">
+<div class="h-4 bg-slate-100 rounded w-3/4 animate-pulse"></div>
+<div class="h-4 bg-slate-100 rounded w-1/2 animate-pulse"></div>
+<div class="pt-4 space-y-2">
+<div class="h-3 bg-slate-100 rounded w-full animate-pulse"></div>
+<div class="h-3 bg-slate-100 rounded w-full animate-pulse"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-12 flex justify-center">
+<button class="flex items-center gap-2 px-8 py-3 rounded-xl bg-white text-headline-text border border-card-border font-bold hover:bg-slate-50 transition-all shadow-sm">
+<span>Load More Intelligence</span>
+<span class="material-symbols-outlined">keyboard_double_arrow_down</span>
+</button>
+</div>
+</section>
+</main>
+</div>
+
+</body></html>

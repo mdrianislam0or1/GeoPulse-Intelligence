@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Social Media Sentiment Intelligence | NewsScope</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#895af6",
+                        "accent-teal": "#0d9488",
+                        "background-light": "#FAFBFC",
+                        "card-white": "#FFFFFF",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', sans-serif; }
+        .radar-grid { background-image: radial-gradient(circle, #e2e8f0 1px, transparent 1px); background-size: 20px 20px; }
+        .velocity-gradient { background: linear-gradient(90deg, #895af6 0%, #0d9488 100%); }
+        .gauge-gradient { background: conic-gradient(from 180deg at 50% 100%, #895af6 0deg, #0d9488 180deg); }
+    </style>
+</head>
+<body class="bg-background-light text-slate-800 min-h-screen flex">
+<aside class="w-64 border-r border-slate-200 flex flex-col h-screen sticky top-0 bg-card-white">
+<div class="p-6 flex items-center gap-3">
+<div class="h-8 w-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-white text-xl">analytics</span>
+</div>
+<div>
+<h1 class="text-lg font-bold leading-none text-slate-900">NewsScope</h1>
+<p class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Intelligence</p>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1 mt-4">
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-slate-400">dashboard</span>
+<span class="text-sm font-semibold">Overview</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/5 text-primary border border-primary/10 cursor-pointer">
+<span class="material-symbols-outlined">query_stats</span>
+<span class="text-sm font-bold">Sentiment</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-slate-400">groups</span>
+<span class="text-sm font-semibold">Influencers</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-slate-400">bolt</span>
+<span class="text-sm font-semibold">Viral Feed</span>
+</div>
+<div class="pt-6 pb-2">
+<p class="px-3 text-[10px] uppercase font-bold tracking-widest text-slate-400">Settings</p>
+</div>
+<div class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-slate-400">settings</span>
+<span class="text-sm font-semibold">Configuration</span>
+</div>
+</nav>
+<div class="p-4 border-t border-slate-100">
+<div class="bg-slate-50 p-3 rounded-xl flex items-center gap-3 border border-slate-100">
+<div class="h-8 w-8 rounded-full bg-slate-200 border border-white" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB0VBgiWA2g6T1NF38GDLpX7nYXPIDFehWaYWOJ_1Aql02DlWR34RFmlHki4P0QPKUeLBe4OxII6ems5Fq77eTULeI440Q2p0FOjEfQAOekF5x6L5dPzYncolhNmLELtfeZgK0jEApA0hntfyiF209PsXt84gB3LIafrl_gtTfFE_uuw8uCKyf8t_dlayhUshjYKx7uI19naJLl6qsS82HCI9a9PrnFTU0OVT1JYh4z2G5nQxwTqivu8w44NW1ijGLZu_eRUc_BckU'); background-size: cover;"></div>
+<div class="overflow-hidden">
+<p class="text-xs font-bold text-slate-900 truncate">Alex Chen</p>
+<p class="text-[10px] text-slate-500 font-medium">Pro Analyst</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col">
+<header class="h-16 border-b border-slate-200 flex items-center justify-between px-8 bg-card-white/80 backdrop-blur-md sticky top-0 z-10">
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="bg-slate-50 border border-slate-200 rounded-lg pl-10 pr-4 py-2 text-sm w-80 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all" placeholder="Search trends, keywords, or platforms..." type="text"/>
+</div>
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-xs font-bold text-primary border-b-2 border-primary pb-1" href="#">Global View</a>
+<a class="text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors" href="#">Networks</a>
+<a class="text-xs font-bold text-slate-500 hover:text-slate-900 transition-colors" href="#">Alerts</a>
+</nav>
+</div>
+<div class="flex items-center gap-3">
+<button class="h-9 w-9 flex items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-xl">notifications</span>
+</button>
+<button class="h-9 px-4 flex items-center gap-2 rounded-lg bg-primary text-white text-xs font-bold hover:opacity-90 shadow-sm transition-all">
+<span class="material-symbols-outlined text-sm">download</span>
+                Export Report
+            </button>
+</div>
+</header>
+<div class="p-8 space-y-8 max-w-7xl mx-auto w-full">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="text-3xl font-black tracking-tight text-slate-900">Social Media Sentiment Intelligence</h2>
+<p class="text-slate-500 mt-1 font-medium">Real-time cross-platform mood and share velocity tracking across major nodes.</p>
+</div>
+<div class="flex items-center gap-1 bg-white border border-slate-200 p-1 rounded-lg self-start shadow-sm">
+<button class="px-3 py-1.5 text-xs font-bold rounded bg-slate-900 text-white shadow-sm">1H</button>
+<button class="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-900">24H</button>
+<button class="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-900">7D</button>
+<button class="px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-slate-900">30D</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="bg-card-white border border-slate-100 p-5 rounded-xl shadow-sm">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Total Mentions</p>
+<div class="flex items-end justify-between mt-2">
+<h3 class="text-2xl font-black text-slate-900">1.2M</h3>
+<span class="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-0.5 mb-1">
+<span class="material-symbols-outlined text-xs">trending_up</span>+5.2%
+                    </span>
+</div>
+</div>
+<div class="bg-card-white border border-slate-100 p-5 rounded-xl shadow-sm">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Global Reach</p>
+<div class="flex items-end justify-between mt-2">
+<h3 class="text-2xl font-black text-slate-900">45.8M</h3>
+<span class="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-0.5 mb-1">
+<span class="material-symbols-outlined text-xs">trending_up</span>+8.1%
+                    </span>
+</div>
+</div>
+<div class="bg-card-white border border-slate-100 p-5 rounded-xl shadow-sm">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Sentiment Score</p>
+<div class="flex items-end justify-between mt-2">
+<h3 class="text-2xl font-black text-accent-teal">78%</h3>
+<span class="text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] font-bold flex items-center gap-0.5 mb-1">
+<span class="material-symbols-outlined text-xs">keyboard_arrow_up</span>+2.5
+                    </span>
+</div>
+</div>
+<div class="bg-card-white border border-slate-100 p-5 rounded-xl shadow-sm">
+<p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Share Velocity</p>
+<div class="flex items-end justify-between mt-2">
+<h3 class="text-2xl font-black text-primary">+12.4%</h3>
+<span class="text-slate-500 text-[10px] font-bold mb-1 uppercase">Avg: 8.2%</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<div class="lg:col-span-4 bg-card-white border border-slate-200 rounded-xl overflow-hidden flex flex-col shadow-sm">
+<div class="p-6 pb-0">
+<h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">Global Sentiment Gauge</h4>
+<p class="text-xs text-slate-500 font-medium">Aggregated real-time brand mood</p>
+</div>
+<div class="flex-1 flex flex-col items-center justify-center p-6 relative">
+<div class="relative w-56 h-28 overflow-hidden">
+<div class="absolute inset-0 border-[20px] border-slate-100 rounded-t-full"></div>
+<div class="absolute inset-0 border-[20px] border-accent-teal rounded-t-full" style="clip-path: polygon(0 0, 80% 0, 80% 100%, 0 100%);"></div>
+<div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-1.5 h-24 origin-bottom rotate-[45deg] bg-slate-900 rounded-full"></div>
+</div>
+<div class="mt-4 text-center">
+<p class="text-5xl font-black text-slate-900">78%</p>
+<p class="text-xs font-black text-accent-teal uppercase tracking-[0.2em]">Optimistic</p>
+</div>
+<div class="w-full grid grid-cols-3 gap-3 mt-8">
+<div class="text-center">
+<div class="h-1.5 rounded-full bg-accent-teal mb-1"></div>
+<p class="text-[9px] text-slate-500 font-black uppercase">POS: 72%</p>
+</div>
+<div class="text-center">
+<div class="h-1.5 rounded-full bg-slate-200 mb-1"></div>
+<p class="text-[9px] text-slate-500 font-black uppercase">NEU: 18%</p>
+</div>
+<div class="text-center">
+<div class="h-1.5 rounded-full bg-rose-400 mb-1"></div>
+<p class="text-[9px] text-slate-500 font-black uppercase">NEG: 10%</p>
+</div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-8 bg-card-white border border-slate-200 rounded-xl flex flex-col shadow-sm">
+<div class="p-6 border-b border-slate-100 flex justify-between items-center">
+<div>
+<h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">Viral News Leaderboard</h4>
+<p class="text-xs text-slate-500 font-medium">Articles with highest share velocity</p>
+</div>
+<button class="text-xs font-bold text-primary hover:underline px-3 py-1.5 bg-primary/5 rounded">View All Report</button>
+</div>
+<div class="flex-1 p-0 overflow-y-auto max-h-[400px]">
+<table class="w-full text-left">
+<thead class="bg-slate-50/80 sticky top-0 z-10">
+<tr>
+<th class="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Article Title</th>
+<th class="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-center">Platform</th>
+<th class="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Velocity</th>
+<th class="px-6 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider text-right">Impact</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100">
+<tr class="hover:bg-slate-50/80 transition-colors group">
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors truncate max-w-[280px]">New breakthrough in fusion energy technology announced</p>
+<p class="text-[10px] text-slate-400 font-medium">reuters.com • 14m ago</p>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2.5 py-1 bg-sky-50 text-sky-600 text-[10px] font-bold rounded-full border border-sky-100">Twitter</span>
+</td>
+<td class="px-6 py-4">
+<div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full velocity-gradient" style="width: 85%"></div>
+</div>
+<p class="text-[10px] text-accent-teal mt-1 font-bold tracking-tight">+850% / hr</p>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="text-sm font-black text-slate-900">9.2k</p>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/80 transition-colors group">
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors truncate max-w-[280px]">Global markets react to central bank interest rate shift</p>
+<p class="text-[10px] text-slate-400 font-medium">bloomberg.com • 32m ago</p>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2.5 py-1 bg-orange-50 text-orange-600 text-[10px] font-bold rounded-full border border-orange-100">Reddit</span>
+</td>
+<td class="px-6 py-4">
+<div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full velocity-gradient" style="width: 62%"></div>
+</div>
+<p class="text-[10px] text-accent-teal mt-1 font-bold tracking-tight">+420% / hr</p>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="text-sm font-black text-slate-900">4.8k</p>
+</td>
+</tr>
+<tr class="hover:bg-slate-50/80 transition-colors group">
+<td class="px-6 py-4">
+<p class="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors truncate max-w-[280px]">Major smartphone release leaked ahead of schedule</p>
+<p class="text-[10px] text-slate-400 font-medium">theverge.com • 1h ago</p>
+</td>
+<td class="px-6 py-4 text-center">
+<span class="px-2.5 py-1 bg-blue-50 text-blue-600 text-[10px] font-bold rounded-full border border-blue-100">Facebook</span>
+</td>
+<td class="px-6 py-4">
+<div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+<div class="h-full velocity-gradient" style="width: 45%"></div>
+</div>
+<p class="text-[10px] text-accent-teal mt-1 font-bold tracking-tight">+210% / hr</p>
+</td>
+<td class="px-6 py-4 text-right">
+<p class="text-sm font-black text-slate-900">2.1k</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-card-white border border-slate-200 rounded-xl p-6 shadow-sm">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">Platform Comparison</h4>
+<p class="text-xs text-slate-500 font-medium">Performance metrics across social networks</p>
+</div>
+<div class="flex gap-4">
+<div class="flex items-center gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<span class="text-[10px] font-black uppercase text-slate-500">X/Twitter</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-2.5 h-2.5 rounded-full bg-accent-teal"></div>
+<span class="text-[10px] font-black uppercase text-slate-500">Reddit</span>
+</div>
+</div>
+</div>
+<div class="h-64 relative flex items-center justify-center radar-grid rounded-lg border border-slate-100 bg-slate-50/30">
+<div class="absolute w-40 h-40 border border-slate-200 rounded-full"></div>
+<div class="absolute w-28 h-28 border border-slate-200 rounded-full"></div>
+<div class="absolute w-16 h-16 border border-slate-200 rounded-full"></div>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-full h-px bg-slate-200 rotate-0"></div>
+<div class="w-full h-px bg-slate-200 rotate-60"></div>
+<div class="w-full h-px bg-slate-200 rotate-120"></div>
+</div>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-60">
+<div class="w-48 h-48 bg-primary/20" style="clip-path: polygon(50% 10%, 90% 30%, 80% 80%, 20% 75%, 15% 40%);"></div>
+</div>
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-60">
+<div class="w-48 h-48 bg-accent-teal/20" style="clip-path: polygon(50% 25%, 70% 45%, 60% 70%, 30% 65%, 40% 35%);"></div>
+</div>
+<div class="absolute top-4 text-[9px] font-black uppercase text-slate-400 tracking-tighter">Sentiment</div>
+<div class="absolute bottom-4 text-[9px] font-black uppercase text-slate-400 tracking-tighter">Volume</div>
+<div class="absolute right-4 text-[9px] font-black uppercase text-slate-400 tracking-tighter">Virality</div>
+<div class="absolute left-4 text-[9px] font-black uppercase text-slate-400 tracking-tighter">Authenticity</div>
+</div>
+</div>
+<div class="bg-card-white border border-slate-200 rounded-xl p-6 shadow-sm">
+<div class="flex justify-between items-start mb-6">
+<div>
+<h4 class="font-bold text-sm text-slate-900 uppercase tracking-tight">Influencer Impact Map</h4>
+<p class="text-xs text-slate-500 font-medium">Reach vs. Actual Sentiment Impact</p>
+</div>
+<button class="h-8 w-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 border border-slate-100 hover:text-slate-600 transition-colors">
+<span class="material-symbols-outlined text-sm">more_vert</span>
+</button>
+</div>
+<div class="h-64 flex flex-col justify-between pt-2">
+<div class="flex-1 relative border-l border-b border-slate-200 ml-6 mb-6">
+<div class="absolute -left-7 top-0 text-[10px] text-slate-400 font-black">100</div>
+<div class="absolute -left-7 bottom-0 text-[10px] text-slate-400 font-black">0</div>
+<div class="absolute -left-12 top-1/2 -translate-y-1/2 -rotate-90 text-[9px] font-black text-slate-400 uppercase tracking-widest">Impact</div>
+<div class="absolute left-0 -bottom-6 text-[10px] text-slate-400 font-black">0</div>
+<div class="absolute right-0 -bottom-6 text-[10px] text-slate-400 font-black">5M+</div>
+<div class="absolute left-1/2 -bottom-10 -translate-x-1/2 text-[9px] font-black text-slate-400 uppercase tracking-widest">Reach</div>
+<div class="absolute bottom-1/4 left-1/4 w-12 h-12 bg-primary/20 rounded-full border border-primary/40 flex items-center justify-center shadow-sm">
+<span class="text-[8px] font-black text-primary">@techguru</span>
+</div>
+<div class="absolute top-1/3 left-2/3 w-16 h-16 bg-accent-teal/20 rounded-full border border-accent-teal/40 flex items-center justify-center shadow-sm">
+<span class="text-[8px] font-black text-accent-teal">@cryptonews</span>
+</div>
+<div class="absolute top-10 right-10 w-8 h-8 bg-slate-100 rounded-full border border-slate-200 flex items-center justify-center shadow-sm">
+<span class="text-[8px] font-black text-slate-600">@user1</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer class="h-12 bg-white border-t border-slate-200 flex items-center px-8 justify-between mt-auto">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-teal opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-accent-teal"></span>
+</span>
+<span class="text-[10px] font-black text-slate-600 uppercase tracking-widest">Live Pulse:</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] text-slate-500 font-semibold tracking-tight">New mention: "Energy Crisis" spike in Western Europe <span class="text-accent-teal">(+12% in 5m)</span></span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-slate-400">dns</span>
+<span class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">API: 24ms</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-slate-400">update</span>
+<span class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">12:45:02 UTC</span>
+</div>
+</div>
+</footer>
+</main>
+
+</body></html>

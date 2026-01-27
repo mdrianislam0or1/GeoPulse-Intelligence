@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Developer API Key Management Hub | NewsScope Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#743df5",
+                        "background-light": "#FAFBFC",
+                        "background-dark": "#151022",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#131118] dark:text-white min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#E2E8F0] dark:border-[#2D2445] bg-white dark:bg-[#1A142E] px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-[#131118] dark:text-white">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">NewsScope Analytics</h2>
+</div>
+<label class="flex flex-col min-w-40 h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full bg-[#f1f0f5] dark:bg-[#2D2445]">
+<div class="text-[#6d608a] flex items-center justify-center pl-4">
+<span class="material-symbols-outlined text-xl">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 border-none bg-transparent focus:outline-0 focus:ring-0 h-full placeholder:text-[#6d608a] px-4 pl-2 text-sm font-normal" placeholder="Search documentation..." value=""/>
+</div>
+</label>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<nav class="hidden md:flex items-center gap-6">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Analytics</a>
+<a class="text-sm font-medium text-primary border-b-2 border-primary" href="#">API Management</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Settings</a>
+</nav>
+<div class="h-6 w-px bg-[#E2E8F0] dark:bg-[#2D2445]"></div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#6d608a] cursor-pointer">notifications</span>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8 ring-2 ring-primary/20" data-alt="User profile avatar with professional lighting" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBYO-tfwaPma5MbMkk1LZnsFGFfIY83eFmzVTfusgeR3ZHLnzmrtWkDkWU2DQpg4Q51SR0N798p1Rml5b9NU1r3VJLvEfT9K_lKbAZB6PoeiczsIMO-poMNuo5uA5PNL3m4DbF5XiJDd4ZCilzwpUCUW69AMbEXsobpYwrt59I_q19RxLN7fKsIwWHJGUJtA_hoBwUQGYWSxTlnh81fP_NowV_6x9QjmapDD8JCjcnGUm8e1bTVGpfsbYVbxUBWIqt9gd_qrOZpYow");'></div>
+</div>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto px-6 py-8">
+<!-- Breadcrumbs & Title Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2 text-sm text-[#6d608a] dark:text-[#A098B5]">
+<a class="hover:text-primary" href="#">Settings</a>
+<span>/</span>
+<span class="text-[#131118] dark:text-white font-medium">API Management</span>
+</div>
+<h1 class="text-4xl font-black tracking-tight text-[#131118] dark:text-white">API Keys</h1>
+<p class="text-[#6d608a] dark:text-[#A098B5]">Manage your developer access keys and monitor monthly usage limits.</p>
+</div>
+<button class="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-lg font-bold hover:bg-opacity-90 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-lg">add</span>
+<span>Generate New Key</span>
+</button>
+</div>
+<div class="grid grid-cols-12 gap-8">
+<!-- Left & Middle: Main Content -->
+<div class="col-span-12 lg:col-span-8 space-y-8">
+<!-- API Keys Table Container -->
+<div class="bg-white dark:bg-[#1A142E] rounded-xl border border-[#E2E8F0] dark:border-[#2D2445] overflow-hidden shadow-sm">
+<div class="p-4 border-b border-[#E2E8F0] dark:border-[#2D2445] flex justify-between items-center">
+<h3 class="font-bold text-lg">Active Keys</h3>
+<span class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded-full">3 Total</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="bg-[#FAFBFC] dark:bg-[#211B38] text-[#6d608a] text-xs font-bold uppercase tracking-wider">
+<tr>
+<th class="px-6 py-4">Key Name</th>
+<th class="px-6 py-4">API Key</th>
+<th class="px-6 py-4">Created</th>
+<th class="px-6 py-4">Last Used</th>
+<th class="px-6 py-4">Permissions</th>
+<th class="px-6 py-4 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#E2E8F0] dark:divide-[#2D2445]">
+<tr class="hover:bg-[#FAFBFC] dark:hover:bg-[#211B38] transition-colors">
+<td class="px-6 py-4 font-semibold text-sm">Production App</td>
+<td class="px-6 py-4 font-mono text-xs text-[#6d608a]">•••••4829</td>
+<td class="px-6 py-4 text-sm text-[#6d608a]">Oct 12, 2023</td>
+<td class="px-6 py-4 text-sm text-[#6d608a]">2 mins ago</td>
+<td class="px-6 py-4">
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded uppercase">Full Access</span>
+</td>
+<td class="px-6 py-4 text-right text-xs">
+<button class="text-primary font-bold hover:underline mr-3">Edit</button>
+<button class="text-red-500 font-bold hover:underline">Revoke</button>
+</td>
+</tr>
+<tr class="hover:bg-[#FAFBFC] dark:hover:bg-[#211B38] transition-colors">
+<td class="px-6 py-4 font-semibold text-sm">Staging Environment</td>
+<td class="px-6 py-4 font-mono text-xs text-[#6d608a]">•••••9102</td>
+<td class="px-6 py-4 text-sm text-[#6d608a]">Nov 05, 2023</td>
+<td class="px-6 py-4 text-sm text-[#6d608a]">Yesterday</td>
+<td class="px-6 py-4">
+<span class="bg-gray-100 dark:bg-gray-800 text-gray-500 text-[10px] font-bold px-2 py-0.5 rounded uppercase">Read-only</span>
+</td>
+<td class="px-6 py-4 text-right text-xs">
+<button class="text-primary font-bold hover:underline mr-3">Edit</button>
+<button class="text-red-500 font-bold hover:underline">Revoke</button>
+</td>
+</tr>
+<tr class="hover:bg-[#FAFBFC] dark:hover:bg-[#211B38] transition-colors">
+<td class="px-6 py-4 font-semibold text-sm">Analytics Plugin</td>
+<td class="px-6 py-4 font-mono text-xs text-[#6d608a]">•••••3341</td>
+<td class="px-6 py-4 text-sm text-[#6d608a]">Dec 01, 2023</td>
+<td class="px-6 py-4 text-sm text-[#6d608a]">Never</td>
+<td class="px-6 py-4">
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-0.5 rounded uppercase">Full Access</span>
+</td>
+<td class="px-6 py-4 text-right text-xs">
+<button class="text-primary font-bold hover:underline mr-3">Edit</button>
+<button class="text-red-500 font-bold hover:underline">Revoke</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Rate Limits & Quotas Section -->
+<div class="bg-white dark:bg-[#1A142E] rounded-xl border border-[#E2E8F0] dark:border-[#2D2445] p-6 shadow-sm">
+<h2 class="text-[#131118] dark:text-white text-xl font-bold leading-tight mb-6">Rate Limits &amp; Quotas</h2>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-semibold">Monthly API Requests</span>
+<span class="text-sm font-medium text-[#6d608a]">5,420 / 10,000 <span class="text-xs ml-1">(54%)</span></span>
+</div>
+<div class="w-full bg-[#f1f0f5] dark:bg-[#2D2445] rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 54%"></div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-semibold">Real-time Data Burst</span>
+<span class="text-sm font-medium text-[#6d608a]">12 / 100 per min</span>
+</div>
+<div class="w-full bg-[#f1f0f5] dark:bg-[#2D2445] rounded-full h-2">
+<div class="bg-green-500 h-2 rounded-full" style="width: 12%"></div>
+</div>
+</div>
+</div>
+<div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+<div class="p-4 rounded-lg bg-[#FAFBFC] dark:bg-[#211B38] border border-[#E2E8F0] dark:border-[#2D2445]">
+<p class="text-xs text-[#6d608a] font-bold uppercase mb-1">Plan</p>
+<p class="text-lg font-bold text-primary">Developer Pro</p>
+</div>
+<div class="p-4 rounded-lg bg-[#FAFBFC] dark:bg-[#211B38] border border-[#E2E8F0] dark:border-[#2D2445]">
+<p class="text-xs text-[#6d608a] font-bold uppercase mb-1">Renewal Date</p>
+<p class="text-lg font-bold">Jan 12, 2024</p>
+</div>
+<div class="p-4 rounded-lg bg-[#FAFBFC] dark:bg-[#211B38] border border-[#E2E8F0] dark:border-[#2D2445]">
+<p class="text-xs text-[#6d608a] font-bold uppercase mb-1">Support Tier</p>
+<p class="text-lg font-bold">Priority Email</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Sidebar: Documentation & Help -->
+<aside class="col-span-12 lg:col-span-4 space-y-8">
+<!-- Implementation Guide -->
+<div class="bg-white dark:bg-[#1A142E] rounded-xl border border-[#E2E8F0] dark:border-[#2D2445] p-6 shadow-sm sticky top-24">
+<div class="flex items-center gap-2 mb-4 text-primary">
+<span class="material-symbols-outlined">description</span>
+<h3 class="font-bold text-lg">Quick Implementation</h3>
+</div>
+<p class="text-sm text-[#6d608a] mb-4">Integrate the NewsScope API into your application using Axios. Ensure you include your secret key in the headers.</p>
+<div class="bg-slate-900 rounded-lg p-4 mb-4 overflow-x-auto">
+<pre class="text-xs text-blue-300"><code><span class="text-purple-400">const</span> axios = <span class="text-yellow-200">require</span>(<span class="text-green-400">'axios'</span>);
+
+<span class="text-purple-400">await</span> axios.<span class="text-blue-400">get</span>(<span class="text-green-400">'https://api.newsscope.com/v1/news'</span>, {
+  <span class="text-gray-400">headers</span>: {
+    <span class="text-green-400">'X-API-KEY'</span>: <span class="text-orange-400">'YOUR_SECRET_KEY'</span>
+  }
+});</code></pre>
+</div>
+<ul class="space-y-3">
+<li>
+<a class="flex items-center justify-between group" href="#">
+<span class="text-sm font-medium group-hover:text-primary transition-colors">API Reference Docs</span>
+<span class="material-symbols-outlined text-sm text-[#6d608a] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</li>
+<li>
+<a class="flex items-center justify-between group" href="#">
+<span class="text-sm font-medium group-hover:text-primary transition-colors">Authentication Guide</span>
+<span class="material-symbols-outlined text-sm text-[#6d608a] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</li>
+<li>
+<a class="flex items-center justify-between group" href="#">
+<span class="text-sm font-medium group-hover:text-primary transition-colors">Postman Collection</span>
+<span class="material-symbols-outlined text-sm text-[#6d608a] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</a>
+</li>
+</ul>
+<div class="mt-8 pt-6 border-t border-[#E2E8F0] dark:border-[#2D2445]">
+<h4 class="text-sm font-bold mb-3">Developer Support</h4>
+<div class="flex items-center gap-3 p-3 bg-primary/5 rounded-lg">
+<div class="bg-primary/20 p-2 rounded text-primary">
+<span class="material-symbols-outlined text-xl">forum</span>
+</div>
+<div>
+<p class="text-xs font-bold">Need help?</p>
+<a class="text-xs text-primary font-bold hover:underline" href="#">Join our Discord Community</a>
+</div>
+</div>
+</div>
+</div>
+<!-- Recent Activity Feed -->
+<div class="bg-white dark:bg-[#1A142E] rounded-xl border border-[#E2E8F0] dark:border-[#2D2445] p-6 shadow-sm">
+<h3 class="font-bold text-lg mb-4">Security Log</h3>
+<div class="space-y-5">
+<div class="flex gap-3">
+<div class="size-2 mt-2 rounded-full bg-green-500"></div>
+<div>
+<p class="text-xs font-bold">Key Created</p>
+<p class="text-[11px] text-[#6d608a]">"Analytics Plugin" was generated.</p>
+<p class="text-[10px] text-[#6d608a] mt-1">Dec 01, 10:24 AM</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="size-2 mt-2 rounded-full bg-blue-500"></div>
+<div>
+<p class="text-xs font-bold">Permissions Updated</p>
+<p class="text-[11px] text-[#6d608a]">"Production App" set to Full Access.</p>
+<p class="text-[10px] text-[#6d608a] mt-1">Nov 28, 04:15 PM</p>
+</div>
+</div>
+<div class="flex gap-3">
+<div class="size-2 mt-2 rounded-full bg-red-500"></div>
+<div>
+<p class="text-xs font-bold">Key Revoked</p>
+<p class="text-[11px] text-[#6d608a]">"Test Sandbox" was deactivated.</p>
+<p class="text-[10px] text-[#6d608a] mt-1">Nov 15, 09:30 AM</p>
+</div>
+</div>
+</div>
+<button class="w-full mt-6 py-2 border border-[#E2E8F0] dark:border-[#2D2445] rounded-lg text-xs font-bold hover:bg-[#FAFBFC] dark:hover:bg-[#211B38] transition-colors">
+                        View Full Audit Trail
+                    </button>
+</div>
+</aside>
+</div>
+</main>
+<!-- Footer Information -->
+<footer class="mt-12 border-t border-[#E2E8F0] dark:border-[#2D2445] py-8 bg-white dark:bg-[#1A142E]">
+<div class="max-w-[1440px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-[#6d608a] text-sm">
+<div class="flex items-center gap-2 mb-4 md:mb-0">
+<span class="material-symbols-outlined text-lg">copyright</span>
+<span>2023 NewsScope Analytics Platform. All rights reserved.</span>
+</div>
+<div class="flex gap-6">
+<a class="hover:text-primary" href="#">Status</a>
+<a class="hover:text-primary" href="#">Privacy Policy</a>
+<a class="hover:text-primary" href="#">Terms of Service</a>
+<a class="hover:text-primary" href="#">Contact Security</a>
+</div>
+</div>
+</footer>
+</body></html>

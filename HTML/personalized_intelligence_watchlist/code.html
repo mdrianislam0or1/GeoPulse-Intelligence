@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Personalized Intelligence Watchlist - NewsScope</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#895af6",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#151022",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen text-[#131118] dark:text-white">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark px-10 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-primary">
+<div class="size-8">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+<path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-[#131118] dark:text-white text-xl font-bold leading-tight tracking-tight">NewsScope</h2>
+</div>
+<div class="hidden md:flex items-center gap-6">
+<a class="text-[#131118] dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-[#131118] dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Intelligence</a>
+<a class="text-primary text-sm font-bold border-b-2 border-primary py-4" href="#">Watchlist</a>
+<a class="text-[#131118] dark:text-slate-300 text-sm font-medium hover:text-primary transition-colors" href="#">Reports</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-[#131118] dark:text-white hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-[#131118] dark:text-white hover:bg-slate-200 transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-cover bg-center border-2 border-primary" data-alt="User profile avatar of an analyst" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDlRb_VZ8ezljI4nx5fxJIjfXWcFinYDlVElnGG-QYF-lLefSNzCtjQVOL-5QS-G062nHeYF2YHb-31ck7_z1B9Jnie9ifrNJt5qSQY_3OiSeGPXnKC3gehAAkBAY8dplLEskEC4wznlswDA2XcLdYzJjY0zIkoVK8sb7BEgH4Lhc91mu71HVU-TdEFDQtU7sbc4xLUKuxU5Br1-d4YwqCOr-dXGOqjyLeChlr4dwJj9dV3d-chSduepneOD8I1YPKpZqMKKV4jz8g");'></div>
+</div>
+</header>
+<main class="max-w-[1400px] mx-auto px-6 py-8">
+<!-- Headline & Search -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+<div class="flex-1">
+<h1 class="text-[#131118] dark:text-white tracking-tight text-3xl font-extrabold leading-tight">Watchlist Management</h1>
+<p class="text-slate-500 dark:text-slate-400 mt-2">Track real-time intelligence across your global interests.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-3 min-w-[500px]">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="Search for a country, topic, or person..." type="text"/>
+</div>
+<div class="w-full sm:w-48">
+<select class="w-full py-3 px-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none appearance-none cursor-pointer">
+<option value="all">Add Everything</option>
+<option value="country">Add Country</option>
+<option value="topic">Add Topic</option>
+<option value="person">Add Entity</option>
+</select>
+</div>
+<button class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-6 rounded-lg transition-colors">Add</button>
+</div>
+</div>
+<!-- Global Notification Settings Bar -->
+<div class="bg-white dark:bg-slate-800 rounded-xl p-4 mb-8 border border-slate-200 dark:border-slate-700 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">campaign</span>
+<span class="font-semibold text-sm uppercase tracking-wider text-slate-500">Global Notification Settings</span>
+</div>
+<div class="flex items-center gap-8">
+<label class="inline-flex items-center cursor-pointer">
+<span class="mr-3 text-sm font-medium text-slate-700 dark:text-slate-300">Real-time Push</span>
+<div class="relative inline-flex h-6 w-11 items-center rounded-full bg-primary">
+<span class="inline-block h-4 w-4 transform rounded-full bg-white transition translate-x-6"></span>
+</div>
+</label>
+<label class="inline-flex items-center cursor-pointer">
+<span class="mr-3 text-sm font-medium text-slate-700 dark:text-slate-300">Daily Digest</span>
+<div class="relative inline-flex h-6 w-11 items-center rounded-full bg-slate-200 dark:bg-slate-600">
+<span class="inline-block h-4 w-4 transform rounded-full bg-white transition translate-x-1"></span>
+</div>
+</label>
+</div>
+</div>
+<!-- Dashboard Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Column 1: Countries & Regions -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between px-2">
+<h3 class="text-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">public</span>
+                        Countries &amp; Regions
+                    </h3>
+<span class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded">5 Tracked</span>
+</div>
+<!-- Country Card 1 -->
+<div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all group">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-8 rounded overflow-hidden shadow-sm border border-slate-100">
+<img class="w-full h-full object-cover" data-alt="National flag of Taiwan" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0bghAB7EbeXWyUJTjc6qUDG7KpB8j9LrF9ILo9dET7RrOIGVdFnY65qIUwqXX_isMFEncuEVHOHLCG-7wUMZpaC5NB1GHbUyZnSigjSTh7fhRufTxE2CXM727RhwoSp7Ggrb3Vve2uMZlrQwzAShXQFlGvPhLSFC3frKsrVq0WY1eE-BnsdilDEyubnvokrQ1X8kSmpDabbir9e_-pk-FAe6UOOHoM0fDOh07NZa1ioC8roYTdoKayez62NPx7WILhegWvnpowJM"/>
+</div>
+<div>
+<h4 class="font-bold text-lg">Taiwan</h4>
+<div class="flex items-center gap-2 mt-1">
+<div class="h-2 w-2 rounded-full bg-emerald-500"></div>
+<span class="text-xs text-slate-500 font-medium uppercase tracking-tighter">Stability Score: 82%</span>
+</div>
+</div>
+</div>
+<button class="text-slate-300 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="mt-4 h-12 w-full bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/10 rounded-lg flex items-end px-2 py-1">
+<div class="flex-1 flex items-end justify-between h-full gap-1">
+<div class="w-full h-1/3 bg-emerald-400 rounded-t-sm"></div>
+<div class="w-full h-2/5 bg-emerald-400 rounded-t-sm"></div>
+<div class="w-full h-1/2 bg-emerald-400 rounded-t-sm"></div>
+<div class="w-full h-3/5 bg-emerald-400 rounded-t-sm"></div>
+<div class="w-full h-4/5 bg-emerald-400 rounded-t-sm"></div>
+<div class="w-full h-2/3 bg-emerald-400 rounded-t-sm"></div>
+<div class="w-full h-full bg-emerald-500 rounded-t-sm"></div>
+</div>
+</div>
+</div>
+<!-- Country Card 2 -->
+<div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all group">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-8 rounded overflow-hidden shadow-sm border border-slate-100">
+<img class="w-full h-full object-cover" data-alt="National flag of Ukraine" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5qwNIzAHnZblt7qpq8gJpJSyIHAgYwH_sf6IlD6MkBaYV0MVkPaNB_LoJqRha9CGG-1OQLolxhzDxCvhZVeTTMv3US1KKnwywWlNv15MsW_8q6FL8luObTYd87lCVdE8mrPLpr9TltNpfi_UsYME80HYyNQdp-LMPUB44P2n4HnjcaSNdlDkjrOE2gj9L50vJjx1In7bjQ_736p2fuKmTF-oFFOKZdoey-vqTqFzTNIiLuHYSjk6tWBqFvGq_FfkX5DlnmN8cNBI"/>
+</div>
+<div>
+<h4 class="font-bold text-lg">Ukraine</h4>
+<div class="flex items-center gap-2 mt-1">
+<div class="h-2 w-2 rounded-full bg-rose-500 animate-pulse"></div>
+<span class="text-xs text-slate-500 font-medium uppercase tracking-tighter">Stability Score: 24%</span>
+</div>
+</div>
+</div>
+<button class="text-slate-300 hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+<div class="mt-4 h-12 w-full bg-gradient-to-r from-rose-50 to-rose-100 dark:from-rose-900/20 dark:to-rose-800/10 rounded-lg flex items-end px-2 py-1">
+<div class="flex-1 flex items-end justify-between h-full gap-1">
+<div class="w-full h-2/3 bg-rose-400 rounded-t-sm"></div>
+<div class="w-full h-1/2 bg-rose-400 rounded-t-sm"></div>
+<div class="w-full h-3/4 bg-rose-400 rounded-t-sm"></div>
+<div class="w-full h-1/3 bg-rose-400 rounded-t-sm"></div>
+<div class="w-full h-1/4 bg-rose-500 rounded-t-sm"></div>
+<div class="w-full h-2/5 bg-rose-500 rounded-t-sm"></div>
+<div class="w-full h-1/5 bg-rose-600 rounded-t-sm"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Column 2: Tracked Topics -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between px-2">
+<h3 class="text-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">label</span>
+                        Tracked Topics
+                    </h3>
+<span class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded">12 Tracked</span>
+</div>
+<!-- Topic Item 1 -->
+<div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<h4 class="font-bold text-lg">Cybersecurity</h4>
+<div class="relative inline-flex h-5 w-9 items-center rounded-full bg-primary cursor-pointer">
+<span class="inline-block h-3 w-3 transform rounded-full bg-white transition translate-x-5"></span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-xs rounded font-medium">Ransomware</span>
+<span class="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-xs rounded font-medium">Critical Infrastructure</span>
+</div>
+<div class="flex items-center justify-between text-xs text-slate-500 pt-3 border-t border-slate-100 dark:border-slate-700">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> Real-time alerts ON</span>
+<a class="text-primary hover:underline font-semibold" href="#">Settings</a>
+</div>
+</div>
+<!-- Topic Item 2 -->
+<div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<h4 class="font-bold text-lg">Semiconductors</h4>
+<div class="relative inline-flex h-5 w-9 items-center rounded-full bg-primary cursor-pointer">
+<span class="inline-block h-3 w-3 transform rounded-full bg-white transition translate-x-5"></span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-xs rounded font-medium">Supply Chain</span>
+<span class="px-2 py-1 bg-slate-100 dark:bg-slate-700 text-xs rounded font-medium">US-China Relations</span>
+</div>
+<div class="flex items-center justify-between text-xs text-slate-500 pt-3 border-t border-slate-100 dark:border-slate-700">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-sm">schedule</span> Daily Digest ONLY</span>
+<a class="text-primary hover:underline font-semibold" href="#">Settings</a>
+</div>
+</div>
+<!-- Topic Item 3 -->
+<div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm border-dashed">
+<button class="w-full flex items-center justify-center gap-2 text-slate-400 hover:text-primary transition-colors py-4">
+<span class="material-symbols-outlined">add_circle</span>
+<span class="font-bold">Add New Topic</span>
+</button>
+</div>
+</div>
+<!-- Column 3: Tracked Entities -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between px-2">
+<h3 class="text-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">groups</span>
+                        Tracked Entities
+                    </h3>
+<span class="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded">8 Tracked</span>
+</div>
+<!-- Entity Card 1 -->
+<div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
+<div class="flex gap-4">
+<div class="h-12 w-12 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a female CEO entity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjKdtxo2ndNOgFMOGkU6h9XNYCNBz7xAIJvXjM3b5fS_Pg3DoKXM1pmgu0PWsCJ9Zw6fr-1vPD4ZFoc8e4ETyom_NCvt6QI8J1v9nRw7dCCogkWU2lPYrSj6vpVsLp8wNtJOgyMcCX5-JBi5w7c8DFVBdijJ3laxUsV6y3ruNXyh91xmQzMCwwxtMlNwQgAgoKzlqJUwTmZWp2tuE-y47B-l_HJSnenfAxaAqY4YLIRNnYygymyA73P_IASxZvISq3lajCC4-0uVw"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<h4 class="font-bold">Sarah Jenkins</h4>
+<span class="bg-amber-100 text-amber-700 text-[10px] font-black px-1.5 py-0.5 rounded uppercase">Trending</span>
+</div>
+<p class="text-xs text-slate-500">CEO, NEXA Dynamics</p>
+</div>
+</div>
+<div class="mt-4 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+<p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Recent Mention</p>
+<p class="text-xs italic leading-relaxed text-slate-700 dark:text-slate-300 line-clamp-2">"...announced new expansion plans into the SE Asian market during the quarterly earnings call..."</p>
+</div>
+<div class="flex justify-end gap-3 mt-4">
+<button class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-xl">visibility</span>
+</button>
+<button class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-xl">share</span>
+</button>
+</div>
+</div>
+<!-- Entity Card 2 -->
+<div class="bg-white dark:bg-slate-800 rounded-xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all">
+<div class="flex gap-4">
+<div class="h-12 w-12 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Corporate headquarters of a tracked organization" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2Bt4Ywv11tyu9UVA-yNjE-RrCHXxHHWk7cae0wRNgTc1PYB2YGZlC6jj98bBoclzNF3PoU5xiOrqRScP6MY_PXZzbsx5UwjP78OHBhWPZTVOXszdzczrRbIikF-5HAY80PkVHPqfAmJ4H1N-WdmAX4ey1FFYpXTgMABMXrigwjlaILdhXFocTwiEFGPsCvUR1HiP5Lk1wHdAQIUW14wr2LTlwIi0Gu0JgKkfAbD9NdcxMGXZXc9WozKft59rZPcbIzDxtpgSq-38"/>
+</div>
+<div class="flex-1">
+<div class="flex items-center justify-between">
+<h4 class="font-bold">European Bank</h4>
+<span class="bg-primary/10 text-primary text-[10px] font-black px-1.5 py-0.5 rounded uppercase">High Volatility</span>
+</div>
+<p class="text-xs text-slate-500">Financial Institution</p>
+</div>
+</div>
+<div class="mt-4 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg">
+<p class="text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-1">Recent Mention</p>
+<p class="text-xs italic leading-relaxed text-slate-700 dark:text-slate-300 line-clamp-2">"Market analysts are closely watching the upcoming interest rate decision scheduled for Thursday..."</p>
+</div>
+<div class="flex justify-end gap-3 mt-4">
+<button class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-xl">visibility</span>
+</button>
+<button class="p-1.5 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">
+<span class="material-symbols-outlined text-xl">share</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button for Mobile -->
+<button class="lg:hidden fixed bottom-6 right-6 h-14 w-14 bg-primary text-white rounded-full shadow-xl flex items-center justify-center">
+<span class="material-symbols-outlined">add</span>
+</button>
+</body></html>

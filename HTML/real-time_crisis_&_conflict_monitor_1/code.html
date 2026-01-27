@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Crisis Monitor | NewsScope Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#895af6",
+                        "background-light": "#f8fafc",
+                        "border-light": "#e2e8f0",
+                        "timeline-axis": "#475569",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .pulse-critical {
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .map-grayscale {
+            filter: grayscale(100%) brightness(1.1) contrast(0.8);
+        }
+    </style>
+</head>
+<body class="bg-background-light font-display text-slate-900 antialiased overflow-hidden">
+<div class="flex flex-col h-screen">
+<header class="flex items-center justify-between border-b border-solid border-border-light bg-white px-6 py-3 shrink-0">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<div class="size-8 text-primary">
+<svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+<path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h1 class="text-lg font-bold tracking-tight">NewsScope <span class="text-primary font-normal">Analytics</span></h1>
+</div>
+<div class="h-6 w-px bg-border-light"></div>
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-sm font-medium hover:text-primary transition-colors text-slate-600" href="#">Dashboard</a>
+<a class="text-sm font-medium text-primary border-b-2 border-primary py-4 -mb-4" href="#">Intelligence</a>
+<a class="text-sm font-medium hover:text-primary transition-colors text-slate-600" href="#">Map</a>
+<a class="text-sm font-medium hover:text-primary transition-colors text-slate-600" href="#">Reports</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-primary/5 px-3 py-1.5 rounded-full border border-primary/10">
+<div class="size-2 rounded-full bg-primary animate-pulse"></div>
+<span class="text-xs font-bold text-primary uppercase tracking-wider">System Live</span>
+</div>
+<button class="flex items-center justify-center size-10 rounded-lg border border-border-light bg-white hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-xl text-slate-600">notifications</span>
+</button>
+<button class="flex items-center justify-center size-10 rounded-lg border border-border-light bg-white hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-xl text-slate-600">settings</span>
+</button>
+<div class="size-10 rounded-full bg-cover bg-center border border-border-light" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAQ95PoZlLMB8plelUJu-x8bmTOBRmhAatse0lbXr2wwoaueboTn7w_KXrZsUgRYlxvDrxjSOE0zVUg6qRXLmoFPSAlMGowYSOBxgBL-kbW4pK8HPCL0r4Jz2U6SEX56d8qv7_mRrI5yWM7OSa_oMZ6FxuVA54B-aZkkESM1JqNjdRuoPVA3GK4tTIY9-_7pa7sGfiTanWVzMstBnR2kth4P8FGMVAdfQNdleZAcA_Ij7v2ZVNd_DX04XfOrJ-XLAWrHxM8_xojOeA");'></div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<aside class="w-64 border-r border-border-light bg-white flex flex-col shrink-0">
+<div class="p-6">
+<div class="mb-8">
+<h2 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Navigation</h2>
+<ul class="space-y-1">
+<li>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-white" href="#">
+<span class="material-symbols-outlined text-[20px]">grid_view</span>
+<span class="text-sm font-semibold">Crisis Monitor</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">map</span>
+<span class="text-sm font-medium">Global Map</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors" href="#">
+<span class="material-symbols-outlined text-[20px]">monitoring</span>
+<span class="text-sm font-medium">Trends</span>
+</a>
+</li>
+</ul>
+</div>
+<div class="mb-8">
+<h2 class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">Active Filters</h2>
+<div class="space-y-1">
+<label class="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer hover:bg-slate-50">
+<input checked="" class="rounded border-slate-300 text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="text-sm font-medium text-slate-700">Critical Alerts</span>
+</label>
+<label class="flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer hover:bg-slate-50">
+<input class="rounded border-slate-300 text-primary focus:ring-primary/20" type="checkbox"/>
+<span class="text-sm font-medium text-slate-700">Cyber Incursions</span>
+</label>
+</div>
+</div>
+</div>
+<div class="mt-auto p-6 border-t border-border-light">
+<div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4">
+<p class="text-[10px] text-slate-500 mb-1">Websocket Status</p>
+<div class="flex items-center justify-between">
+<span class="text-xs font-bold text-emerald-600">CONNECTED</span>
+<span class="text-[10px] font-mono text-slate-400">142ms</span>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-lg">description</span>
+<span class="text-sm">Generate Report</span>
+</button>
+</div>
+</aside>
+<main class="flex-1 flex flex-col min-w-0 bg-[#f1f5f9]">
+<div class="flex-1 relative bg-slate-200 overflow-hidden">
+<div class="absolute inset-0 bg-cover bg-center map-grayscale opacity-60" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCAtk_cTVkrAHCVPoMhBVKHFKRi_kyjudiH2fE0kttZkLD4q8GpLlJNV-U8SeyTqStPr-6lZsI9YFaFPHPH8etgoyUVM1piu4l7zuRLUTf3YejvIiYheMXUrHx6xwV2vkne88SGJlkWiUAvGij7eeTc6T5OO_GkUokIM3CaeS4bPld6d_ydvSc5Rk5gwRMfPY6BweNQFqFsJBDPkLxbG4nKm164yFH6o-Nn2OXvLeNPeLTX9zbAnNfJ1-eSIYeRtH_IdByz2i72INo');"></div>
+<div class="absolute top-[28%] left-[35%] size-6 rounded-full bg-red-500 pulse-critical flex items-center justify-center border-2 border-white cursor-pointer z-10 shadow-lg">
+<div class="size-2 bg-white rounded-full"></div>
+</div>
+<div class="absolute top-[55%] left-[52%] size-4 rounded-full bg-orange-500 flex items-center justify-center border-2 border-white cursor-pointer z-10 shadow-lg">
+<div class="size-1.5 bg-white rounded-full"></div>
+</div>
+<div class="absolute bottom-[35%] right-[22%] size-6 rounded-full bg-red-500 pulse-critical flex items-center justify-center border-2 border-white cursor-pointer z-10 shadow-lg">
+<div class="size-2 bg-white rounded-full"></div>
+</div>
+<div class="absolute top-6 left-6 right-6 flex justify-between items-start pointer-events-none">
+<div class="pointer-events-auto">
+<div class="bg-white/90 backdrop-blur border border-border-light rounded-xl p-4 shadow-lg">
+<h3 class="text-base font-bold flex items-center gap-2 text-slate-900">
+<span class="material-symbols-outlined text-red-600">warning</span>
+                                Live Crisis Map
+                            </h3>
+<p class="text-[11px] text-slate-500 mt-1 font-medium">Monitoring 248 geopolitical data points</p>
+</div>
+</div>
+<div class="flex flex-col gap-2 pointer-events-auto">
+<div class="flex flex-col rounded-lg bg-white/90 backdrop-blur border border-border-light overflow-hidden shadow-lg">
+<button class="p-2.5 hover:bg-slate-100 border-b border-border-light text-slate-600"><span class="material-symbols-outlined text-[20px]">add</span></button>
+<button class="p-2.5 hover:bg-slate-100 text-slate-600"><span class="material-symbols-outlined text-[20px]">remove</span></button>
+</div>
+<button class="p-2.5 rounded-lg bg-white/90 backdrop-blur border border-border-light hover:bg-slate-100 shadow-lg text-slate-600">
+<span class="material-symbols-outlined text-[20px]">my_location</span>
+</button>
+</div>
+</div>
+<div class="absolute bottom-6 left-6 pointer-events-auto">
+<div class="bg-white/90 backdrop-blur border border-border-light rounded-xl p-4 shadow-lg max-w-xs">
+<div class="flex items-center gap-4 mb-3">
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Current Risk</span>
+<span class="text-xl font-black text-red-600">EXTREME</span>
+</div>
+<div class="h-8 w-px bg-border-light"></div>
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Active Nodes</span>
+<span class="text-xl font-black text-slate-900">42</span>
+</div>
+</div>
+<p class="text-[11px] leading-relaxed text-slate-600 font-medium">Tactical escalation detected in Sector 7-G. Kinetic operations confirmed.</p>
+</div>
+</div>
+</div>
+<div class="h-64 border-t border-border-light bg-white flex flex-col px-6 py-4">
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Crisis Escalation Timeline (24h)</h2>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1.5">
+<div class="size-2 rounded-full bg-red-500"></div>
+<span class="text-[10px] font-bold text-slate-600 uppercase">Severe</span>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="size-2 rounded-full bg-primary"></div>
+<span class="text-[10px] font-bold text-slate-600 uppercase">Moderate</span>
+</div>
+</div>
+</div>
+<div class="flex-1 relative flex flex-col justify-end">
+<div class="absolute inset-0 pt-4">
+<svg class="overflow-visible" fill="none" height="100%" preserveAspectRatio="none" viewBox="0 0 1000 150" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#ef4444" stop-opacity="0.1"></stop>
+<stop offset="100%" stop-color="#895af6" stop-opacity="0"></stop>
+</linearGradient>
+</defs>
+<path class="drop-shadow-sm" d="M0 130 C 50 120, 100 40, 150 50 S 250 110, 300 100 S 400 10, 450 20 S 550 140, 600 130 S 700 30, 750 25 S 850 120, 900 115 S 1000 5, 1050 5" fill="none" stroke="#895af6" stroke-linecap="round" stroke-width="3"></path>
+<path d="M0 130 C 50 120, 100 40, 150 50 S 250 110, 300 100 S 400 10, 450 20 S 550 140, 600 130 S 700 30, 750 25 S 850 120, 900 115 S 1000 5, 1050 5 V 150 H 0 Z" fill="url(#chartGradient)"></path>
+</svg>
+</div>
+<div class="flex justify-between mt-auto pt-4 border-t border-timeline-axis/20">
+<span class="text-[10px] font-mono text-timeline-axis font-bold">00:00</span>
+<span class="text-[10px] font-mono text-timeline-axis font-bold">04:00</span>
+<span class="text-[10px] font-mono text-timeline-axis font-bold">08:00</span>
+<span class="text-[10px] font-mono text-timeline-axis font-bold">12:00</span>
+<span class="text-[10px] font-mono text-timeline-axis font-bold">16:00</span>
+<span class="text-[10px] font-mono text-timeline-axis font-bold">20:00</span>
+<div class="flex items-center gap-1.5">
+<div class="size-1.5 rounded-full bg-red-600 animate-pulse"></div>
+<span class="text-[10px] font-mono text-red-600 font-bold">LIVE</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<aside class="w-80 border-l border-border-light bg-slate-50 flex flex-col shrink-0 overflow-hidden">
+<div class="p-4 border-b border-border-light flex items-center justify-between bg-white">
+<h2 class="text-[10px] font-bold uppercase tracking-widest text-slate-500">Active Alerts</h2>
+<span class="text-[10px] bg-red-600 text-white font-black px-1.5 py-0.5 rounded shadow-sm">12 NEW</span>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-3">
+<div class="group p-4 rounded-xl bg-white border-l-4 border-red-500 shadow-sm hover:shadow-md transition-all cursor-pointer">
+<div class="flex items-start justify-between mb-2">
+<span class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-50 text-red-700 text-[10px] font-black uppercase border border-red-100">
+<span class="material-symbols-outlined text-[12px]">emergency</span>
+                            Critical
+                        </span>
+<span class="text-[10px] font-mono text-slate-400">12:42:04</span>
+</div>
+<h4 class="text-sm font-bold text-slate-900 group-hover:text-red-600 transition-colors">Abnormal Naval Movement</h4>
+<p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">Satellite imagery detects large-scale deployment of Baltic Fleet units outside standard operational zones.</p>
+<div class="mt-3 flex items-center gap-2">
+<span class="text-[10px] font-bold text-slate-500 uppercase bg-slate-100 px-2 py-0.5 rounded">Baltic Sea</span>
+<span class="text-[10px] font-bold text-slate-500 uppercase bg-slate-100 px-2 py-0.5 rounded">Naval</span>
+</div>
+</div>
+<div class="group p-4 rounded-xl bg-white border-l-4 border-orange-500 shadow-sm hover:shadow-md transition-all cursor-pointer">
+<div class="flex items-start justify-between mb-2">
+<span class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-orange-50 text-orange-700 text-[10px] font-black uppercase border border-orange-100">
+<span class="material-symbols-outlined text-[12px]">warning</span>
+                            High
+                        </span>
+<span class="text-[10px] font-mono text-slate-400">12:38:51</span>
+</div>
+<h4 class="text-sm font-bold text-slate-900 group-hover:text-orange-600">Cyber Incursion Attempt</h4>
+<p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">Distributed denial of service attack launched against regional power grid controllers.</p>
+<div class="mt-3 flex items-center gap-2">
+<span class="text-[10px] font-bold text-slate-500 uppercase bg-slate-100 px-2 py-0.5 rounded">Cyber</span>
+<span class="text-[10px] font-bold text-slate-500 uppercase bg-slate-100 px-2 py-0.5 rounded">Infra</span>
+</div>
+</div>
+<div class="group p-4 rounded-xl bg-white border-l-4 border-slate-400 shadow-sm hover:shadow-md transition-all cursor-pointer">
+<div class="flex items-start justify-between mb-2">
+<span class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-black uppercase border border-slate-200">
+<span class="material-symbols-outlined text-[12px]">info</span>
+                            Medium
+                        </span>
+<span class="text-[10px] font-mono text-slate-400">12:35:10</span>
+</div>
+<h4 class="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">Diplomatic Withdrawal</h4>
+<p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">Ambassador from Nation-State Alpha recalled for consultations following trade dispute.</p>
+<div class="mt-3 flex items-center gap-2">
+<span class="text-[10px] font-bold text-slate-500 uppercase bg-slate-100 px-2 py-0.5 rounded">Politics</span>
+</div>
+</div>
+<div class="group p-4 rounded-xl bg-white border-l-4 border-red-500 shadow-sm hover:shadow-md transition-all cursor-pointer">
+<div class="flex items-start justify-between mb-2">
+<span class="flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-50 text-red-700 text-[10px] font-black uppercase border border-red-100">
+<span class="material-symbols-outlined text-[12px]">emergency</span>
+                            Critical
+                        </span>
+<span class="text-[10px] font-mono text-slate-400">12:22:15</span>
+</div>
+<h4 class="text-sm font-bold text-slate-900 group-hover:text-red-600">Border Breach Detected</h4>
+<p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">Kinetic engagement reported at Point Zulu. Unauthorized crossing confirmed.</p>
+<div class="mt-3 flex items-center gap-2">
+<span class="text-[10px] font-bold text-slate-500 uppercase bg-slate-100 px-2 py-0.5 rounded">Ground Op</span>
+</div>
+</div>
+</div>
+<div class="p-4 bg-white border-t border-border-light flex gap-2">
+<button class="flex-1 py-2 text-[10px] font-bold uppercase tracking-widest border border-slate-200 text-slate-600 rounded hover:bg-slate-50 transition-colors">Silence</button>
+<button class="flex-1 py-2 text-[10px] font-bold uppercase tracking-widest bg-slate-900 text-white rounded hover:bg-slate-800 transition-colors">Analyze</button>
+</div>
+</aside>
+</div>
+</div>
+
+</body></html>

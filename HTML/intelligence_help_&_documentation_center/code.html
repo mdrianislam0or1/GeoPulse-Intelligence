@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Intelligence Help &amp; Documentation Center | NewsScope</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#895af6",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#151022",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#131118] dark:text-white min-h-screen">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-[#f1f0f5] dark:border-white/10 px-6 lg:px-40 py-3">
+<div class="max-w-[1280px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-4 text-[#131118] dark:text-white">
+<div class="size-8 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+<path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-tight">Help Center</h2>
+</div>
+<div class="hidden md:flex flex-1 justify-end items-center gap-8">
+<nav class="flex items-center gap-8">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Platform</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">API Docs</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Community</a>
+</nav>
+<div class="h-6 w-px bg-[#f1f0f5] dark:bg-white/10 mx-2"></div>
+<button class="flex min-w-[100px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-all">
+<span>Back to App</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-[1280px] mx-auto pb-20">
+<!-- Search Hero Section -->
+<section class="py-16 px-6 text-center">
+<h1 class="text-[#131118] dark:text-white tracking-tight text-4xl font-bold leading-tight pb-6 pt-4">How can we help you today?</h1>
+<div class="max-w-[720px] mx-auto">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-[#6d608a]">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="w-full h-14 pl-12 pr-4 bg-white dark:bg-white/5 border border-transparent shadow-lg rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent text-lg outline-none transition-all placeholder:text-[#6d608a]" placeholder="Search for articles, guides, or API references..." type="text"/>
+</div>
+<div class="mt-4 flex flex-wrap justify-center gap-2">
+<span class="text-sm text-[#6d608a]">Popular searches:</span>
+<a class="text-sm text-primary hover:underline" href="#">API Authentication</a>
+<a class="text-sm text-primary hover:underline" href="#">Webhook setup</a>
+<a class="text-sm text-primary hover:underline" href="#">Sentiment export</a>
+</div>
+</div>
+</section>
+<!-- Quick Start Grid -->
+<section class="px-6 mb-16">
+<h2 class="text-[#131118] dark:text-white text-2xl font-bold mb-8 text-center">Explore by topic</h2>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Platform Basics -->
+<div class="group bg-white dark:bg-white/5 p-6 rounded-xl border border-transparent hover:border-primary/30 transition-all cursor-pointer shadow-sm hover:shadow-md">
+<div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4">
+<span class="material-symbols-outlined">rocket_launch</span>
+</div>
+<h3 class="text-[#131118] dark:text-white text-lg font-bold mb-2">Platform Basics</h3>
+<p class="text-[#6d608a] dark:text-gray-400 text-sm leading-relaxed">Fundamental guides to get your NewsScope workspace ready.</p>
+</div>
+<!-- Analytical Tools -->
+<div class="group bg-white dark:bg-white/5 p-6 rounded-xl border border-transparent hover:border-primary/30 transition-all cursor-pointer shadow-sm hover:shadow-md">
+<div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4">
+<span class="material-symbols-outlined">analytics</span>
+</div>
+<h3 class="text-[#131118] dark:text-white text-lg font-bold mb-2">Analytical Tools</h3>
+<p class="text-[#6d608a] dark:text-gray-400 text-sm leading-relaxed">Master data visualization, sentiment models, and custom reports.</p>
+</div>
+<!-- API Integration -->
+<div class="group bg-white dark:bg-white/5 p-6 rounded-xl border border-transparent hover:border-primary/30 transition-all cursor-pointer shadow-sm hover:shadow-md">
+<div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4">
+<span class="material-symbols-outlined">integration_instructions</span>
+</div>
+<h3 class="text-[#131118] dark:text-white text-lg font-bold mb-2">API Integration</h3>
+<p class="text-[#6d608a] dark:text-gray-400 text-sm leading-relaxed">Endpoints, SDKs, and developer tools for deep automation.</p>
+</div>
+<!-- Crisis Monitoring -->
+<div class="group bg-white dark:bg-white/5 p-6 rounded-xl border border-transparent hover:border-primary/30 transition-all cursor-pointer shadow-sm hover:shadow-md">
+<div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center text-primary mb-4">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<h3 class="text-[#131118] dark:text-white text-lg font-bold mb-2">Crisis Monitoring</h3>
+<p class="text-[#6d608a] dark:text-gray-400 text-sm leading-relaxed">Set up real-time risk alerts and monitor brand sentiment live.</p>
+</div>
+</div>
+</section>
+<!-- Main Content Area: Sidebar + Trending Articles -->
+<div class="flex flex-col lg:flex-row gap-8 px-6">
+<!-- Left Sidebar Navigation -->
+<aside class="w-full lg:w-1/4">
+<div class="sticky top-24 bg-white dark:bg-white/5 rounded-xl p-6 border border-[#f1f0f5] dark:border-white/10">
+<h4 class="text-xs font-bold uppercase tracking-wider text-[#6d608a] mb-4">Documentation</h4>
+<nav class="space-y-1">
+<div>
+<button class="w-full flex items-center justify-between py-2 text-sm font-semibold text-primary">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">menu_book</span> Introduction</span>
+<span class="material-symbols-outlined text-[18px]">expand_more</span>
+</button>
+<div class="pl-7 space-y-1 mt-1 border-l-2 border-primary/20">
+<a class="block py-1.5 text-sm text-primary font-medium" href="#">Overview</a>
+<a class="block py-1.5 text-sm text-[#6d608a] hover:text-primary transition-colors" href="#">Quickstart Guide</a>
+<a class="block py-1.5 text-sm text-[#6d608a] hover:text-primary transition-colors" href="#">Release Notes</a>
+</div>
+</div>
+<div class="py-2">
+<button class="w-full flex items-center justify-between text-sm font-medium text-[#131118] dark:text-white hover:text-primary transition-colors">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">account_circle</span> Account Setup</span>
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<div class="py-2">
+<button class="w-full flex items-center justify-between text-sm font-medium text-[#131118] dark:text-white hover:text-primary transition-colors">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">database</span> Data Sources</span>
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<div class="py-2">
+<button class="w-full flex items-center justify-between text-sm font-medium text-[#131118] dark:text-white hover:text-primary transition-colors">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">lock</span> Security &amp; Privacy</span>
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+<div class="py-2">
+<button class="w-full flex items-center justify-between text-sm font-medium text-[#131118] dark:text-white hover:text-primary transition-colors">
+<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">code</span> Developer Hub</span>
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</nav>
+<div class="mt-8 pt-6 border-t border-[#f1f0f5] dark:border-white/10">
+<p class="text-xs font-bold uppercase tracking-wider text-[#6d608a] mb-4">Support</p>
+<a class="flex items-center gap-2 text-sm text-[#131118] dark:text-white hover:text-primary py-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">mail</span> Contact Us
+                        </a>
+<a class="flex items-center gap-2 text-sm text-[#131118] dark:text-white hover:text-primary py-2 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">forum</span> Live Chat
+                        </a>
+</div>
+</div>
+</aside>
+<!-- Main Content: Trending Articles -->
+<section class="flex-1">
+<div class="bg-white dark:bg-white/5 rounded-xl border border-[#f1f0f5] dark:border-white/10 overflow-hidden">
+<div class="p-6 border-b border-[#f1f0f5] dark:border-white/10 flex items-center justify-between">
+<h3 class="text-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">trending_up</span> Trending Articles
+                        </h3>
+<button class="text-sm font-semibold text-primary hover:underline">View all articles</button>
+</div>
+<div class="divide-y divide-[#f1f0f5] dark:divide-white/10">
+<!-- Article 1 -->
+<div class="p-6 hover:bg-background-light dark:hover:bg-white/5 transition-colors cursor-pointer flex justify-between items-start group">
+<div class="flex-1 pr-6">
+<h4 class="text-lg font-semibold text-[#131118] dark:text-white group-hover:text-primary transition-colors mb-2">How to set up your first real-time alert</h4>
+<p class="text-[#6d608a] dark:text-gray-400 text-sm line-clamp-2">Learn the step-by-step process of configuring keywords, sentiment thresholds, and delivery channels for your primary alerts.</p>
+<div class="flex items-center gap-4 mt-4">
+<span class="text-xs text-[#6d608a] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> 5 min read</span>
+<span class="text-xs text-[#6d608a] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> 1.2k views</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[#6d608a] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+<!-- Article 2 -->
+<div class="p-6 hover:bg-background-light dark:hover:bg-white/5 transition-colors cursor-pointer flex justify-between items-start group">
+<div class="flex-1 pr-6">
+<h4 class="text-lg font-semibold text-[#131118] dark:text-white group-hover:text-primary transition-colors mb-2">Understanding Sentiment Scores &amp; AI Models</h4>
+<p class="text-[#6d608a] dark:text-gray-400 text-sm line-clamp-2">A deep dive into how our NLP engine categorizes news sentiment and how to interpret the confidence scores.</p>
+<div class="flex items-center gap-4 mt-4">
+<span class="text-xs text-[#6d608a] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> 8 min read</span>
+<span class="text-xs text-[#6d608a] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> 850 views</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[#6d608a] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+<!-- Article 3 -->
+<div class="p-6 hover:bg-background-light dark:hover:bg-white/5 transition-colors cursor-pointer flex justify-between items-start group">
+<div class="flex-1 pr-6">
+<h4 class="text-lg font-semibold text-[#131118] dark:text-white group-hover:text-primary transition-colors mb-2">Exporting Data to CSV and Custom JSON</h4>
+<p class="text-[#6d608a] dark:text-gray-400 text-sm line-clamp-2">Need to move data to your internal BI tools? This guide covers manual exports and automated data pumping.</p>
+<div class="flex items-center gap-4 mt-4">
+<span class="text-xs text-[#6d608a] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> 3 min read</span>
+<span class="text-xs text-[#6d608a] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> 640 views</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[#6d608a] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+<!-- Article 4 -->
+<div class="p-6 hover:bg-background-light dark:hover:bg-white/5 transition-colors cursor-pointer flex justify-between items-start group">
+<div class="flex-1 pr-6">
+<h4 class="text-lg font-semibold text-[#131118] dark:text-white group-hover:text-primary transition-colors mb-2">Managing User Permissions and Team Access</h4>
+<p class="text-[#6d608a] dark:text-gray-400 text-sm line-clamp-2">Best practices for setting up RBAC (Role-Based Access Control) for large analytical teams.</p>
+<div class="flex items-center gap-4 mt-4">
+<span class="text-xs text-[#6d608a] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">schedule</span> 4 min read</span>
+<span class="text-xs text-[#6d608a] flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">visibility</span> 430 views</span>
+</div>
+</div>
+<span class="material-symbols-outlined text-[#6d608a] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+<div class="bg-background-light dark:bg-white/5 p-8 flex flex-col items-center text-center">
+<div class="size-16 bg-white dark:bg-background-dark rounded-full shadow-sm flex items-center justify-center text-primary mb-4 border border-primary/20">
+<span class="material-symbols-outlined text-3xl">help_outline</span>
+</div>
+<h4 class="text-lg font-bold mb-2">Still can't find what you need?</h4>
+<p class="text-[#6d608a] dark:text-gray-400 text-sm mb-6 max-w-sm">Our support engineers are available 24/7 to help you with complex integrations and advanced platform questions.</p>
+<button class="px-6 py-2.5 bg-primary text-white font-bold rounded-lg hover:bg-primary/90 transition-all">Submit a Support Ticket</button>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Simple Footer -->
+<footer class="border-t border-[#f1f0f5] dark:border-white/10 py-10 px-6 lg:px-40">
+<div class="max-w-[1280px] mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-2 opacity-60">
+<div class="size-4 text-[#131118] dark:text-white">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M24 18.4228L42 11.475V34.3663C42 34.7796 41.7457 35.1504 41.3601 35.2992L24 42V18.4228Z" fill="currentColor" fill-rule="evenodd"></path>
+<path clip-rule="evenodd" d="M24 8.18819L33.4123 11.574L24 15.2071L14.5877 11.574L24 8.18819ZM9 15.8487L21 20.4805V37.6263L9 32.9945V15.8487ZM27 37.6263V20.4805L39 15.8487V32.9945L27 37.6263ZM25.354 2.29885C24.4788 1.98402 23.5212 1.98402 22.646 2.29885L4.98454 8.65208C3.7939 9.08038 3 10.2097 3 11.475V34.3663C3 36.0196 4.01719 37.5026 5.55962 38.098L22.9197 44.7987C23.6149 45.0671 24.3851 45.0671 25.0803 44.7987L42.4404 38.098C43.9828 37.5026 45 36.0196 45 34.3663V11.475C45 10.2097 44.2061 9.08038 43.0155 8.65208L25.354 2.29885Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<span class="text-sm font-semibold">NewsScope Analytics</span>
+</div>
+<div class="flex gap-8 text-sm text-[#6d608a] dark:text-gray-400">
+<a class="hover:text-primary" href="#">Status</a>
+<a class="hover:text-primary" href="#">Privacy Policy</a>
+<a class="hover:text-primary" href="#">Terms of Service</a>
+<a class="hover:text-primary" href="#">Twitter / X</a>
+</div>
+<p class="text-xs text-[#6d608a] dark:text-gray-500">© 2024 NewsScope Inc. All rights reserved.</p>
+</div>
+</footer>
+</body></html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Analytical Data Export Configuration</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#895af6",
+                        "background-light": "#f6f5f8",
+                        "background-dark": "#151022",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .backdrop-blur-custom {
+            backdrop-filter: blur(8px);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#131118] dark:text-white antialiased">
+<!-- Blurred Background Dashboard Mockup -->
+<div class="fixed inset-0 z-0 opacity-40 select-none pointer-events-none overflow-hidden">
+<div class="p-8 grid grid-cols-12 gap-6 h-full">
+<div class="col-span-3 bg-white dark:bg-[#1e1a2d] rounded-xl border border-[#e2e8f0] dark:border-[#2d2845] h-64"></div>
+<div class="col-span-9 bg-white dark:bg-[#1e1a2d] rounded-xl border border-[#e2e8f0] dark:border-[#2d2845] h-64"></div>
+<div class="col-span-12 bg-white dark:bg-[#1e1a2d] rounded-xl border border-[#e2e8f0] dark:border-[#2d2845] flex-1 min-h-[400px]"></div>
+</div>
+</div>
+<!-- Modal Overlay Container -->
+<div class="relative min-h-screen flex items-center justify-center p-4 z-10">
+<div class="absolute inset-0 bg-black/20 backdrop-blur-sm"></div>
+<!-- Export Modal Container -->
+<div class="relative w-full max-w-[640px] bg-white dark:bg-[#1e1a2d] rounded-xl shadow-2xl border border-[#e2e8f0] dark:border-[#2d2845] overflow-hidden flex flex-col">
+<!-- Header -->
+<header class="flex items-center justify-between border-b border-[#f1f0f5] dark:border-[#2d2845] px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="bg-primary/10 p-2 rounded-lg">
+<span class="material-symbols-outlined text-primary text-2xl">ios_share</span>
+</div>
+<div>
+<h2 class="text-[#131118] dark:text-white text-xl font-bold leading-tight">Export Configuration</h2>
+<p class="text-[#6d608a] dark:text-gray-400 text-sm">Customize visualization data for external analysis.</p>
+</div>
+</div>
+<button class="text-[#6d608a] hover:text-[#131118] dark:hover:text-white transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</header>
+<div class="overflow-y-auto max-h-[70vh] p-6 space-y-8">
+<!-- 1. Select Format -->
+<section>
+<div class="flex items-center gap-2 mb-4">
+<span class="flex items-center justify-center size-6 rounded-full bg-primary text-white text-[12px] font-bold">1</span>
+<h3 class="text-[#131118] dark:text-white text-sm font-bold uppercase tracking-wider">Select Format</h3>
+</div>
+<div class="flex bg-[#f1f0f5] dark:bg-[#151022] p-1 rounded-lg">
+<label class="flex-1 cursor-pointer">
+<input checked="" class="hidden peer" name="format" type="radio" value="CSV"/>
+<div class="flex items-center justify-center py-2 rounded-md peer-checked:bg-white dark:peer-checked:bg-[#2d2845] peer-checked:shadow-sm text-[#6d608a] dark:text-gray-400 peer-checked:text-primary transition-all font-semibold text-sm">
+                                CSV
+                            </div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="hidden peer" name="format" type="radio" value="Excel"/>
+<div class="flex items-center justify-center py-2 rounded-md peer-checked:bg-white dark:peer-checked:bg-[#2d2845] peer-checked:shadow-sm text-[#6d608a] dark:text-gray-400 peer-checked:text-primary transition-all font-semibold text-sm">
+                                Excel
+                            </div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="hidden peer" name="format" type="radio" value="JSON"/>
+<div class="flex items-center justify-center py-2 rounded-md peer-checked:bg-white dark:peer-checked:bg-[#2d2845] peer-checked:shadow-sm text-[#6d608a] dark:text-gray-400 peer-checked:text-primary transition-all font-semibold text-sm">
+                                JSON
+                            </div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="hidden peer" name="format" type="radio" value="Image"/>
+<div class="flex items-center justify-center py-2 rounded-md peer-checked:bg-white dark:peer-checked:bg-[#2d2845] peer-checked:shadow-sm text-[#6d608a] dark:text-gray-400 peer-checked:text-primary transition-all font-semibold text-sm">
+                                PNG/SVG
+                            </div>
+</label>
+</div>
+</section>
+<!-- 2. Data Range -->
+<section>
+<div class="flex items-center gap-2 mb-4">
+<span class="flex items-center justify-center size-6 rounded-full bg-primary text-white text-[12px] font-bold">2</span>
+<h3 class="text-[#131118] dark:text-white text-sm font-bold uppercase tracking-wider">Data Range</h3>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="flex flex-col gap-1.5">
+<label class="text-[#6d608a] dark:text-gray-400 text-xs font-semibold uppercase">Preset Range</label>
+<select class="form-select w-full bg-[#f1f0f5] dark:bg-[#151022] border-none rounded-lg text-sm text-[#131118] dark:text-white focus:ring-2 focus:ring-primary">
+<option>Current View</option>
+<option>Last 7 Days</option>
+<option>Last 30 Days</option>
+<option>Custom Range...</option>
+</select>
+</div>
+<div class="flex flex-col gap-1.5">
+<label class="text-[#6d608a] dark:text-gray-400 text-xs font-semibold uppercase">Custom Interval</label>
+<div class="relative">
+<input class="w-full bg-[#f1f0f5] dark:bg-[#151022] border-none rounded-lg text-sm text-[#131118] dark:text-white pl-9 focus:ring-2 focus:ring-primary" readonly="" type="text" value="2023-10-01 - 2023-10-15"/>
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[#6d608a] text-lg">calendar_month</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. Granularity -->
+<section>
+<div class="flex items-center gap-2 mb-4">
+<span class="flex items-center justify-center size-6 rounded-full bg-primary text-white text-[12px] font-bold">3</span>
+<h3 class="text-[#131118] dark:text-white text-sm font-bold uppercase tracking-wider">Granularity</h3>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<label class="relative flex items-center p-3 rounded-xl border-2 border-[#f1f0f5] dark:border-[#2d2845] has-[:checked]:border-primary/50 has-[:checked]:bg-primary/5 cursor-pointer transition-all">
+<input checked="" class="text-primary focus:ring-primary border-gray-300 mr-3" name="granularity" type="radio" value="raw"/>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-[#131118] dark:text-white leading-none">Raw Data</span>
+<span class="text-xs text-[#6d608a] dark:text-gray-400 mt-1">Every recorded event</span>
+</div>
+</label>
+<label class="relative flex items-center p-3 rounded-xl border-2 border-[#f1f0f5] dark:border-[#2d2845] has-[:checked]:border-primary/50 has-[:checked]:bg-primary/5 cursor-pointer transition-all">
+<input class="text-primary focus:ring-primary border-gray-300 mr-3" name="granularity" type="radio" value="agg"/>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-[#131118] dark:text-white leading-none">Aggregated</span>
+<span class="text-xs text-[#6d608a] dark:text-gray-400 mt-1">Hourly averages</span>
+</div>
+</label>
+</div>
+</section>
+<!-- 4. Metadata Settings -->
+<section>
+<div class="flex items-center gap-2 mb-4">
+<span class="flex items-center justify-center size-6 rounded-full bg-primary text-white text-[12px] font-bold">4</span>
+<h3 class="text-[#131118] dark:text-white text-sm font-bold uppercase tracking-wider">Data Enrichment</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-6 px-1">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded text-primary border-[#d1d5db] dark:border-[#2d2845] bg-[#f1f0f5] dark:bg-[#151022] focus:ring-primary" type="checkbox"/>
+<span class="text-sm text-[#131118] dark:text-gray-300 font-medium group-hover:text-primary transition-colors">Source Attribution</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input checked="" class="w-5 h-5 rounded text-primary border-[#d1d5db] dark:border-[#2d2845] bg-[#f1f0f5] dark:bg-[#151022] focus:ring-primary" type="checkbox"/>
+<span class="text-sm text-[#131118] dark:text-gray-300 font-medium group-hover:text-primary transition-colors">Sentiment Scores</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-5 h-5 rounded text-primary border-[#d1d5db] dark:border-[#2d2845] bg-[#f1f0f5] dark:bg-[#151022] focus:ring-primary" type="checkbox"/>
+<span class="text-sm text-[#131118] dark:text-gray-300 font-medium group-hover:text-primary transition-colors">Confidence Intervals</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="w-5 h-5 rounded text-primary border-[#d1d5db] dark:border-[#2d2845] bg-[#f1f0f5] dark:bg-[#151022] focus:ring-primary" type="checkbox"/>
+<span class="text-sm text-[#131118] dark:text-gray-300 font-medium group-hover:text-primary transition-colors">Audit Logs</span>
+</label>
+</div>
+</section>
+<div class="bg-[#f8f9fa] dark:bg-[#1a162a] rounded-lg p-3 flex items-center justify-between border border-[#e2e8f0] dark:border-[#2d2845]">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">info</span>
+<span class="text-xs font-medium text-[#6d608a] dark:text-gray-400">Estimated file size: <span class="text-[#131118] dark:text-white font-bold">14.2 MB</span></span>
+</div>
+<span class="text-[10px] uppercase font-black text-primary/60 tracking-widest">Optimized for Python/R</span>
+</div>
+</div>
+<!-- Footer -->
+<footer class="p-6 border-t border-[#f1f0f5] dark:border-[#2d2845] flex items-center justify-end gap-4 bg-white dark:bg-[#1e1a2d]">
+<button class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-[#131118] dark:text-white font-bold text-sm hover:bg-[#f1f0f5] dark:hover:bg-[#2d2845] transition-all">
+<span class="material-symbols-outlined text-lg">content_copy</span>
+                    Copy to Clipboard
+                </button>
+<button class="flex items-center gap-2 px-8 py-2.5 rounded-lg bg-primary text-white font-bold text-sm shadow-lg shadow-primary/30 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all">
+<span class="material-symbols-outlined text-lg">download</span>
+                    Download Data
+                </button>
+</footer>
+</div>
+</div>
+</body></html>
