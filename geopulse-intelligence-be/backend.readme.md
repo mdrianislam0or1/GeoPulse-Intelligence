@@ -90,10 +90,6 @@
 - **node-fetch** (^3.3.2): Fetch API
 - **nodemailer** (^7.0.5): Email sending
 
-#### API Documentation
-
-- **swagger-jsdoc** (^6.2.8): OpenAPI/Swagger documentation
-- **swagger-ui-express** (^5.0.1): Swagger UI middleware
 
 #### Validation & Configuration
 
@@ -165,65 +161,6 @@
 
 ### Project Structure for Express.js
 
-```
-src/
-├── server.ts           # Main application entry
-├── config/
-│   ├── database.ts     # MongoDB connection
-│   ├── env.ts          # Environment variables
-│   └── swagger.ts      # Swagger configuration
-├── middleware/
-│   ├── auth.ts         # JWT authentication
-│   ├── errorHandler.ts # Error handling
-│   ├── rateLimit.ts    # Rate limiting
-│   └── cors.ts         # CORS configuration
-├── routes/
-│   ├── auth.ts         # Authentication routes
-│   ├── news.ts         # News routes
-│   ├── geo.ts          # Geographic routes
-│   ├── analytics.ts    # Analytics routes
-│   ├── users.ts        # User management routes
-│   ├── crisis.ts       # Crisis management routes
-│   ├── social.ts       # Social integration routes
-│   └── economic.ts     # Economic intelligence routes
-├── controllers/
-│   ├── authController.ts
-│   ├── newsController.ts
-│   ├── geoController.ts
-│   ├── analyticsController.ts
-│   ├── usersController.ts
-│   ├── crisisController.ts
-│   ├── socialController.ts
-│   └── economicController.ts
-├── services/
-│   ├── authService.ts
-│   ├── newsService.ts
-│   ├── geoService.ts
-│   ├── analyticsService.ts
-│   ├── usersService.ts
-│   ├── crisisService.ts
-│   ├── socialService.ts
-│   └── economicService.ts
-├── models/
-│   ├── User.ts
-│   ├── Article.ts
-│   ├── Country.ts
-│   ├── Prediction.ts
-│   ├── Crisis.ts
-│   └── Analytics.ts
-├── utils/
-│   ├── validators.ts   # Zod schemas
-│   ├── helpers.ts      # Helper functions
-│   ├── jwt.ts          # JWT utilities
-│   ├── email.ts        # Email service (Nodemailer)
-│   ├── pdf.ts          # PDF generation (PDFKit)
-│   └── constants.ts    # Application constants
-├── types/
-│   ├── index.ts        # Global types
-│   ├── api.ts          # API types
-│   └── models.ts       # Model types
-└── dist/               # Compiled JavaScript (generated)
-```
 
 ---
 
@@ -2064,8 +2001,6 @@ See the **Express.js package.json Configuration** section above for the complete
 ```
 GET /health - Overall system health
 GET /health/db - Database connection status
-GET /health/kafka - Kafka broker status
-GET /health/redis - Redis connection status
 GET /health/elasticsearch - Elasticsearch cluster status
 ```
 
@@ -2073,7 +2008,6 @@ GET /health/elasticsearch - Elasticsearch cluster status
 
 - API response times
 - Database query performance
-- Kafka lag
 - Cache hit ratio
 - Error rates
 - Ingestion throughput
