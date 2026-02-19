@@ -3,71 +3,70 @@
 import crypto from 'crypto';
 import httpStatus from 'http-status';
 import jwt, { SignOptions } from 'jsonwebtoken';
-
-const TOTP_PERIOD = 30;
+import qrcode from 'qrcode';
+import speakeasy from 'speakeasy';
 
 import config from '../../../config';
 import { ApplicationError } from '../../../errors/ApplicationError';
 import {
-  sendVerificationEmail,
-  sendWelcomeEmail
+    sendPasswordResetEmail,
+    sendVerificationEmail,
+    sendWelcomeEmail,
 } from '../../../lib/emailService';
 import logger from '../../../utils/logger';
 import type {
-  IAuthResponse,
-  IJwtPayload,
-  ILoginRequest,
-  IRegisterRequest,
-  IUser,
-  IVerifyEmailRequest
+    IAuthResponse,
+    IChangePasswordRequest,
+    IForgotPasswordRequest,
+    IJwtPayload,
+    ILoginRequest,
+    IRefreshTokenRequest,
+    IRegisterRequest,
+    IResetPasswordRequest,
+    IUser,
+    IVerifyEmailRequest,
 } from './auth.interface';
 import { User } from './auth.model';
 
-// Generate JWT token
+const TOTP_PERIOD = 30;
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
 const generateToken = (payload: IJwtPayload): string => {
-  const options: SignOptions = {
-    expiresIn: '304d',
-  };
+  const options: SignOptions = { expiresIn: '1d' };
   return jwt.sign(payload, config.jwt.jwt_secret as string, options);
 };
 
-// Generate refresh token
 const generateRefreshToken = (payload: IJwtPayload): string => {
-  const options: SignOptions = {
-    expiresIn: '304d',
-  };
+  const options: SignOptions = { expiresIn: '30d' };
   return jwt.sign(payload, config.jwt.refresh_token_secret as string, options);
 };
 
-// Register new user
+// ─── Register ─────────────────────────────────────────────────────────────────
+
 export const register = async (
   userData: IRegisterRequest,
 ): Promise<{ user: IUser; message: string }> => {
   logger.info('📝 Creating a new user', { email: userData.email });
 
-  // Check if passwords match
   if (userData.password !== userData.confirmPassword) {
     throw new ApplicationError(httpStatus.BAD_REQUEST, 'Passwords do not match');
   }
 
-  // Check if email already exists
   const existingEmail = await User.findOne({ email: userData.email });
   if (existingEmail) {
     throw new ApplicationError(httpStatus.CONFLICT, 'Email is already registered');
   }
 
-  // Check if username already exists
   const existingUsername = await User.findOne({ username: userData.username });
   if (existingUsername) {
     throw new ApplicationError(httpStatus.CONFLICT, 'Username is already taken');
   }
 
-  // Generate email verification token
   const emailVerificationToken = crypto.randomBytes(32).toString('hex');
   const emailVerificationTokenExpires = new Date();
   emailVerificationTokenExpires.setHours(emailVerificationTokenExpires.getHours() + 24);
 
-  // Create user
   const newUser = new User({
     fullName: userData.fullName,
     username: userData.username.toLowerCase(),
@@ -79,16 +78,10 @@ export const register = async (
 
   const savedUser = await newUser.save();
 
-  // Send verification email
   try {
     await sendVerificationEmail(savedUser.email, emailVerificationToken);
-    logger.info('📧 Verification email sent', {
-      userId: savedUser._id,
-      email: savedUser.email,
-    });
   } catch (error) {
     logger.error('Failed to send verification email:', error);
-    // Don't throw error, user is created successfully
   }
 
   return {
@@ -97,18 +90,17 @@ export const register = async (
   };
 };
 
-// Login user
+// ─── Login ────────────────────────────────────────────────────────────────────
+
 export const login = async (loginData: ILoginRequest): Promise<IAuthResponse> => {
   logger.info('🔐 User login attempt', { email: loginData.email });
 
-  // Find user with password field
   const user = await User.findOne({ email: loginData.email }).select('+password');
 
   if (!user) {
     throw new ApplicationError(httpStatus.UNAUTHORIZED, 'Invalid email or password');
   }
 
-  // Check if user is active
   if (!user.isActive) {
     throw new ApplicationError(
       httpStatus.FORBIDDEN,
@@ -116,13 +108,11 @@ export const login = async (loginData: ILoginRequest): Promise<IAuthResponse> =>
     );
   }
 
-  // Verify password
   const isPasswordValid = await user.comparePassword(loginData.password);
   if (!isPasswordValid) {
     throw new ApplicationError(httpStatus.UNAUTHORIZED, 'Invalid email or password');
   }
 
-  // Generate tokens
   const payload: IJwtPayload = {
     userId: user._id.toString(),
     email: user.email,
@@ -132,15 +122,9 @@ export const login = async (loginData: ILoginRequest): Promise<IAuthResponse> =>
   const accessToken = generateToken(payload);
   const refreshToken = generateRefreshToken(payload);
 
-  // Save refresh token to database
   user.refreshToken = refreshToken;
   user.lastLogin = new Date();
   await user.save();
-
-  logger.info('✅ User logged in successfully', {
-    userId: user._id,
-    email: user.email,
-  });
 
   return {
     user: {
@@ -157,12 +141,11 @@ export const login = async (loginData: ILoginRequest): Promise<IAuthResponse> =>
   };
 };
 
-// Verify email
+// ─── Verify Email ─────────────────────────────────────────────────────────────
+
 export const verifyEmail = async (
   verifyData: IVerifyEmailRequest,
 ): Promise<{ message: string }> => {
-  logger.info('📧 Email verification attempt');
-
   const user = await User.findOne({
     emailVerificationToken: verifyData.token,
     emailVerificationTokenExpires: { $gt: new Date() },
@@ -172,82 +155,240 @@ export const verifyEmail = async (
     throw new ApplicationError(httpStatus.BAD_REQUEST, 'Invalid or expired verification token');
   }
 
-  // Mark email as verified
   user.isEmailVerified = true;
   user.emailVerificationToken = undefined;
   user.emailVerificationTokenExpires = undefined;
   await user.save();
 
-  // Send welcome email
   try {
     await sendWelcomeEmail(user.email, user.fullName);
   } catch (error) {
     logger.error('Failed to send welcome email:', error);
   }
 
-  logger.info('✅ Email verified successfully', {
-    userId: user._id,
-    email: user.email,
-  });
-
-  return {
-    message: 'Email verified successfully. Welcome aboard!',
-  };
+  return { message: 'Email verified successfully. Welcome aboard!' };
 };
 
+// ─── Forgot Password ──────────────────────────────────────────────────────────
 
+export const forgotPassword = async (
+  data: IForgotPasswordRequest,
+): Promise<{ message: string }> => {
+  const user = await User.findOne({ email: data.email.toLowerCase() });
 
+  // Always return the same message to avoid user enumeration
+  if (!user) {
+    return { message: 'If that email is registered you will receive a reset link shortly.' };
+  }
 
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  user.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  user.passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+  await user.save({ validateBeforeSave: false });
 
-// Logout user
-export const logout = async (userId: string): Promise<{ message: string }> => {
-  logger.info('👋 User logout', { userId });
+  try {
+    await sendPasswordResetEmail(user.email, resetToken);
+  } catch (error) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    throw new ApplicationError(
+      httpStatus.INTERNAL_SERVER_ERROR,
+      'Email could not be sent. Please try again.',
+    );
+  }
 
-  const user = await User.findById(userId);
+  return { message: 'If that email is registered you will receive a reset link shortly.' };
+};
 
+// ─── Reset Password ───────────────────────────────────────────────────────────
+
+export const resetPassword = async (
+  data: IResetPasswordRequest,
+): Promise<{ message: string }> => {
+  if (data.newPassword !== data.confirmPassword) {
+    throw new ApplicationError(httpStatus.BAD_REQUEST, 'Passwords do not match');
+  }
+
+  const hashedToken = crypto.createHash('sha256').update(data.token).digest('hex');
+
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: new Date() },
+  }).select('+password');
+
+  if (!user) {
+    throw new ApplicationError(httpStatus.BAD_REQUEST, 'Invalid or expired reset token');
+  }
+
+  user.password = data.newPassword;
+  user.passwordResetToken = undefined;
+  user.passwordResetExpires = undefined;
+  user.refreshToken = undefined; // invalidate all sessions
+  await user.save();
+
+  return { message: 'Password reset successfully. Please log in with your new password.' };
+};
+
+// ─── Refresh Token ────────────────────────────────────────────────────────────
+
+export const refreshToken = async (
+  data: IRefreshTokenRequest,
+): Promise<{ token: string; refreshToken: string }> => {
+  let decoded: IJwtPayload;
+  try {
+    decoded = jwt.verify(
+      data.refreshToken,
+      config.jwt.refresh_token_secret as string,
+    ) as IJwtPayload;
+  } catch {
+    throw new ApplicationError(httpStatus.UNAUTHORIZED, 'Invalid or expired refresh token');
+  }
+
+  const user = await User.findOne({
+    _id: decoded.userId,
+    refreshToken: data.refreshToken,
+  });
+
+  if (!user) {
+    throw new ApplicationError(httpStatus.UNAUTHORIZED, 'Refresh token not recognised');
+  }
+
+  const payload: IJwtPayload = {
+    userId: user._id.toString(),
+    email: user.email,
+    role: user.role,
+  };
+
+  const newAccessToken = generateToken(payload);
+  const newRefreshToken = generateRefreshToken(payload);
+
+  user.refreshToken = newRefreshToken;
+  await user.save();
+
+  return { token: newAccessToken, refreshToken: newRefreshToken };
+};
+
+// ─── Change Password ──────────────────────────────────────────────────────────
+
+export const changePassword = async (
+  userId: string,
+  data: IChangePasswordRequest,
+): Promise<{ message: string }> => {
+  if (data.newPassword !== data.confirmPassword) {
+    throw new ApplicationError(httpStatus.BAD_REQUEST, 'New passwords do not match');
+  }
+
+  const user = await User.findById(userId).select('+password');
   if (!user) {
     throw new ApplicationError(httpStatus.NOT_FOUND, 'User not found');
   }
 
-  // Clear refresh token
+  const isValid = await user.comparePassword(data.currentPassword);
+  if (!isValid) {
+    throw new ApplicationError(httpStatus.UNAUTHORIZED, 'Current password is incorrect');
+  }
+
+  user.password = data.newPassword;
+  user.refreshToken = undefined; // invalidate all sessions
+  await user.save();
+
+  return { message: 'Password changed successfully. Please log in again.' };
+};
+
+// ─── Logout ───────────────────────────────────────────────────────────────────
+
+export const logout = async (userId: string): Promise<{ message: string }> => {
+  const user = await User.findById(userId);
+  if (!user) throw new ApplicationError(httpStatus.NOT_FOUND, 'User not found');
+
   user.refreshToken = undefined;
   await user.save();
 
-  logger.info('✅ User logged out successfully', {
-    userId: user._id,
-    email: user.email,
-  });
-
-  return {
-    message: 'Logged out successfully',
-  };
+  return { message: 'Logged out successfully' };
 };
 
+// ─── Get Current User ─────────────────────────────────────────────────────────
 
-
-
-
-
-// Get current user
 export const getCurrentUser = async (userId: string): Promise<IUser> => {
-  logger.info('👤 Fetching current user', { userId });
-
   const user = await User.findById(userId);
-
-  if (!user) {
-    throw new ApplicationError(httpStatus.NOT_FOUND, 'User not found');
-  }
-
+  if (!user) throw new ApplicationError(httpStatus.NOT_FOUND, 'User not found');
   return user;
 };
 
-// Export all functions as a named object
+// ─── 2FA ──────────────────────────────────────────────────────────────────────
+
+export const enableTwoFactor = async (
+  userId: string,
+): Promise<{ secret: string; qrCode: string }> => {
+  const user = await User.findById(userId);
+  if (!user) throw new ApplicationError(httpStatus.NOT_FOUND, 'User not found');
+
+  const secretData = speakeasy.generateSecret({
+    name: `GeoPulse (${user.email})`,
+    issuer: 'GeoPulse Intelligence',
+    length: 20,
+  });
+
+  const qrCode = await qrcode.toDataURL(secretData.otpauth_url!);
+
+  user.twoFactorSecret = secretData.base32;
+  await user.save();
+
+  return { secret: secretData.base32, qrCode };
+};
+
+export const verifyTwoFactor = async (
+  userId: string,
+  token: string,
+): Promise<{ message: string }> => {
+  const user = await User.findById(userId).select('+twoFactorSecret');
+  if (!user) throw new ApplicationError(httpStatus.NOT_FOUND, 'User not found');
+  if (!user.twoFactorSecret) {
+    throw new ApplicationError(httpStatus.BAD_REQUEST, '2FA is not set up. Please enable it first.');
+  }
+
+  const verified = speakeasy.totp.verify({
+    secret: user.twoFactorSecret,
+    encoding: 'base32',
+    token,
+    window: 1,
+  });
+
+  if (!verified) {
+    throw new ApplicationError(httpStatus.UNAUTHORIZED, 'Invalid 2FA token');
+  }
+
+  user.isTwoFactorEnabled = true;
+  await user.save();
+
+  return { message: '2FA enabled successfully' };
+};
+
+export const disableTwoFactor = async (userId: string): Promise<{ message: string }> => {
+  const user = await User.findById(userId);
+  if (!user) throw new ApplicationError(httpStatus.NOT_FOUND, 'User not found');
+
+  user.isTwoFactorEnabled = false;
+  user.twoFactorSecret = undefined;
+  await user.save();
+
+  return { message: '2FA disabled successfully' };
+};
+
+// ─── Export ───────────────────────────────────────────────────────────────────
+
 export const authService = {
   register,
   login,
   verifyEmail,
-
+  forgotPassword,
+  resetPassword,
+  refreshToken,
+  changePassword,
   logout,
   getCurrentUser,
-
+  enableTwoFactor,
+  verifyTwoFactor,
+  disableTwoFactor,
 };

@@ -12,6 +12,7 @@ import {
     verifyEmailValidation,
     verifyTwoFactorValidation,
 } from './auth.validation';
+import { watchlistRoutes } from './watchlist.routes';
 
 const router = express.Router();
 
@@ -95,5 +96,8 @@ router.get('/me', auth(), authController.getCurrentUser);
 router.post('/2fa/enable', auth(), authController.enableTwoFactor);
 router.post('/2fa/verify', auth(), validateRequest(verifyTwoFactorValidation), authController.verifyTwoFactor);
 router.post('/2fa/disable', auth(), authController.disableTwoFactor);
+
+// Mount watchlist routes
+router.use('/', watchlistRoutes);
 
 export const authRoutes = router;

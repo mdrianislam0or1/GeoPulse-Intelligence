@@ -1,16 +1,14 @@
 import { Server } from 'http';
 import app from './app';
-import { initializeAdminSocket } from './app/modules/Admin/admin.module';
-import { initializeAISocket } from './app/modules/AI/ai.module';
-import { initializeNotificationSocket } from './app/modules/Notification/notification.module';
+import { initAnalysisCron } from './app/modules/NewsAnalysis/analysis.service';
+import { initIngestionCron } from './app/modules/NewsIngestion/cron/dailyFetch.cron';
+import { seedApiUsage } from './app/modules/NewsIngestion/models/ApiUsage';
 import config from './config';
 import { initSocket } from './config/socket';
 import { connectDB } from './db';
 import logger from './utils/logger';
 
 let server: Server;
-
-
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
@@ -24,24 +22,26 @@ async function bootstrap() {
     // Connect to MongoDB
     await connectDB();
 
-
-    // ✅ SOCKET.IO INITIALIZATION
-    const io = initSocket(server);
-
-    // ✅ MODULE SOCKET REGISTRATION
-    initializeAdminSocket(io);
-    initializeNotificationSocket(io);
-    initializeAISocket(io);
-
-
-    // Start server
+    // ✅ Start server first so initSocket gets a valid server instance
     server = app.listen(config.port, () => {
       logger.info(`🚀 Server is running on port ${config.port}`);
       logger.info(`🌍 Environment: ${config.env}`);
       logger.info(`📍 URL: ${config.backend_url}`);
-      logger.info(`🏥 Health Check: ${config.backend_url}/health`);
-      logger.info(`📚 API Docs: ${config.backend_url}/api-docs`);
+      logger.info(`🏥 Health: ${config.backend_url}/health`);
     });
+
+    // ✅ SOCKET.IO INITIALIZATION
+    initSocket(server);
+    logger.info('✅ Socket.io initialized');
+
+    // ✅ SEED API USAGE RECORDS (safe to run every startup — upsert)
+    await seedApiUsage();
+    logger.info('✅ ApiUsage records seeded');
+
+    // ✅ INITIALIZE CRON JOBS
+    initIngestionCron();
+    initAnalysisCron();
+
   } catch (error) {
     logger.error('❌ Failed to start server:', error);
     process.exit(1);

@@ -4,41 +4,41 @@ import httpStatus from 'http-status';
 import catchAsync from '../../../utils/catchAsync';
 import sendResponse from '../../../utils/sendResponse';
 import {
-  ILoginRequest,
-  IRegisterRequest,
-  IVerifyEmailRequest
+    IChangePasswordRequest,
+    IForgotPasswordRequest,
+    ILoginRequest,
+    IRefreshTokenRequest,
+    IRegisterRequest,
+    IResetPasswordRequest,
+    IVerifyEmailRequest,
 } from './auth.interface';
 import { authService } from './auth.service';
 
-// Register user
+// ─── Register ────────────────────────────────────────────────────────────────
+
 const register = catchAsync(async (req: Request, res: Response) => {
   const userData: IRegisterRequest = req.body;
-
   const result = await authService.register(userData);
-
-  const responseData = {
-    userId: result.user._id,
-    fullName: result.user.fullName,
-    username: result.user.username,
-    email: result.user.email,
-    role: result.user.role,
-    isEmailVerified: result.user.isEmailVerified,
-  };
-
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
     message: result.message,
-    data: responseData,
+    data: {
+      userId: result.user._id,
+      fullName: result.user.fullName,
+      username: result.user.username,
+      email: result.user.email,
+      role: result.user.role,
+      isEmailVerified: result.user.isEmailVerified,
+    },
   });
 });
 
-// Login user
+// ─── Login ────────────────────────────────────────────────────────────────────
+
 const login = catchAsync(async (req: Request, res: Response) => {
   const loginData: ILoginRequest = req.body;
-
   const result = await authService.login(loginData);
-
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -47,82 +47,102 @@ const login = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// Verify email
+// ─── Verify Email ─────────────────────────────────────────────────────────────
+
 const verifyEmail = catchAsync(async (req: Request, res: Response) => {
   const verifyData: IVerifyEmailRequest = req.body;
-
   const result = await authService.verifyEmail(verifyData);
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: result.message,
-    data: null,
-  });
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: result.message, data: null });
 });
 
+// ─── Forgot Password ──────────────────────────────────────────────────────────
 
+const forgotPassword = catchAsync(async (req: Request, res: Response) => {
+  const data: IForgotPasswordRequest = req.body;
+  const result = await authService.forgotPassword(data);
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: result.message, data: null });
+});
 
+// ─── Reset Password ───────────────────────────────────────────────────────────
 
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+  const data: IResetPasswordRequest = req.body;
+  const result = await authService.resetPassword(data);
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: result.message, data: null });
+});
 
+// ─── Refresh Token ────────────────────────────────────────────────────────────
 
-// Logout
+const refreshToken = catchAsync(async (req: Request, res: Response) => {
+  const data: IRefreshTokenRequest = req.body;
+  const result = await authService.refreshToken(data);
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: 'Token refreshed', data: result });
+});
+
+// ─── Change Password ──────────────────────────────────────────────────────────
+
+const changePassword = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId as string;
+  const data: IChangePasswordRequest = req.body;
+  const result = await authService.changePassword(userId, data);
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: result.message, data: null });
+});
+
+// ─── Logout ───────────────────────────────────────────────────────────────────
+
 const logout = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user?.userId;
-
-  if (!userId) {
-    return sendResponse(res, {
-      statusCode: httpStatus.UNAUTHORIZED,
-      success: false,
-      message: 'Unauthorized',
-      data: null,
-    });
-  }
-
+  const userId = req.user?.userId as string;
   const result = await authService.logout(userId);
-
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: result.message,
-    data: null,
-  });
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: result.message, data: null });
 });
 
-// Get current user
+// ─── Get Current User ─────────────────────────────────────────────────────────
+
 const getCurrentUser = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user?.userId;
-
-  if (!userId) {
-    return sendResponse(res, {
-      statusCode: httpStatus.UNAUTHORIZED,
-      success: false,
-      message: 'Unauthorized',
-      data: null,
-    });
-  }
-
+  const userId = req.user?.userId as string;
   const user = await authService.getCurrentUser(userId);
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: 'User retrieved', data: user });
+});
 
+// ─── 2FA ──────────────────────────────────────────────────────────────────────
+
+const enableTwoFactor = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId as string;
+  const result = await authService.enableTwoFactor(userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'User retrieved successfully',
-    data: user,
+    message: 'Scan the QR code with your authenticator app, then verify with the 6-digit token.',
+    data: result,
   });
 });
 
+const verifyTwoFactor = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId as string;
+  const { token } = req.body;
+  const result = await authService.verifyTwoFactor(userId, token);
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: result.message, data: null });
+});
 
+const disableTwoFactor = catchAsync(async (req: Request, res: Response) => {
+  const userId = req.user?.userId as string;
+  const result = await authService.disableTwoFactor(userId);
+  sendResponse(res, { statusCode: httpStatus.OK, success: true, message: result.message, data: null });
+});
 
-
-
+// ─── Export ───────────────────────────────────────────────────────────────────
 
 export const authController = {
   register,
   login,
   verifyEmail,
-
+  forgotPassword,
+  resetPassword,
+  refreshToken,
+  changePassword,
   logout,
   getCurrentUser,
-
+  enableTwoFactor,
+  verifyTwoFactor,
+  disableTwoFactor,
 };
