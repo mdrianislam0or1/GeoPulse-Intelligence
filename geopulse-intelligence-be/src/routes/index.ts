@@ -2,6 +2,7 @@ import express from 'express';
 import { authRoutes } from '../app/modules/Auth/auth.routes';
 // GeoPulse Intelligence modules
 import { crisisRoutes } from '../app/modules/CrisisManagement/crisis.routes';
+import { analyticsRoutes } from '../app/modules/GeoIntelligence/analytics.routes';
 import { geoRoutes } from '../app/modules/GeoIntelligence/geo.routes';
 import { analysisRoutes } from '../app/modules/NewsAnalysis/analysis.routes';
 import { ingestionRoutes } from '../app/modules/NewsIngestion/ingestion.routes';
@@ -30,6 +31,10 @@ const moduleRoutes = [
   {
     path: '/crisis',
     route: crisisRoutes,
+  },
+  {
+    path: '/analytics',
+    route: analyticsRoutes,
   },
 ];
 

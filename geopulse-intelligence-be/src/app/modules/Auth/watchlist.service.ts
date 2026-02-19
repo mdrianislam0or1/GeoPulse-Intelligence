@@ -87,7 +87,19 @@ const processArticleAlerts = async (articleId: string) => {
       });
     }
 
-    // TODO: Implement email notifications if watchlist.notify_email is true
+    // Email notification if enabled
+    if (watchlist.notify_email) {
+      try {
+        const { sendAlertEmail } = await import('../../../utils/emailService');
+        await sendAlertEmail(
+          userId,
+          `📰 Watchlist Alert: ${watchlist.type} match — ${watchlist.value}`,
+          `A new article matched your ${watchlist.type} watchlist for "${watchlist.value}".\n\nTitle: ${article.title}\nSource: ${article.source_name || 'Unknown'}\nURL: ${article.url || 'N/A'}`,
+        );
+      } catch (err: any) {
+        logger.error(`[Alerts] Email notification failed for user ${userId}:`, err.message);
+      }
+    }
   }
 
   logger.info(`[Alerts] Created ${userMatches.size} alerts for article ${articleId}`);

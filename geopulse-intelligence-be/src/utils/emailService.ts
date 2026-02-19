@@ -4,10 +4,12 @@ import config from '../config';
 import logger from './logger';
 
 const transporter = nodemailer.createTransport({
-  service: config.email.service,
+  host: config.email.smtp_host,
+  port: config.email.smtp_port,
+  secure: config.email.smtp_port === 465,
   auth: {
-    user: config.email.user,
-    pass: config.email.pass,
+    user: config.email.smtp_user,
+    pass: config.email.smtp_pass,
   },
 });
 

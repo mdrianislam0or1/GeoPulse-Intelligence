@@ -1,5 +1,6 @@
 import { Server } from 'http';
 import app from './app';
+import { seedCountries } from './app/modules/GeoIntelligence/seeders/countries.seeder';
 import { initAnalysisCron } from './app/modules/NewsAnalysis/analysis.service';
 import { initIngestionCron } from './app/modules/NewsIngestion/cron/dailyFetch.cron';
 import { seedApiUsage } from './app/modules/NewsIngestion/models/ApiUsage';
@@ -37,6 +38,10 @@ async function bootstrap() {
     // ✅ SEED API USAGE RECORDS (safe to run every startup — upsert)
     await seedApiUsage();
     logger.info('✅ ApiUsage records seeded');
+
+    // ✅ SEED COUNTRY DATA (safe to run every startup — upsert)
+    await seedCountries();
+    logger.info('✅ Countries seeded');
 
     // ✅ INITIALIZE CRON JOBS
     initIngestionCron();
