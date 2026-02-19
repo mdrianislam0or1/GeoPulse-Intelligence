@@ -58,6 +58,18 @@ const detectCrises = catchAsync(async (_req: Request, res: Response) => {
   });
 });
 
+// POST /api/crisis/alerts/notify
+const notifyAlerts = catchAsync(async (req: Request, res: Response) => {
+  const { crisisId } = req.body;
+  const result = await crisisService.notifySubscribedUsers(crisisId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Crisis notifications sent',
+    data: result,
+  });
+});
+
 export const crisisController = {
   getEvents,
   createEvent,
@@ -67,4 +79,5 @@ export const crisisController = {
   getEarlyWarnings,
   getMapData,
   detectCrises,
+  notifyAlerts,
 };

@@ -3,6 +3,7 @@ import { generateResponse } from '../../../integrations/openrouter/openrouter.se
 import logger from '../../../utils/logger';
 import { Article } from '../NewsIngestion/models/Article';
 import { ArticleAnalysis } from './models/ArticleAnalysis';
+import { TopicModel } from './models/TopicModel';
 
 const ANALYSIS_MODEL = 'mistralai/mistral-7b-instruct';
 const BATCH_SIZE = 5; // process 5 articles at a time
@@ -216,6 +217,135 @@ export const initAnalysisCron = () => {
   logger.info('✅ [CRON] News analysis scheduler initialized');
 };
 
+/**
+ * Classify a single article by ID (category only).
+ */
+const classifyArticle = async (articleId: string) => {
+  const article = await Article.findById(articleId);
+  if (!article) throw new Error('Article not found');
+
+  const prompt = `Classify this news article into ONE of these categories: politics|economy|health|environment|technology|crisis|social|sports|entertainment|science.
+
+Return ONLY a valid JSON object:
+{"category": "...", "sub_categories": ["..."], "confidence": 0.0-1.0}
+
+Title: ${article.title}
+Content: ${(article.content || article.description || '').substring(0, 1000)}
+
+Return ONLY valid JSON.`;
+
+  const response = await generateResponse([{ role: 'user', content: prompt }], ANALYSIS_MODEL);
+  const raw = response.choices[0]?.message?.content || '{}';
+  return JSON.parse(raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim());
+};
+
+/**
+ * Sentiment analysis for a single article.
+ */
+const sentimentAnalysis = async (articleId: string) => {
+  const article = await Article.findById(articleId);
+  if (!article) throw new Error('Article not found');
+
+  const prompt = `Perform sentiment analysis on this news article.
+
+Return ONLY a valid JSON object:
+{"polarity": -1.0 to 1.0, "subjectivity": 0.0 to 1.0, "label": "positive|negative|neutral", "emotion": {"joy": 0-1, "sadness": 0-1, "anger": 0-1, "fear": 0-1, "surprise": 0-1}}
+
+Title: ${article.title}
+Content: ${(article.content || article.description || '').substring(0, 1000)}
+
+Return ONLY valid JSON.`;
+
+  const response = await generateResponse([{ role: 'user', content: prompt }], ANALYSIS_MODEL);
+  const raw = response.choices[0]?.message?.content || '{}';
+  return JSON.parse(raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim());
+};
+
+/**
+ * Bias detection for a single article.
+ */
+const biasDetection = async (articleId: string) => {
+  const article = await Article.findById(articleId);
+  if (!article) throw new Error('Article not found');
+
+  const prompt = `Analyze the media bias in this news article.
+
+Return ONLY a valid JSON object:
+{"bias_score": 0.0-1.0, "bias_direction": "left|center|right|unknown", "reasoning": "brief explanation"}
+
+Title: ${article.title}
+Content: ${(article.content || article.description || '').substring(0, 1000)}
+
+Return ONLY valid JSON.`;
+
+  const response = await generateResponse([{ role: 'user', content: prompt }], ANALYSIS_MODEL);
+  const raw = response.choices[0]?.message?.content || '{}';
+  return JSON.parse(raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim());
+};
+
+/**
+ * Fake news probability check for a single article.
+ */
+const fakeNewsCheck = async (articleId: string) => {
+  const article = await Article.findById(articleId);
+  if (!article) throw new Error('Article not found');
+
+  const prompt = `Analyze the likelihood that this news article contains misinformation.
+
+Return ONLY a valid JSON object:
+{"fake_news_probability": 0.0-1.0, "credibility_indicators": ["..."], "red_flags": ["..."], "reasoning": "brief explanation"}
+
+Title: ${article.title}
+Source: ${article.source_name || 'Unknown'}
+Content: ${(article.content || article.description || '').substring(0, 1000)}
+
+Return ONLY valid JSON.`;
+
+  const response = await generateResponse([{ role: 'user', content: prompt }], ANALYSIS_MODEL);
+  const raw = response.choices[0]?.message?.content || '{}';
+  return JSON.parse(raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim());
+};
+
+/**
+ * Extract topics from a single article.
+ */
+const topicModeling = async (articleId: string) => {
+  const article = await Article.findById(articleId);
+  if (!article) throw new Error('Article not found');
+
+  const prompt = `Extract the main topics and themes from this news article.
+
+Return ONLY a valid JSON object:
+{"topics": [{"name": "topic name", "score": 0.0-1.0}], "keywords": ["keyword1", "keyword2"]}
+
+Title: ${article.title}
+Content: ${(article.content || article.description || '').substring(0, 1000)}
+
+Return ONLY valid JSON.`;
+
+  const response = await generateResponse([{ role: 'user', content: prompt }], ANALYSIS_MODEL);
+  const raw = response.choices[0]?.message?.content || '{}';
+  const parsed = JSON.parse(raw.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim());
+
+  // Save extracted topics to TopicModel
+  if (parsed.topics && Array.isArray(parsed.topics)) {
+    const today = new Date(new Date().setHours(0, 0, 0, 0));
+    for (const topic of parsed.topics) {
+      await TopicModel.findOneAndUpdate(
+        { name: topic.name.toLowerCase(), date: today },
+        {
+          $inc: { article_count: 1 },
+          $set: { score: topic.score },
+          $addToSet: { related_articles: article._id },
+        },
+        { upsert: true },
+      );
+    }
+  }
+
+  return parsed;
+};
+
 // Type alias for return
 type IArticleAnalysis = Awaited<ReturnType<typeof ArticleAnalysis.prototype.save>>;
 
@@ -225,4 +355,9 @@ export const analysisService = {
   getArticleAnalysis,
   getTrendingTopics,
   getSentimentSummary,
+  classifyArticle,
+  sentimentAnalysis,
+  biasDetection,
+  fakeNewsCheck,
+  topicModeling,
 };

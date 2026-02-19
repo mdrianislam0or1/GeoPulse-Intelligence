@@ -20,6 +20,14 @@ export function initSocket(server: HttpServer): Server {
     io.on('connection', (socket) => {
         logger.info(`🔌 Socket connected: ${socket.id}`);
 
+        // Allow authenticated users to join their personal room for targeted alerts
+        socket.on('join', (userId: string) => {
+            if (userId) {
+                socket.join(userId);
+                logger.info(`📌 User ${userId} joined room via socket ${socket.id}`);
+            }
+        });
+
         socket.on('disconnect', () => {
             logger.info(`❌ Socket disconnected: ${socket.id}`);
         });

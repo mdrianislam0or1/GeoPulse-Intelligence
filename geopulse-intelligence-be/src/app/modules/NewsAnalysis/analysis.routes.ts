@@ -4,32 +4,23 @@ import { analysisController } from './analysis.controller';
 
 const router = express.Router();
 
-/**
- * @route  POST /api/analysis/analyze/:articleId
- * @desc   Trigger AI analysis for a single article
- * @access Admin
- */
+// Full AI analysis for single article
 router.post('/analyze/:articleId', auth('admin'), analysisController.analyzeArticle);
 
-/**
- * @route  POST /api/analysis/batch-analyze
- * @desc   Batch analyze all unprocessed articles (up to 5 per call)
- * @access Admin
- */
+// Batch analyze unprocessed articles
 router.post('/batch-analyze', auth('admin'), analysisController.batchAnalyze);
 
-/**
- * @route  GET /api/analysis/article/:id
- * @desc   Get AI analysis result for a specific article
- * @access Private
- */
+// Individual analysis endpoints
+router.post('/classify', auth('admin'), analysisController.classify);
+router.post('/sentiment', auth('admin'), analysisController.sentiment);
+router.post('/bias-detection', auth('admin'), analysisController.biasDetection);
+router.post('/fake-news-check', auth('admin'), analysisController.fakeNewsCheck);
+router.post('/topic-modeling', auth('admin'), analysisController.topicModeling);
+
+// Get analysis result for specific article
 router.get('/article/:id', auth(), analysisController.getArticleAnalysis);
 
-/**
- * @route  GET /api/analysis/trends/:timeframe
- * @desc   Get trending topics and sentiment (daily|weekly|monthly)
- * @access Private
- */
+// Trending topics and sentiment
 router.get('/trends/:timeframe', auth(), analysisController.getTrends);
 
 export const analysisRoutes = router;

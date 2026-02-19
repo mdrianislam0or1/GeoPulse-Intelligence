@@ -1,6 +1,7 @@
 import { ArticleAnalysis } from '../NewsAnalysis/models/ArticleAnalysis';
 import { Article } from '../NewsIngestion/models/Article';
 import { Country } from './models/Country';
+import { CrisisEvent } from './models/CrisisEvent';
 import { StabilityMetrics } from './models/StabilityMetrics';
 
 /**
@@ -166,6 +167,62 @@ const getHeatmapData = async () => {
     .lean();
 };
 
+/**
+ * Correlate events across countries — find cross-border crisis patterns.
+ */
+const correlateEvents = async (countryCodes?: string[]) => {
+  const since = new Date(Date.now() - 30 * 24 * 3_600_000); // last 30 days
+
+  const matchQuery: any = { createdAt: { $gte: since } };
+  if (countryCodes && countryCodes.length > 0) {
+    matchQuery.countries_affected = {
+      $in: countryCodes.map((c: string) => c.toUpperCase()),
+    };
+  }
+
+  // Find crisis events that affect multiple countries
+  const multiCountryCrises = await CrisisEvent.find({
+    ...matchQuery,
+    'countries_affected.1': { $exists: true }, // at least 2 countries
+  })
+    .populate('source_articles', 'title url published_at')
+    .sort({ createdAt: -1 })
+    .lean();
+
+  // Find shared crisis types across countries
+  const correlations = await CrisisEvent.aggregate([
+    { $match: matchQuery },
+    { $unwind: '$countries_affected' },
+    {
+      $group: {
+        _id: { type: '$type', country: '$countries_affected' },
+        count: { $sum: 1 },
+        latestSeverity: { $first: '$severity' },
+      },
+    },
+    {
+      $group: {
+        _id: '$_id.type',
+        countries: {
+          $push: {
+            country: '$_id.country',
+            count: '$count',
+            severity: '$latestSeverity',
+          },
+        },
+        totalEvents: { $sum: '$count' },
+      },
+    },
+    { $match: { 'countries.1': { $exists: true } } }, // at least 2 countries share this crisis type
+    { $sort: { totalEvents: -1 } },
+  ]);
+
+  return {
+    multiCountryCrises,
+    crossBorderCorrelations: correlations,
+  };
+};
+
 export const geoService = {
   getAllCountries,
   getCountryDetail,
@@ -173,4 +230,5 @@ export const geoService = {
   getConflictZones,
   getRegionalAnalysis,
   getHeatmapData,
+  correlateEvents,
 };

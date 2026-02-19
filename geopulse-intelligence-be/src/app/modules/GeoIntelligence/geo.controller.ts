@@ -79,6 +79,18 @@ const getHeatmapData = catchAsync(async (_req: Request, res: Response) => {
   });
 });
 
+// POST /api/geo/correlate-events
+const correlateEvents = catchAsync(async (req: Request, res: Response) => {
+  const { countryCodes } = req.body;
+  const data = await geoService.correlateEvents(countryCodes);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Cross-border event correlations',
+    data,
+  });
+});
+
 export const geoController = {
   getAllCountries,
   getCountryDetail,
@@ -86,4 +98,5 @@ export const geoController = {
   getConflictZones,
   getRegionalAnalysis,
   getHeatmapData,
+  correlateEvents,
 };

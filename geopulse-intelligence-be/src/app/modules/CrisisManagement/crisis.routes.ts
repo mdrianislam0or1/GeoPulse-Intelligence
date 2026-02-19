@@ -12,5 +12,6 @@ router.post('/event/:id/verify', auth('admin'), crisisController.verifyEvent);
 router.get('/early-warnings', auth(), crisisController.getEarlyWarnings);
 router.get('/map', crisisController.getMapData); // public — for frontend map
 router.post('/detect', auth('admin'), crisisController.detectCrises);
+router.post('/alerts/notify', auth('admin'), crisisController.notifyAlerts);
 
 export const crisisRoutes = router;

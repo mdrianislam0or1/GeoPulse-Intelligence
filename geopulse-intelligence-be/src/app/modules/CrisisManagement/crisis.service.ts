@@ -1,7 +1,11 @@
 import httpStatus from 'http-status';
+import { getIO } from '../../../config/socket';
 import { ApplicationError } from '../../../errors/ApplicationError';
 import { generateResponse } from '../../../integrations/openrouter/openrouter.service';
+import { SOCKET_EVENTS } from '../../../socket/events';
+import { sendAlertEmail } from '../../../utils/emailService';
 import logger from '../../../utils/logger';
+import { Watchlist } from '../Auth/watchlist.model';
 import { CrisisEvent } from '../GeoIntelligence/models/CrisisEvent';
 import { ArticleAnalysis } from '../NewsAnalysis/models/ArticleAnalysis';
 
@@ -158,6 +162,65 @@ const getMapData = async () => {
     .lean();
 };
 
+/**
+ * Notify subscribed users about a crisis event via Socket.io + Email.
+ */
+const notifySubscribedUsers = async (crisisId: string) => {
+  const crisis = await CrisisEvent.findById(crisisId).lean();
+  if (!crisis) throw new ApplicationError(httpStatus.NOT_FOUND, 'Crisis event not found');
+
+  const io = getIO();
+  const notifiedUsers = new Set<string>();
+
+  // Find watchlists matching affected countries
+  for (const country of crisis.countries_affected) {
+    const watchlists = await Watchlist.find({
+      type: 'country',
+      value: { $regex: new RegExp(`^${country}$`, 'i') },
+    }).lean();
+
+    for (const watchlist of watchlists) {
+      const userId = watchlist.user_id.toString();
+      if (notifiedUsers.has(userId)) continue;
+      notifiedUsers.add(userId);
+
+      // Socket notification
+      if (watchlist.notify_socket) {
+        io.to(userId).emit(SOCKET_EVENTS.CRISIS_ALERT, {
+          crisisId: crisis._id,
+          title: crisis.title,
+          severity: crisis.severity,
+          countries: crisis.countries_affected,
+        });
+      }
+
+      // Email notification
+      if (watchlist.notify_email) {
+        try {
+          await sendAlertEmail(
+            userId,
+            `🚨 Crisis Alert: ${crisis.title}`,
+            `A ${crisis.severity.toUpperCase()} crisis event has been detected affecting ${crisis.countries_affected.join(', ')}.\n\n${crisis.description || ''}\n\nType: ${crisis.type}\nSeverity: ${crisis.severity}\nStatus: ${crisis.status}`,
+          );
+        } catch (err: any) {
+          logger.error('[Crisis] Email notification failed', { userId, error: err.message });
+        }
+      }
+    }
+  }
+
+  // Also broadcast globally
+  io.emit(SOCKET_EVENTS.CRISIS_ALERT, {
+    crisisId: crisis._id,
+    title: crisis.title,
+    severity: crisis.severity,
+    countries: crisis.countries_affected,
+  });
+
+  logger.info(`[Crisis] Notified ${notifiedUsers.size} users about crisis: ${crisis.title}`);
+  return { notifiedCount: notifiedUsers.size, crisisId: crisis._id };
+};
+
 export const crisisService = {
   autoDetectCrises,
   getActiveEvents,
@@ -167,4 +230,5 @@ export const crisisService = {
   verifyEvent,
   generateEarlyWarnings,
   getMapData,
+  notifySubscribedUsers,
 };

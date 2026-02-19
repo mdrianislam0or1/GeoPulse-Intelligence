@@ -10,5 +10,6 @@ router.get('/stability-index/:code', auth(), geoController.getStabilityIndex);
 router.get('/conflict-zones', auth(), geoController.getConflictZones);
 router.get('/regional-analysis/:region', auth(), geoController.getRegionalAnalysis);
 router.get('/heatmap-data', auth(), geoController.getHeatmapData);
+router.post('/correlate-events', auth(), geoController.correlateEvents);
 
 export const geoRoutes = router;
