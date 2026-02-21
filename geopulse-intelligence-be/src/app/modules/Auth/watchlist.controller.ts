@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import httpStatus from 'http-status';
 import catchAsync from '../../../utils/catchAsync';
 import sendResponse from '../../../utils/sendResponse';
@@ -7,62 +7,55 @@ import { watchlistService } from './watchlist.service';
 const createWatchlist = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId as string;
   const result = await watchlistService.createWatchlist(userId, req.body);
-
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
-    message: 'Watchlist item created successfully',
+    message: 'Watchlist item created',
     data: result,
   });
 });
 
-const getMyWatchlist = catchAsync(async (req: Request, res: Response) => {
+const getWatchlists = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId as string;
-  const result = await watchlistService.getMyWatchlist(userId);
-
+  const result = await watchlistService.getWatchlists(userId);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Watchlist retrieved successfully',
+    message: 'Watchlist items retrieved',
     data: result,
   });
 });
 
-const removeWatchlist = catchAsync(async (req: Request, res: Response) => {
+const deleteWatchlist = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId as string;
-  const { id } = req.params;
-  const result = await watchlistService.removeWatchlist(userId, id);
-
+  await watchlistService.deleteWatchlist(userId, req.params.id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Watchlist item removed successfully',
-    data: result,
+    message: 'Watchlist item deleted',
+    data: null,
   });
 });
 
-const getMyAlerts = catchAsync(async (req: Request, res: Response) => {
+const getUserAlerts = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId as string;
-  const { is_read, limit } = req.query;
-
-  const result = await watchlistService.getMyAlerts(userId, {
-    is_read: is_read === 'true' ? true : is_read === 'false' ? false : undefined,
-    limit: limit ? parseInt(limit as string) : undefined
-  });
-
+  const result = await watchlistService.getUserAlerts(
+    userId,
+    Number(req.query.page) || 1,
+    Number(req.query.limit) || 20,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Alerts retrieved successfully',
-    data: result,
+    message: 'Alerts retrieved',
+    meta: result.meta,
+    data: result.alerts,
   });
 });
 
-const markAlertAsRead = catchAsync(async (req: Request, res: Response) => {
+const markAlertRead = catchAsync(async (req: Request, res: Response) => {
   const userId = req.user?.userId as string;
-  const { id } = req.params;
-  const result = await watchlistService.markAlertAsRead(userId, id);
-
+  const result = await watchlistService.markAlertRead(userId, req.params.id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -73,8 +66,8 @@ const markAlertAsRead = catchAsync(async (req: Request, res: Response) => {
 
 export const watchlistController = {
   createWatchlist,
-  getMyWatchlist,
-  removeWatchlist,
-  getMyAlerts,
-  markAlertAsRead
+  getWatchlists,
+  deleteWatchlist,
+  getUserAlerts,
+  markAlertRead,
 };

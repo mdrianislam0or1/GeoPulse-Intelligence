@@ -1,71 +1,119 @@
-import { Document, Schema, model } from 'mongoose';
+import crypto from 'crypto';
+import { Schema, model } from 'mongoose';
+import type { IArticle } from '../ingestion.interface';
 
-export interface IArticle extends Document {
-  source_api: 'newsapi' | 'currentsapi' | 'gnews' | 'rss2json' | 'manual';
-  source_name?: string;
-  source_id?: string;
-  title: string;
-  description?: string;
-  content?: string;
-  url?: string;
-  author?: string;
-  image_url?: string;
-  published_at?: Date;
-  ingested_at: Date;
-  language: string;
-  country?: string;
-  content_hash?: string;
-  keywords: string[];
-  entities: {
-    countries: string[];
-    people: string[];
-    organizations: string[];
-  };
-  is_analyzed: boolean;
-  categories: string[];
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const articleSchema = new Schema<IArticle>(
+const ArticleSchema = new Schema<IArticle>(
   {
     source_api: {
       type: String,
-      enum: ['newsapi', 'currentsapi', 'gnews', 'rss2json', 'manual'],
       required: true,
+      enum: ['newsapi', 'currentsapi', 'gnews', 'rss2json', 'manual'],
+      index: true,
     },
-    source_name: String,
-    source_id: String,
-    title: { type: String, required: true },
-    description: String,
-    content: String,
-    url: String,
-    author: String,
-    image_url: String,
-    published_at: Date,
-    ingested_at: { type: Date, default: Date.now },
-    language: { type: String, default: 'en' },
-    country: String,
-    content_hash: String, // MD5(title+url) for deduplication
-    keywords: [String],
+    title: {
+      type: String,
+      required: [true, 'Title is required'],
+      trim: true,
+    },
+    description: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    content: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    url: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    image_url: {
+      type: String,
+      default: null,
+    },
+    published_at: {
+      type: Date,
+      default: null,
+      index: true,
+    },
+    source_name: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    author: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    country: {
+      type: String,
+      trim: true,
+      uppercase: true,
+      default: null,
+      index: true,
+    },
+    language: {
+      type: String,
+      default: 'en',
+    },
+    content_hash: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    is_analyzed: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
     entities: {
-      countries: [String],
-      people: [String],
-      organizations: [String],
+      countries: { type: [String], default: [] },
+      people: { type: [String], default: [] },
+      organizations: { type: [String], default: [] },
     },
-    is_analyzed: { type: Boolean, default: false },
-    categories: [String],
+    fetch_batch_id: {
+      type: String,
+      default: null,
+    },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 );
 
-articleSchema.index({ title: 'text', content: 'text' });
-articleSchema.index({ content_hash: 1 }, { unique: true, sparse: true });
-articleSchema.index({ ingested_at: -1 });
-articleSchema.index({ published_at: -1 });
-articleSchema.index({ source_api: 1 });
-articleSchema.index({ is_analyzed: 1 });
-articleSchema.index({ 'entities.countries': 1 });
-articleSchema.index({ url: 1 }, { sparse: true });
+// TTL index — auto-delete raw data after 7 days
+ArticleSchema.index({ createdAt: 1 }, { expireAfterSeconds: 7 * 24 * 60 * 60 });
 
-export const Article = model<IArticle>('Article', articleSchema);
+// Text index for keyword search
+ArticleSchema.index({ title: 'text', description: 'text' });
+
+// Compound index for analysis queries
+ArticleSchema.index({ is_analyzed: 1, createdAt: -1 });
+
+/**
+ * Generate content hash from title (used for deduplication)
+ */
+ArticleSchema.statics.generateHash = (title: string): string => {
+  return crypto.createHash('sha256').update(title.toLowerCase().trim()).digest('hex').slice(0, 32);
+};
+
+// Auto-generate content_hash from title if not provided
+ArticleSchema.pre('validate', function (next) {
+  if (!this.content_hash && this.title) {
+    this.content_hash = crypto
+      .createHash('sha256')
+      .update(this.title.toLowerCase().trim())
+      .digest('hex')
+      .slice(0, 32);
+  }
+  next();
+});
+
+export const Article = model<IArticle>('Article', ArticleSchema);

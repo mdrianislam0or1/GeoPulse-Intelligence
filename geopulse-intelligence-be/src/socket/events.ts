@@ -12,6 +12,9 @@ export const SOCKET_EVENTS = {
 
   // User
   WATCHLIST_ALERT: 'watchlist:alert',
+
+  // Dashboard
+  DASHBOARD_UPDATE: 'dashboard:update',
 } as const;
 
 export type SocketEvent = typeof SOCKET_EVENTS[keyof typeof SOCKET_EVENTS];

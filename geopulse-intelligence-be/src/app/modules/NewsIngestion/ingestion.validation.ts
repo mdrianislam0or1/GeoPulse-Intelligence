@@ -1,15 +1,26 @@
 import { z } from 'zod';
 
-export const articleSearchSchema = z.object({
+export const getArticlesValidation = z.object({
   query: z.object({
-    q: z.string().optional(),
-    source_api: z.enum(['newsapi', 'currentsapi', 'gnews', 'rss2json', 'manual']).optional(),
-    language: z.string().min(2).max(5).optional(),
-    country: z.string().min(2).max(5).optional(),
-    from: z.string().datetime().optional(),
-    to: z.string().datetime().optional(),
+    page: z.string().optional(),
+    limit: z.string().optional(),
+    source_api: z.enum(['newsapi', 'currentsapi', 'gnews', 'rss2json']).optional(),
+    country: z.string().max(5).optional(),
     is_analyzed: z.enum(['true', 'false']).optional(),
-    limit: z.string().regex(/^\d+$/).optional(),
-    page: z.string().regex(/^\d+$/).optional(),
+    search: z.string().max(200).optional(),
+    from_date: z.string().optional(),
+    to_date: z.string().optional(),
+  }),
+});
+
+export const triggerIngestionValidation = z.object({
+  body: z.object({
+    source: z.enum(['newsapi', 'currentsapi', 'gnews', 'rss2json', 'all']).optional(),
+  }),
+});
+
+export const getArticleByIdValidation = z.object({
+  params: z.object({
+    id: z.string().length(24, 'Invalid article ID'),
   }),
 });

@@ -1,26 +1,52 @@
 import { Document, Schema, Types, model } from 'mongoose';
 
 export interface IUserAlert extends Document {
+  _id: Types.ObjectId;
   user_id: Types.ObjectId;
-  article_id: Types.ObjectId;
-  watchlist_id: Types.ObjectId;
-  type: 'country' | 'keyword' | 'category' | 'crisis';
+  type: string;
+  article_id?: Types.ObjectId;
+  value: string;
+  message: string;
   is_read: boolean;
   createdAt: Date;
 }
 
-const userAlertSchema = new Schema<IUserAlert>(
+const UserAlertSchema = new Schema<IUserAlert>(
   {
-    user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    article_id: { type: Schema.Types.ObjectId, ref: 'Article', required: true },
-    watchlist_id: { type: Schema.Types.ObjectId, ref: 'Watchlist', required: true },
-    type: { type: String, enum: ['country', 'keyword', 'category', 'crisis'], required: true },
-    is_read: { type: Boolean, default: false },
+    user_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
+    type: {
+      type: String,
+      required: true,
+    },
+    article_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'Article',
+      default: null,
+    },
+    value: {
+      type: String,
+      required: true,
+    },
+    message: {
+      type: String,
+      default: '',
+    },
+    is_read: {
+      type: Boolean,
+      default: false,
+    },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  },
 );
 
-userAlertSchema.index({ user_id: 1, is_read: 1 });
-userAlertSchema.index({ createdAt: -1 });
+// TTL — auto-delete alerts after 30 days
+UserAlertSchema.index({ createdAt: 1 }, { expireAfterSeconds: 30 * 24 * 60 * 60 });
 
-export const UserAlert = model<IUserAlert>('UserAlert', userAlertSchema);
+export const UserAlert = model<IUserAlert>('UserAlert', UserAlertSchema);

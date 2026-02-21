@@ -71,6 +71,16 @@ export function initSocket(server: HttpServer): Server {
       logger.info(`📌 User ${userId} joined room via socket ${socket.id}`);
     });
 
+    // Allow admin users to join admin-specific room
+    socket.on('join:admin', (userId: unknown) => {
+      if (!isValidUserId(userId)) {
+        socket.emit('error', { code: 4000, message: 'Invalid userId' });
+        return;
+      }
+      socket.join('admin');
+      logger.info(`👑 Admin ${userId} joined admin room via socket ${socket.id}`);
+    });
+
     socket.on('disconnect', () => {
       socketRateLimitMap.delete(socket.id);
       logger.info(`❌ Socket disconnected: ${socket.id}`);

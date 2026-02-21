@@ -1,26 +1,44 @@
 import express from 'express';
 import { auth } from '../../../middleware/auth';
+import validateRequest from '../../../middleware/validation.middleware';
 import { analysisController } from './analysis.controller';
+import {
+    getAnalysesValidation,
+    getAnalysisByArticleIdValidation,
+    triggerAnalysisValidation,
+} from './analysis.validation';
 
 const router = express.Router();
 
-// Full AI analysis for single article
-router.post('/analyze/:articleId', auth('admin'), analysisController.analyzeArticle);
+/**
+ * @route   GET /api/analysis
+ * @desc    Get paginated analyses
+ * @access  Private
+ */
+router.get('/', auth(), validateRequest(getAnalysesValidation), analysisController.getAnalyses);
 
-// Batch analyze unprocessed articles
-router.post('/batch-analyze', auth('admin'), analysisController.batchAnalyze);
+/**
+ * @route   GET /api/analysis/article/:articleId
+ * @desc    Get analysis for specific article
+ * @access  Private
+ */
+router.get(
+  '/article/:articleId',
+  auth(),
+  validateRequest(getAnalysisByArticleIdValidation),
+  analysisController.getAnalysisByArticleId,
+);
 
-// Individual analysis endpoints
-router.post('/classify', auth('admin'), analysisController.classify);
-router.post('/sentiment', auth('admin'), analysisController.sentiment);
-router.post('/bias-detection', auth('admin'), analysisController.biasDetection);
-router.post('/fake-news-check', auth('admin'), analysisController.fakeNewsCheck);
-router.post('/topic-modeling', auth('admin'), analysisController.topicModeling);
-
-// Get analysis result for specific article
-router.get('/article/:id', auth(), analysisController.getArticleAnalysis);
-
-// Trending topics and sentiment
-router.get('/trends/:timeframe', auth(), analysisController.getTrends);
+/**
+ * @route   POST /api/analysis/trigger
+ * @desc    Manually trigger analysis (admin only)
+ * @access  Admin
+ */
+router.post(
+  '/trigger',
+  auth('admin'),
+  validateRequest(triggerAnalysisValidation),
+  analysisController.triggerAnalysis,
+);
 
 export const analysisRoutes = router;

@@ -1,26 +1,54 @@
 import { Document, Schema, Types, model } from 'mongoose';
 
 export interface IWatchlist extends Document {
+  _id: Types.ObjectId;
   user_id: Types.ObjectId;
-  type: 'country' | 'keyword' | 'category';
-  value: string; // ISO code, keyword, or category name
-  notify_email: boolean;
+  type: 'country' | 'keyword' | 'source' | 'topic';
+  value: string;
   notify_socket: boolean;
+  notify_email: boolean;
+  is_active: boolean;
   createdAt: Date;
+  updatedAt: Date;
 }
 
-const watchlistSchema = new Schema<IWatchlist>(
+const WatchlistSchema = new Schema<IWatchlist>(
   {
-    user_id: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    type: { type: String, enum: ['country', 'keyword', 'category'], required: true },
-    value: { type: String, required: true },
-    notify_email: { type: Boolean, default: false },
-    notify_socket: { type: Boolean, default: true },
+    user_id: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
+    type: {
+      type: String,
+      enum: ['country', 'keyword', 'source', 'topic'],
+      required: true,
+    },
+    value: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    notify_socket: {
+      type: Boolean,
+      default: true,
+    },
+    notify_email: {
+      type: Boolean,
+      default: false,
+    },
+    is_active: {
+      type: Boolean,
+      default: true,
+    },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  },
 );
 
-watchlistSchema.index({ user_id: 1 });
-watchlistSchema.index({ type: 1, value: 1 });
+// Compound unique index: same user can't watch same type+value twice
+WatchlistSchema.index({ user_id: 1, type: 1, value: 1 }, { unique: true });
 
-export const Watchlist = model<IWatchlist>('Watchlist', watchlistSchema);
+export const Watchlist = model<IWatchlist>('Watchlist', WatchlistSchema);

@@ -1,86 +1,72 @@
 import axios from 'axios';
+import crypto from 'crypto';
 import config from '../../../../config';
 import logger from '../../../../utils/logger';
-import { normalizeNewsAPI } from '../utils/normalizers';
+import type { IRawArticle } from '../ingestion.interface';
+import { canUseApi, incrementApiUsage } from '../models/ApiUsage';
 
-const COUNTRY_CODES = ['us', 'gb', 'in', 'au', 'bd', 'ca', 'de', 'fr', 'jp'];
-const KEYWORDS = ['war', 'economy', 'climate', 'election', 'politics'];
+const BANGLADESH_QUERIES = ['bangladesh', 'dhaka', 'bangla'];
+const GLOBAL_QUERIES = ['crisis', 'breaking news', 'world news'];
 
 /**
- * Fetch top-headlines for a country code.
- * Returns normalized article objects.
+ * Fetch articles from NewsAPI.org
  */
-export const fetchTopHeadlines = async (country: string): Promise<any[]> => {
-  try {
-    const response = await axios.get(`${config.newsApis.newsapi.baseUrl}/top-headlines`, {
-      params: {
-        country,
-        pageSize: 20,
-        apiKey: config.newsApis.newsapi.key,
-      },
-      timeout: 10_000,
-    });
-
-    if (response.data?.status !== 'ok') return [];
-    const articles = response.data?.articles || [];
-    // Filter out [Removed] articles
-    return articles
-      .filter((a: any) => a.title && a.title !== '[Removed]' && a.url)
-      .map((a: any) => normalizeNewsAPI(a, country));
-  } catch (err: any) {
-    logger.error(`[NewsAPI] fetchTopHeadlines(${country}) failed`, { error: err.message });
+export const fetchAllNewsAPI = async (): Promise<IRawArticle[]> => {
+  const { key, baseUrl } = config.newsApis.newsapi;
+  if (!key) {
+    logger.warn('[NewsAPI] No API key configured, skipping');
     return [];
   }
-};
 
-/**
- * Fetch articles by keyword using /everything endpoint.
- */
-export const fetchEverythingByKeyword = async (keyword: string): Promise<any[]> => {
-  try {
-    const fromDate = new Date();
-    fromDate.setDate(fromDate.getDate() - 1);
-
-    const response = await axios.get(`${config.newsApis.newsapi.baseUrl}/everything`, {
-      params: {
-        q: keyword,
-        from: fromDate.toISOString().split('T')[0],
-        sortBy: 'popularity',
-        pageSize: 20,
-        apiKey: config.newsApis.newsapi.key,
-      },
-      timeout: 10_000,
-    });
-
-    if (response.data?.status !== 'ok') return [];
-    const articles = response.data?.articles || [];
-    return articles
-      .filter((a: any) => a.title && a.title !== '[Removed]' && a.url)
-      .map((a: any) => normalizeNewsAPI(a, 'global'));
-  } catch (err: any) {
-    logger.error(`[NewsAPI] fetchEverythingByKeyword(${keyword}) failed`, { error: err.message });
+  const canUse = await canUseApi('newsapi');
+  if (!canUse) {
+    logger.warn('[NewsAPI] Daily limit reached, skipping');
     return [];
   }
-};
 
-/**
- * Run a full NewsAPI fetch cycle.
- * Rotates through countries + keywords.
- */
-export const fetchAllNewsAPI = async (): Promise<any[]> => {
-  const all: any[] = [];
+  const articles: IRawArticle[] = [];
+  const queries = [...BANGLADESH_QUERIES, ...GLOBAL_QUERIES];
 
-  // Rotate country — pick based on hour to spread calls
-  const hourIndex = new Date().getHours() % COUNTRY_CODES.length;
-  const country = COUNTRY_CODES[hourIndex];
-  const headlines = await fetchTopHeadlines(country);
-  all.push(...headlines);
+  try {
+    // Use 'everything' endpoint with BD queries
+    const query = queries[Math.floor(Math.random() * queries.length)];
+    const response = await axios.get(`${baseUrl}/everything`, {
+      params: {
+        q: query,
+        language: 'en',
+        sortBy: 'publishedAt',
+        pageSize: 20,
+        apiKey: key,
+      },
+      timeout: 15000,
+    });
 
-  // One keyword per run
-  const keywordIndex = new Date().getHours() % KEYWORDS.length;
-  const keyword = KEYWORDS[keywordIndex];
-  const keywordArticles = await fetchEverythingByKeyword(keyword);
-  all.push(...keywordArticles);
+    await incrementApiUsage('newsapi');
 
-  return all;
+    if (response.data?.articles) {
+      for (const a of response.data.articles) {
+        if (!a.title || a.title === '[Removed]') continue;
+        articles.push({
+          source_api: 'newsapi',
+          title: a.title,
+          description: a.description || '',
+          content: a.content || '',
+          url: a.url || '',
+          image_url: a.urlToImage || '',
+          published_at: a.publishedAt || new Date().toISOString(),
+          source_name: a.source?.name || '',
+          author: a.author || '',
+          country: 'BD',
+          language: 'en',
+          content_hash: crypto.createHash('sha256').update(a.title.toLowerCase().trim()).digest('hex').slice(0, 32),
+        });
+      }
+    }
+
+    logger.info(`[NewsAPI] Fetched ${articles.length} articles for query "${query}"`);
+  } catch (error: any) {
+    logger.error('[NewsAPI] Fetch error:', error.message);
+  }
+
+  return articles;
 };

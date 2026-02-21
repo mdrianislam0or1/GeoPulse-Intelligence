@@ -1,18 +1,9 @@
-import { Document, Schema, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
+import config from '../../../../config';
+import logger from '../../../../utils/logger';
+import type { IApiUsage } from '../ingestion.interface';
 
-export interface IApiUsage extends Document {
-  api_name: 'newsapi' | 'currentsapi' | 'gnews' | 'rss2json';
-  daily_count: number;
-  max_daily_limit: number;
-  last_reset: Date;
-  is_active: boolean;
-  last_fetch_at?: Date;
-  total_lifetime_calls: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const apiUsageSchema = new Schema<IApiUsage>(
+const ApiUsageSchema = new Schema<IApiUsage>(
   {
     api_name: {
       type: String,
@@ -20,69 +11,83 @@ const apiUsageSchema = new Schema<IApiUsage>(
       unique: true,
       enum: ['newsapi', 'currentsapi', 'gnews', 'rss2json'],
     },
-    daily_count: { type: Number, default: 0 },
-    max_daily_limit: { type: Number, required: true },
-    last_reset: { type: Date, default: Date.now },
-    is_active: { type: Boolean, default: true },
-    last_fetch_at: Date,
-    total_lifetime_calls: { type: Number, default: 0 },
+    daily_limit: {
+      type: Number,
+      required: true,
+    },
+    used_today: {
+      type: Number,
+      default: 0,
+    },
+    last_reset: {
+      type: Date,
+      default: Date.now,
+    },
+    last_used_at: {
+      type: Date,
+      default: null,
+    },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+  },
 );
 
-export const ApiUsage = model<IApiUsage>('ApiUsage', apiUsageSchema);
+export const ApiUsage = model<IApiUsage>('ApiUsage', ApiUsageSchema);
 
 /**
- * Seed initial API usage records on app startup.
- * Uses upsert so it's safe to call multiple times.
+ * Seed default API usage records (safe to run every startup — upsert)
  */
 export const seedApiUsage = async (): Promise<void> => {
-  const sources = [
-    { api_name: 'newsapi', max_daily_limit: 500 },
-    { api_name: 'currentsapi', max_daily_limit: 20 },
-    { api_name: 'gnews', max_daily_limit: 100 },
-    { api_name: 'rss2json', max_daily_limit: 9999 },
+  const apis = [
+    { api_name: 'newsapi', daily_limit: config.newsApis.newsapi.dailyLimit },
+    { api_name: 'currentsapi', daily_limit: config.newsApis.currentsapi.dailyLimit },
+    { api_name: 'gnews', daily_limit: config.newsApis.gnews.dailyLimit },
+    { api_name: 'rss2json', daily_limit: config.newsApis.rss2json.dailyLimit },
   ];
 
-  for (const src of sources) {
+  for (const api of apis) {
     await ApiUsage.findOneAndUpdate(
-      { api_name: src.api_name },
-      { $setOnInsert: { ...src, is_active: true, daily_count: 0, total_lifetime_calls: 0 } },
+      { api_name: api.api_name },
+      { $setOnInsert: { ...api, used_today: 0, last_reset: new Date() } },
       { upsert: true, new: true },
     );
   }
+
+  logger.info('✅ ApiUsage records seeded/verified');
 };
 
 /**
- * Check if an API is within its daily limit.
- * Automatically resets counter after 24 hours.
- * Returns true if the request can proceed.
+ * Check if an API can be used (hasn't exceeded daily limit)
+ * Also auto-resets if a new day has started.
  */
-export const checkAndIncrementUsage = async (
-  apiName: IApiUsage['api_name'],
-): Promise<boolean> => {
-  const usage = await ApiUsage.findOne({ api_name: apiName });
-  if (!usage) return false;
+export const canUseApi = async (apiName: string): Promise<boolean> => {
+  const record = await ApiUsage.findOne({ api_name: apiName });
+  if (!record) return false;
 
-  // Reset if 24 hours have passed
-  const hoursSinceReset = (Date.now() - usage.last_reset.getTime()) / 3_600_000;
-  if (hoursSinceReset >= 24) {
-    usage.daily_count = 0;
-    usage.last_reset = new Date();
-    usage.is_active = true;
+  // Auto-reset if last_reset was before today midnight
+  const now = new Date();
+  const lastReset = new Date(record.last_reset);
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  if (lastReset < todayMidnight) {
+    record.used_today = 0;
+    record.last_reset = now;
+    await record.save();
   }
 
-  // Check limit
-  if (!usage.is_active || usage.daily_count >= usage.max_daily_limit) {
-    usage.is_active = false;
-    await usage.save();
-    return false;
-  }
+  return record.used_today < record.daily_limit;
+};
 
-  // Increment usage
-  usage.daily_count += 1;
-  usage.total_lifetime_calls += 1;
-  usage.last_fetch_at = new Date();
-  await usage.save();
-  return true;
+/**
+ * Increment usage counter
+ */
+export const incrementApiUsage = async (apiName: string): Promise<void> => {
+  await ApiUsage.findOneAndUpdate(
+    { api_name: apiName },
+    {
+      $inc: { used_today: 1 },
+      $set: { last_used_at: new Date() },
+    },
+  );
 };

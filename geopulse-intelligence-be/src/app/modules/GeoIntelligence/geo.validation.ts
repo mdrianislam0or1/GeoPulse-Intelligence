@@ -1,16 +1,24 @@
 import { z } from 'zod';
 
-/**
- * Validation schema for POST /api/geo/correlate-events
- * Accept an optional array of 2-3 char ISO country codes (max 20).
- */
-export const correlateEventsSchema = z.object({
-  body: z.object({
-    countryCodes: z
-      .array(
-        z.string().regex(/^[A-Za-z]{2,3}$/, 'Each country code must be 2-3 alphabetic characters'),
-      )
-      .max(20, 'Cannot correlate more than 20 countries at once')
-      .optional(),
+export const getCrisesValidation = z.object({
+  query: z.object({
+    page: z.string().optional(),
+    limit: z.string().optional(),
+    status: z.enum(['active', 'monitoring', 'resolved']).optional(),
+    severity: z.enum(['low', 'medium', 'high', 'critical']).optional(),
+    type: z.string().optional(),
+    country: z.string().max(5).optional(),
+  }),
+});
+
+export const getCrisisByIdValidation = z.object({
+  params: z.object({
+    id: z.string().length(24, 'Invalid crisis ID'),
+  }),
+});
+
+export const getCountriesValidation = z.object({
+  query: z.object({
+    region: z.string().optional(),
   }),
 });

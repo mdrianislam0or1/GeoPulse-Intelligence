@@ -1,70 +1,68 @@
 import axios from 'axios';
+import crypto from 'crypto';
 import config from '../../../../config';
 import logger from '../../../../utils/logger';
-import { checkAndIncrementUsage } from '../models/ApiUsage';
-import { normalizeCurrentsAPI } from '../utils/normalizers';
+import type { IRawArticle } from '../ingestion.interface';
+import { canUseApi, incrementApiUsage } from '../models/ApiUsage';
 
 /**
- * ⚠️ CRITICAL: CurrentsAPI free plan = 20 requests per 24 hours HARD LIMIT.
- * ALL calls MUST go through checkAndIncrementUsage first.
+ * Fetch articles from CurrentsAPI
+ * CRITICAL: Hard 20 requests per 24 hours
  */
-export const fetchLatestNews = async (): Promise<any[]> => {
-  const allowed = await checkAndIncrementUsage('currentsapi');
-  if (!allowed) {
-    logger.warn('[CurrentsAPI] Daily limit reached (20/day) — skipping fetch');
+export const fetchAllCurrentsAPI = async (): Promise<IRawArticle[]> => {
+  const { key, baseUrl } = config.newsApis.currentsapi;
+  if (!key) {
+    logger.warn('[CurrentsAPI] No API key configured, skipping');
     return [];
   }
+
+  // CRITICAL: Check usage BEFORE making any request
+  const canUse = await canUseApi('currentsapi');
+  if (!canUse) {
+    logger.warn('[CurrentsAPI] ⚠️ Daily limit (20) reached — HARD STOP');
+    return [];
+  }
+
+  const articles: IRawArticle[] = [];
 
   try {
-    const response = await axios.get(`${config.newsApis.currentsapi.baseUrl}/latest-news`, {
-      headers: { Authorization: config.newsApis.currentsapi.key },
-      timeout: 10_000,
+    const response = await axios.get(`${baseUrl}/search`, {
+      params: {
+        keywords: 'bangladesh OR dhaka OR crisis',
+        language: 'en',
+        type: 1, // news
+        apiKey: key,
+      },
+      timeout: 15000,
     });
 
-    if (response.data?.status !== 'ok') return [];
-    return (response.data?.news || []).map((item: any) => normalizeCurrentsAPI(item));
-  } catch (err: any) {
-    logger.error('[CurrentsAPI] fetchLatestNews failed', { error: err.message });
-    return [];
+    // Increment IMMEDIATELY after successful request
+    await incrementApiUsage('currentsapi');
+
+    if (response.data?.news) {
+      for (const a of response.data.news) {
+        if (!a.title) continue;
+        articles.push({
+          source_api: 'currentsapi',
+          title: a.title,
+          description: a.description || '',
+          content: a.description || '', // CurrentsAPI returns description as content
+          url: a.url || '',
+          image_url: a.image !== 'None' ? a.image : '',
+          published_at: a.published || new Date().toISOString(),
+          source_name: a.author || '',
+          author: a.author || '',
+          country: 'BD',
+          language: a.language || 'en',
+          content_hash: crypto.createHash('sha256').update(a.title.toLowerCase().trim()).digest('hex').slice(0, 32),
+        });
+      }
+    }
+
+    logger.info(`[CurrentsAPI] Fetched ${articles.length} articles (usage incremented)`);
+  } catch (error: any) {
+    logger.error('[CurrentsAPI] Fetch error:', error.message);
   }
-};
 
-/**
- * Search CurrentsAPI for specific keywords/language.
- * Always checks rate limit first.
- */
-export const searchCurrentsAPI = async (
-  keywords: string,
-  language = 'en',
-  country?: string,
-): Promise<any[]> => {
-  const allowed = await checkAndIncrementUsage('currentsapi');
-  if (!allowed) {
-    logger.warn('[CurrentsAPI] Daily limit reached (20/day) — skipping search');
-    return [];
-  }
-
-  try {
-    const params: Record<string, string> = { keywords, language, apiKey: config.newsApis.currentsapi.key };
-    if (country) params.country = country;
-
-    const response = await axios.get(`${config.newsApis.currentsapi.baseUrl}/search`, {
-      headers: { Authorization: config.newsApis.currentsapi.key },
-      params,
-      timeout: 10_000,
-    });
-
-    if (response.data?.status !== 'ok') return [];
-    return (response.data?.news || []).map((item: any) => normalizeCurrentsAPI(item));
-  } catch (err: any) {
-    logger.error('[CurrentsAPI] searchCurrentsAPI failed', { error: err.message });
-    return [];
-  }
-};
-
-/**
- * Full CurrentsAPI fetch cycle — uses 1 of the 20 daily calls.
- */
-export const fetchAllCurrentsAPI = async (): Promise<any[]> => {
-  return fetchLatestNews();
+  return articles;
 };

@@ -1,5 +1,5 @@
 {
-  "name": "geopulse-intelligence-fe",
+  "name": "geopulse-intelligence-be",
   "version": "1.0.0",
   "description": "Portfolio Backend API with Node.js, Express, MongoDB, Redis",
   "private": true,

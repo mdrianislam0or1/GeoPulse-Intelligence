@@ -2,16 +2,29 @@ import express from 'express';
 import { auth } from '../../../middleware/auth';
 import validateRequest from '../../../middleware/validation.middleware';
 import { geoController } from './geo.controller';
-import { correlateEventsSchema } from './geo.validation';
+import { getCountriesValidation, getCrisesValidation, getCrisisByIdValidation } from './geo.validation';
 
 const router = express.Router();
 
-router.get('/countries', auth(), geoController.getAllCountries);
-router.get('/country/:code', auth(), geoController.getCountryDetail);
-router.get('/stability-index/:code', auth(), geoController.getStabilityIndex);
-router.get('/conflict-zones', auth(), geoController.getConflictZones);
-router.get('/regional-analysis/:region', auth(), geoController.getRegionalAnalysis);
-router.get('/heatmap-data', auth(), geoController.getHeatmapData);
-router.post('/correlate-events', auth(), validateRequest(correlateEventsSchema), geoController.correlateEvents);
+/**
+ * @route   GET /api/geo/crises
+ * @desc    Get all crisis events
+ * @access  Private
+ */
+router.get('/crises', auth(), validateRequest(getCrisesValidation), geoController.getCrises);
+
+/**
+ * @route   GET /api/geo/crises/:id
+ * @desc    Get single crisis by ID
+ * @access  Private
+ */
+router.get('/crises/:id', auth(), validateRequest(getCrisisByIdValidation), geoController.getCrisisById);
+
+/**
+ * @route   GET /api/geo/countries
+ * @desc    Get country list
+ * @access  Private
+ */
+router.get('/countries', auth(), validateRequest(getCountriesValidation), geoController.getCountries);
 
 export const geoRoutes = router;

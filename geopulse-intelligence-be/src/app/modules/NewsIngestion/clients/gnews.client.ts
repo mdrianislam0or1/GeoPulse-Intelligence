@@ -1,85 +1,66 @@
 import axios from 'axios';
+import crypto from 'crypto';
 import config from '../../../../config';
 import logger from '../../../../utils/logger';
-import { normalizeGNews } from '../utils/normalizers';
-
-const GNEWS_QUERIES = ['politics', 'economy', 'war', 'climate', 'technology'];
+import type { IRawArticle } from '../ingestion.interface';
+import { canUseApi, incrementApiUsage } from '../models/ApiUsage';
 
 /**
- * Fetch GNews top headlines for a language/country.
+ * Fetch articles from GNews.io
  */
-export const fetchGNewsHeadlines = async (
-  lang = 'en',
-  country?: string,
-  maxArticles = 10,
-): Promise<any[]> => {
-  try {
-    const params: Record<string, any> = {
-      lang,
-      max: maxArticles,
-      apikey: config.newsApis.gnews.key,
-    };
-    if (country) params.country = country;
-
-    const response = await axios.get(`${config.newsApis.gnews.baseUrl}/top-headlines`, {
-      params,
-      timeout: 10_000,
-    });
-
-    return (response.data?.articles || []).map((a: any) => normalizeGNews(a));
-  } catch (err: any) {
-    logger.error(`[GNews] fetchGNewsHeadlines(${lang}) failed`, { error: err.message });
+export const fetchAllGNews = async (): Promise<IRawArticle[]> => {
+  const { key, baseUrl } = config.newsApis.gnews;
+  if (!key) {
+    logger.warn('[GNews] No API key configured, skipping');
     return [];
   }
-};
 
-/**
- * Search GNews for a keyword in a specific language.
- */
-export const searchGNews = async (
-  query: string,
-  lang = 'en',
-  maxArticles = 10,
-): Promise<any[]> => {
+  const canUse = await canUseApi('gnews');
+  if (!canUse) {
+    logger.warn('[GNews] Daily limit reached, skipping');
+    return [];
+  }
+
+  const articles: IRawArticle[] = [];
+
   try {
-    const response = await axios.get(`${config.newsApis.gnews.baseUrl}/search`, {
+    const response = await axios.get(`${baseUrl}/search`, {
       params: {
-        q: query,
-        lang,
-        max: maxArticles,
-        sortby: 'publishedAt',
-        apikey: config.newsApis.gnews.key,
+        q: 'bangladesh',
+        lang: 'en',
+        country: 'bd',
+        max: 10,
+        apikey: key,
       },
-      timeout: 10_000,
+      timeout: 15000,
     });
 
-    return (response.data?.articles || []).map((a: any) => normalizeGNews(a));
-  } catch (err: any) {
-    logger.error(`[GNews] searchGNews(${query}) failed`, { error: err.message });
-    return [];
+    await incrementApiUsage('gnews');
+
+    if (response.data?.articles) {
+      for (const a of response.data.articles) {
+        if (!a.title) continue;
+        articles.push({
+          source_api: 'gnews',
+          title: a.title,
+          description: a.description || '',
+          content: a.content || '',
+          url: a.url || '',
+          image_url: a.image || '',
+          published_at: a.publishedAt || new Date().toISOString(),
+          source_name: a.source?.name || '',
+          author: a.source?.name || '',
+          country: 'BD',
+          language: 'en',
+          content_hash: crypto.createHash('sha256').update(a.title.toLowerCase().trim()).digest('hex').slice(0, 32),
+        });
+      }
+    }
+
+    logger.info(`[GNews] Fetched ${articles.length} articles`);
+  } catch (error: any) {
+    logger.error('[GNews] Fetch error:', error.message);
   }
-};
 
-/**
- * Full GNews fetch cycle: English global + Bengali (Bangladesh).
- * Picks rotating keyword to stay within 100/day limit.
- */
-export const fetchAllGNews = async (): Promise<any[]> => {
-  const all: any[] = [];
-
-  // English global headlines
-  const global = await fetchGNewsHeadlines('en', undefined, 10);
-  all.push(...global);
-
-  // Bengali / Bangladesh news
-  const bengali = await fetchGNewsHeadlines('bn', 'bd', 10);
-  all.push(...bengali);
-
-  // Rotating keyword
-  const kwIdx = new Date().getHours() % GNEWS_QUERIES.length;
-  const keyword = GNEWS_QUERIES[kwIdx];
-  const keywordArticles = await searchGNews(keyword, 'en', 10);
-  all.push(...keywordArticles);
-
-  return all;
+  return articles;
 };

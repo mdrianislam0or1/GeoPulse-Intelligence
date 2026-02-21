@@ -1,196 +1,201 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { getIO } from '../../../config/socket';
+import { SOCKET_EVENTS } from '../../../socket/events';
 import logger from '../../../utils/logger';
-import { watchlistService } from '../Auth/watchlist.service';
 import { fetchAllCurrentsAPI } from './clients/currentsapi.client';
 import { fetchAllGNews } from './clients/gnews.client';
 import { fetchAllNewsAPI } from './clients/newsapi.client';
 import { fetchAllRSS2JSON } from './clients/rss2json.client';
-import { ApiUsage } from './models/ApiUsage';
+import type { IIngestionResult, IRawArticle } from './ingestion.interface';
 import { Article } from './models/Article';
-import { IngestionLog } from './models/IngestionLog';
 
-export type SourceName = 'newsapi' | 'currentsapi' | 'gnews' | 'rss2json';
+type SourceName = 'newsapi' | 'currentsapi' | 'gnews' | 'rss2json';
 
-interface FetchResult {
-  source: SourceName;
-  fetched: number;
-  saved: number;
-  duplicates: number;
-  status: 'success' | 'failed' | 'skipped';
-  error?: string;
-  duration_ms: number;
-}
+const SOURCE_FETCHERS: Record<SourceName, () => Promise<IRawArticle[]>> = {
+  newsapi: fetchAllNewsAPI,
+  currentsapi: fetchAllCurrentsAPI,
+  gnews: fetchAllGNews,
+  rss2json: fetchAllRSS2JSON,
+};
 
 /**
- * Save normalized articles to MongoDB.
- * Skips duplicates via content_hash uniqueness constraint.
+ * Save raw articles with deduplication (pre-check + unique index fallback)
  */
-const saveArticles = async (articles: any[]): Promise<{ saved: number; duplicates: number; newArticleIds: string[] }> => {
+const saveArticles = async (
+  rawArticles: IRawArticle[],
+): Promise<{ saved: number; duplicates: number }> => {
   let saved = 0;
   let duplicates = 0;
-  const newArticleIds: string[] = [];
 
-  for (const articleData of articles) {
+  for (const raw of rawArticles) {
+    // Skip articles with missing title or hash
+    if (!raw.title?.trim() || !raw.content_hash?.trim()) {
+      continue;
+    }
+
     try {
-      if (!articleData.title || !articleData.content_hash) {
+      // Pre-check: does this content_hash already exist?
+      const existing = await Article.findOne({ content_hash: raw.content_hash }).select('_id').lean();
+      if (existing) {
+        duplicates++;
         continue;
       }
 
-      const result = await Article.findOneAndUpdate(
-        { content_hash: articleData.content_hash },
-        { $setOnInsert: articleData },
-        { upsert: true, new: false }, // Returns null if inserted
-      );
-
-      if (result) {
+      await Article.create({
+        source_api: raw.source_api,
+        title: raw.title,
+        description: raw.description,
+        content: raw.content,
+        url: raw.url,
+        image_url: raw.image_url,
+        published_at: raw.published_at ? new Date(raw.published_at) : undefined,
+        source_name: raw.source_name,
+        author: raw.author,
+        country: raw.country,
+        language: raw.language,
+        content_hash: raw.content_hash,
+      });
+      saved++;
+    } catch (error: any) {
+      // Fallback: catch E11000 duplicate key from concurrent inserts
+      const isDuplicate =
+        error?.code === 11000 ||
+        error?.message?.includes('duplicate key') ||
+        error?.message?.includes('E11000');
+      if (isDuplicate) {
         duplicates++;
       } else {
-        const newDoc = await Article.findOne({ content_hash: articleData.content_hash });
-        if (newDoc) {
-          saved++;
-          newArticleIds.push(newDoc._id.toString() as string);
-        }
-      }
-    } catch (err: any) {
-      if (err.code === 11000) {
-        duplicates++;
-      } else {
-        logger.error('[Ingestion] Error saving article', { error: err.message, title: articleData.title });
+        logger.error(`[Ingestion] Save error: ${error.message}`);
       }
     }
   }
 
-  return { saved, duplicates, newArticleIds };
+  return { saved, duplicates };
 };
 
 /**
- * Fetch from a single source and save results.
+ * Fetch articles from a specific source
  */
-const fetchFromSource = async (
-  source: SourceName,
-  triggeredBy: 'cron' | 'manual' = 'cron',
-): Promise<FetchResult> => {
-  const startTime = Date.now();
-  let articles: any[] = [];
-  let status: FetchResult['status'] = 'success';
-  let errorMsg: string | undefined;
+const fetchFromSource = async (source: SourceName): Promise<IIngestionResult> => {
+  const fetcher = SOURCE_FETCHERS[source];
+  if (!fetcher) {
+    logger.warn(`[Ingestion] Unknown source: ${source}`);
+    return { source, fetched: 0, saved: 0, duplicates: 0, errors: 0, timestamp: new Date() };
+  }
 
   try {
-    switch (source) {
-      case 'newsapi':
-        articles = await fetchAllNewsAPI();
-        break;
-      case 'currentsapi':
-        articles = await fetchAllCurrentsAPI();
-        if (articles.length === 0) status = 'skipped'; // rate limited
-        break;
-      case 'gnews':
-        articles = await fetchAllGNews();
-        break;
-      case 'rss2json':
-        articles = await fetchAllRSS2JSON();
-        break;
-    }
-  } catch (err: any) {
-    status = 'failed';
-    errorMsg = err.message;
-    logger.error(`[Ingestion] fetchFromSource(${source}) crashed`, { error: err.message });
+    const rawArticles = await fetcher();
+    const { saved, duplicates } = await saveArticles(rawArticles);
+
+    const result: IIngestionResult = {
+      source,
+      fetched: rawArticles.length,
+      saved,
+      duplicates,
+      errors: rawArticles.length - saved - duplicates,
+      timestamp: new Date(),
+    };
+
+    logger.info(`[Ingestion] ${source}: fetched=${result.fetched} saved=${result.saved} dups=${result.duplicates}`);
+    return result;
+  } catch (error: any) {
+    logger.error(`[Ingestion] ${source} error: ${error.message}`);
+    return { source, fetched: 0, saved: 0, duplicates: 0, errors: 1, timestamp: new Date() };
   }
-
-  const { saved, duplicates, newArticleIds } = status !== 'skipped' && status !== 'failed'
-    ? await saveArticles(articles)
-    : { saved: 0, duplicates: 0, newArticleIds: [] as string[] };
-
-  // Trigger alert processing for each new article
-  if (newArticleIds.length > 0) {
-    // We process alerts asynchronously to not block the ingestion response
-    Promise.all(newArticleIds.map(id => watchlistService.processArticleAlerts(id)))
-      .catch(err => logger.error('[Ingestion] Error triggering article alerts', { error: err.message }));
-  }
-
-  const duration_ms = Date.now() - startTime;
-
-  // Log to DB
-  await IngestionLog.create({
-    source_api: source,
-    status,
-    articles_fetched: articles.length,
-    articles_saved: saved,
-    articles_duplicate: duplicates,
-    error_message: errorMsg,
-    duration_ms,
-    triggered_by: triggeredBy,
-  });
-
-  logger.info(`[Ingestion] ${source}: fetched=${articles.length}, saved=${saved}, dupes=${duplicates}, ${duration_ms}ms`);
-
-  return {
-    source,
-    fetched: articles.length,
-    saved,
-    duplicates,
-    status,
-    error: errorMsg,
-    duration_ms,
-  };
 };
 
 /**
- * Fetch from all 4 sources.
+ * Fetch from all sources
  */
-const fetchAllSources = async (triggeredBy: 'cron' | 'manual' = 'cron'): Promise<FetchResult[]> => {
+const fetchAll = async (): Promise<IIngestionResult[]> => {
   const sources: SourceName[] = ['newsapi', 'currentsapi', 'gnews', 'rss2json'];
-  const results: FetchResult[] = [];
+  const results: IIngestionResult[] = [];
 
   for (const source of sources) {
-    const result = await fetchFromSource(source, triggeredBy);
+    const result = await fetchFromSource(source);
     results.push(result);
+  }
+
+  // Emit socket event
+  try {
+    const io = getIO();
+    const totalSaved = results.reduce((sum, r) => sum + r.saved, 0);
+    io.emit(SOCKET_EVENTS.NEWS_INGESTED, {
+      totalSaved,
+      results,
+      timestamp: new Date().toISOString(),
+    });
+  } catch {
+    logger.debug('[Ingestion] Socket not available for emit');
   }
 
   return results;
 };
 
 /**
- * Get current API usage status for all sources.
+ * Get recent articles with filtering
  */
-const getApiUsageStatus = async () => {
-  return ApiUsage.find({}).lean();
-};
+const getArticles = async (query: {
+  page?: number;
+  limit?: number;
+  source_api?: string;
+  country?: string;
+  is_analyzed?: boolean;
+  search?: string;
+  from_date?: string;
+  to_date?: string;
+}) => {
+  const page = Math.max(1, query.page || 1);
+  const limit = Math.min(50, Math.max(1, query.limit || 20));
+  const skip = (page - 1) * limit;
 
-/**
- * Get ingestion pipeline status (recent logs).
- */
-const getPipelineStatus = async () => {
-  const logs = await IngestionLog.find({})
-    .sort({ createdAt: -1 })
-    .limit(20)
-    .lean();
+  const filter: any = {};
 
-  const totalArticles = await Article.countDocuments();
-  const unanalyzed = await Article.countDocuments({ is_analyzed: false });
+  if (query.source_api) filter.source_api = query.source_api;
+  if (query.country) filter.country = query.country.toUpperCase();
+  if (query.is_analyzed !== undefined) filter.is_analyzed = query.is_analyzed;
+  if (query.search) {
+    filter.$text = { $search: query.search };
+  }
+  if (query.from_date || query.to_date) {
+    filter.createdAt = {};
+    if (query.from_date) filter.createdAt.$gte = new Date(query.from_date);
+    if (query.to_date) filter.createdAt.$lte = new Date(query.to_date);
+  }
+
+  const [articles, total] = await Promise.all([
+    Article.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Article.countDocuments(filter),
+  ]);
 
   return {
-    recentLogs: logs,
-    totalArticles,
-    unanalyzedArticles: unanalyzed,
+    articles,
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+      hasNextPage: page < Math.ceil(total / limit),
+      hasPrevPage: page > 1,
+    },
   };
 };
 
 /**
- * Toggle a source on/off.
+ * Get a single article by ID
  */
-const toggleSource = async (source: SourceName, isActive: boolean) => {
-  const usage = await ApiUsage.findOneAndUpdate(
-    { api_name: source },
-    { is_active: isActive },
-    { new: true },
-  );
-  return usage;
+const getArticleById = async (articleId: string) => {
+  return Article.findById(articleId).lean();
 };
 
 export const ingestionService = {
   fetchFromSource,
-  fetchAllSources,
-  getApiUsageStatus,
-  getPipelineStatus,
-  toggleSource,
+  fetchAll,
+  getArticles,
+  getArticleById,
+  saveArticles,
 };

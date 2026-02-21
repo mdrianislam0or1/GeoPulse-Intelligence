@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from 'http-status';
 import { Types } from 'mongoose';
 import { getIO } from '../../../config/socket';
@@ -6,134 +7,166 @@ import { SOCKET_EVENTS } from '../../../socket/events';
 import logger from '../../../utils/logger';
 import { Article } from '../NewsIngestion/models/Article';
 import { UserAlert } from './userAlert.model';
-import { Watchlist } from './watchlist.model';
+import { IWatchlist, Watchlist } from './watchlist.model';
 
-// Create a new watchlist item
-const createWatchlist = async (userId: string, data: { type: string; value: string; notify_email?: boolean; notify_socket?: boolean }) => {
-  const existing = await Watchlist.findOne({ user_id: userId, type: data.type, value: data.value });
+/**
+ * Create a watchlist entry
+ */
+const createWatchlist = async (
+  userId: string,
+  data: { type: string; value: string; notify_socket?: boolean; notify_email?: boolean },
+): Promise<IWatchlist> => {
+  // Check for duplicate
+  const existing = await Watchlist.findOne({
+    user_id: new Types.ObjectId(userId),
+    type: data.type,
+    value: data.value,
+  });
+
   if (existing) {
     throw new ApplicationError(httpStatus.CONFLICT, 'Watchlist item already exists');
   }
 
-  const watchlist = await Watchlist.create({
+  const entry = await Watchlist.create({
     user_id: new Types.ObjectId(userId),
-    ...data
+    type: data.type,
+    value: data.value,
+    notify_socket: data.notify_socket ?? true,
+    notify_email: data.notify_email ?? false,
   });
 
-  return watchlist;
+  return entry;
 };
 
-// Get all watchlist items for a user
-const getMyWatchlist = async (userId: string) => {
-  return await Watchlist.find({ user_id: userId }).sort({ createdAt: -1 });
+/**
+ * Get all watchlist entries for a user
+ */
+const getWatchlists = async (userId: string) => {
+  return Watchlist.find({ user_id: new Types.ObjectId(userId), is_active: true }).lean();
 };
 
-// Remove a watchlist item
-const removeWatchlist = async (userId: string, watchlistId: string) => {
-  const result = await Watchlist.findOneAndDelete({ _id: watchlistId, user_id: userId });
+/**
+ * Delete a watchlist entry
+ */
+const deleteWatchlist = async (userId: string, watchlistId: string): Promise<void> => {
+  const result = await Watchlist.findOneAndDelete({
+    _id: new Types.ObjectId(watchlistId),
+    user_id: new Types.ObjectId(userId),
+  });
+
   if (!result) {
     throw new ApplicationError(httpStatus.NOT_FOUND, 'Watchlist item not found');
   }
-  return result;
 };
 
-// Process new article against all watchlists
-// This should be called after a new article is saved or analyzed
-const processArticleAlerts = async (articleId: string) => {
-  const article = await Article.findById(articleId);
+/**
+ * Get user alerts (notification history)
+ */
+const getUserAlerts = async (userId: string, page = 1, limit = 20) => {
+  const skip = (page - 1) * limit;
+
+  const [alerts, total] = await Promise.all([
+    UserAlert.find({ user_id: new Types.ObjectId(userId) })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate('article_id', 'title url')
+      .lean(),
+    UserAlert.countDocuments({ user_id: new Types.ObjectId(userId) }),
+  ]);
+
+  return {
+    alerts,
+    meta: { page, limit, total, totalPages: Math.ceil(total / limit) },
+  };
+};
+
+/**
+ * Mark alert as read
+ */
+const markAlertRead = async (userId: string, alertId: string) => {
+  return UserAlert.findOneAndUpdate(
+    { _id: new Types.ObjectId(alertId), user_id: new Types.ObjectId(userId) },
+    { is_read: true },
+    { new: true },
+  );
+};
+
+/**
+ * Process article alerts — called after each article is saved
+ * Matches article against all active watchlists and triggers notifications.
+ */
+const processArticleAlerts = async (articleId: string): Promise<void> => {
+  const article = await Article.findById(articleId).lean();
   if (!article) return;
 
-  logger.info(`[Alerts] Processing alerts for article: ${article.title}`);
+  const titleLower = (article.title || '').toLowerCase();
+  const contentLower = `${article.title || ''} ${article.description || ''} ${article.content || ''}`.toLowerCase();
+  const articleCountry = (article.country || '').toUpperCase();
 
-  // 1. Find country matches
-  const countryWatchlists = await Watchlist.find({ type: 'country', value: article.country });
+  // Fetch all active watchlists
+  const watchlists = await Watchlist.find({ is_active: true }).lean();
 
-  // 2. Find keyword matches
-  // Using simple regex for keyword matching in title/description
-  const allKeywordWatchlists = await Watchlist.find({ type: 'keyword' });
-  const keywordMatches = allKeywordWatchlists.filter(w =>
-    article.title.toLowerCase().includes(w.value.toLowerCase()) ||
-    (article.description && article.description.toLowerCase().includes(w.value.toLowerCase()))
-  );
+  for (const wl of watchlists) {
+    let matched = false;
 
-  // Combine matches
-  const matches = [...countryWatchlists, ...keywordMatches];
+    switch (wl.type) {
+      case 'keyword':
+        matched = contentLower.includes(wl.value.toLowerCase());
+        break;
+      case 'country':
+        matched = articleCountry === wl.value.toUpperCase() ||
+          (article.entities?.countries || []).some(
+            (c: string) => c.toUpperCase() === wl.value.toUpperCase(),
+          );
+        break;
+      case 'source':
+        matched = (article.source_name || '').toLowerCase().includes(wl.value.toLowerCase());
+        break;
+      case 'topic':
+        matched = contentLower.includes(wl.value.toLowerCase());
+        break;
+    }
 
-  // Dedup by user
-  const userMatches = new Map();
-  matches.forEach(m => {
-    userMatches.set(m.user_id.toString(), m);
-  });
+    if (!matched) continue;
 
-  const io = getIO();
-
-  for (const [userId, watchlist] of userMatches.entries()) {
-    // Create alert record
-    const alert = await UserAlert.create({
-      user_id: new Types.ObjectId(userId),
+    // Create UserAlert
+    await UserAlert.create({
+      user_id: wl.user_id,
+      type: wl.type,
       article_id: article._id,
-      watchlist_id: watchlist._id,
-      type: watchlist.type,
-      is_read: false
+      value: wl.value,
+      message: `New ${wl.type} match: "${article.title?.slice(0, 80)}"`,
     });
 
-    // Emit socket event if enabled
-    if (watchlist.notify_socket && io) {
-      io.to(userId).emit(SOCKET_EVENTS.WATCHLIST_ALERT, {
-        alertId: alert._id,
-        articleTitle: article.title,
-        type: watchlist.type,
-        value: watchlist.value
-      });
-    }
-
-    // Email notification if enabled
-    if (watchlist.notify_email) {
+    // Socket notification
+    if (wl.notify_socket) {
       try {
-        const { sendAlertEmail } = await import('../../../utils/emailService');
-        await sendAlertEmail(
-          userId,
-          `📰 Watchlist Alert: ${watchlist.type} match — ${watchlist.value}`,
-          `A new article matched your ${watchlist.type} watchlist for "${watchlist.value}".\n\nTitle: ${article.title}\nSource: ${article.source_name || 'Unknown'}\nURL: ${article.url || 'N/A'}`,
-        );
-      } catch (err: any) {
-        logger.error(`[Alerts] Email notification failed for user ${userId}:`, err.message);
+        const io = getIO();
+        io.to(wl.user_id.toString()).emit(SOCKET_EVENTS.WATCHLIST_ALERT, {
+          type: wl.type,
+          value: wl.value,
+          article: {
+            id: article._id,
+            title: article.title,
+            url: article.url,
+          },
+          timestamp: new Date().toISOString(),
+        });
+      } catch {
+        logger.debug('[Watchlist] Socket not available');
       }
     }
+
+    logger.info(`[Watchlist] Alert triggered for user ${wl.user_id}: ${wl.type}="${wl.value}"`);
   }
-
-  logger.info(`[Alerts] Created ${userMatches.size} alerts for article ${articleId}`);
-};
-
-// Get user alerts
-const getMyAlerts = async (userId: string, query: { is_read?: boolean; limit?: number }) => {
-  const filter: any = { user_id: userId };
-  if (query.is_read !== undefined) filter.is_read = query.is_read;
-
-  return await UserAlert.find(filter)
-    .populate('article_id', 'title source_name url published_at')
-    .sort({ createdAt: -1 })
-    .limit(query.limit || 50);
-};
-
-// Mark alert as read
-const markAlertAsRead = async (userId: string, alertId: string) => {
-  const alert = await UserAlert.findOneAndUpdate(
-    { _id: alertId, user_id: userId },
-    { is_read: true },
-    { new: true }
-  );
-  if (!alert) {
-    throw new ApplicationError(httpStatus.NOT_FOUND, 'Alert not found');
-  }
-  return alert;
 };
 
 export const watchlistService = {
   createWatchlist,
-  getMyWatchlist,
-  removeWatchlist,
+  getWatchlists,
+  deleteWatchlist,
+  getUserAlerts,
+  markAlertRead,
   processArticleAlerts,
-  getMyAlerts,
-  markAlertAsRead
 };

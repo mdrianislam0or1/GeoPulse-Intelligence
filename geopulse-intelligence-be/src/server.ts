@@ -4,6 +4,7 @@ import { seedCountries } from './app/modules/GeoIntelligence/seeders/countries.s
 import { initAnalysisCron } from './app/modules/NewsAnalysis/analysis.service';
 import { initIngestionCron } from './app/modules/NewsIngestion/cron/dailyFetch.cron';
 import { seedApiUsage } from './app/modules/NewsIngestion/models/ApiUsage';
+import { initRetentionCron } from './app/modules/NewsIngestion/retention.service';
 import config from './config';
 import { initSocket } from './config/socket';
 import { connectDB } from './db';
@@ -46,6 +47,7 @@ async function bootstrap() {
     // ✅ INITIALIZE CRON JOBS
     initIngestionCron();
     initAnalysisCron();
+    initRetentionCron();
 
   } catch (error) {
     logger.error('❌ Failed to start server:', error);

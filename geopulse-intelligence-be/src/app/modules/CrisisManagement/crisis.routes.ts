@@ -1,23 +1,21 @@
 import express from 'express';
 import { auth } from '../../../middleware/auth';
-import validateRequest from '../../../middleware/validation.middleware';
 import { crisisController } from './crisis.controller';
-import {
-    createCrisisSchema,
-    notifyAlertsSchema,
-    updateCrisisSchema,
-} from './crisis.validation';
 
 const router = express.Router();
 
-router.get('/events', auth(), crisisController.getEvents);
-router.post('/events', auth('admin'), validateRequest(createCrisisSchema), crisisController.createEvent);
-router.get('/event/:id', auth(), crisisController.getEvent);
-router.put('/event/:id', auth('admin'), validateRequest(updateCrisisSchema), crisisController.updateEvent);
-router.post('/event/:id/verify', auth('admin'), crisisController.verifyEvent);
-router.get('/early-warnings', auth(), crisisController.getEarlyWarnings);
-router.get('/map', crisisController.getMapData); // public — for frontend map
+/**
+ * @route   POST /api/crisis/detect
+ * @desc    Trigger crisis detection (admin only)
+ * @access  Admin
+ */
 router.post('/detect', auth('admin'), crisisController.detectCrises);
-router.post('/alerts/notify', auth('admin'), validateRequest(notifyAlertsSchema), crisisController.notifyAlerts);
+
+/**
+ * @route   GET /api/crisis/stats
+ * @desc    Get crisis statistics
+ * @access  Private
+ */
+router.get('/stats', auth(), crisisController.getCrisisStats);
 
 export const crisisRoutes = router;

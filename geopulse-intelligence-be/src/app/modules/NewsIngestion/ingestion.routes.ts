@@ -2,57 +2,38 @@ import express from 'express';
 import { auth } from '../../../middleware/auth';
 import validateRequest from '../../../middleware/validation.middleware';
 import { ingestionController } from './ingestion.controller';
-import { articleSearchSchema } from './ingestion.validation';
+import {
+    getArticleByIdValidation,
+    getArticlesValidation,
+    triggerIngestionValidation,
+} from './ingestion.validation';
 
 const router = express.Router();
 
 /**
- * @route  POST /api/ingestion/fetch-all
- * @desc   Manually trigger fetch from all news sources
- * @access Admin
+ * @route   GET /api/news
+ * @desc    Get paginated articles with filters
+ * @access  Private
  */
-router.post('/fetch-all', auth('admin'), ingestionController.fetchAll);
+router.get('/', auth(), validateRequest(getArticlesValidation), ingestionController.getArticles);
 
 /**
- * @route  POST /api/ingestion/fetch/:source
- * @desc   Fetch from one specific source (newsapi|currentsapi|gnews|rss2json)
- * @access Admin
+ * @route   GET /api/news/:id
+ * @desc    Get single article by ID
+ * @access  Private
  */
-router.post('/fetch/:source', auth('admin'), ingestionController.fetchOne);
+router.get('/:id', auth(), validateRequest(getArticleByIdValidation), ingestionController.getArticleById);
 
 /**
- * @route  GET /api/ingestion/sources
- * @desc   List all configured news sources
- * @access Private
+ * @route   POST /api/news/ingest
+ * @desc    Manually trigger ingestion (admin only)
+ * @access  Admin
  */
-router.get('/sources', auth(), ingestionController.getSources);
-
-/**
- * @route  GET /api/ingestion/status
- * @desc   Get pipeline status and recent ingestion logs
- * @access Private
- */
-router.get('/status', auth(), ingestionController.getStatus);
-
-/**
- * @route  GET /api/ingestion/api-usage
- * @desc   Get daily API usage counts per source
- * @access Private
- */
-router.get('/api-usage', auth(), ingestionController.getApiUsage);
-
-/**
- * @route  POST /api/ingestion/toggle/:source
- * @desc   Enable or disable a source { isActive: boolean }
- * @access Admin
- */
-router.post('/toggle/:source', auth('admin'), ingestionController.toggleSource);
-
-/**
- * @route  GET /api/ingestion/articles
- * @desc   Search/filter ingested articles with pagination
- * @access Private
- */
-router.get('/articles', auth(), validateRequest(articleSearchSchema), ingestionController.getArticles);
+router.post(
+  '/ingest',
+  auth('admin'),
+  validateRequest(triggerIngestionValidation),
+  ingestionController.triggerIngestion,
+);
 
 export const ingestionRoutes = router;

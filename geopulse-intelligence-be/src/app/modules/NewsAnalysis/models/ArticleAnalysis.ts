@@ -1,81 +1,62 @@
-import { Document, Schema, Types, model } from 'mongoose';
+import { Schema, model } from 'mongoose';
+import type { IArticleAnalysis } from '../analysis.interface';
 
-export interface IArticleAnalysis extends Document {
-  article_id: Types.ObjectId;
-  classification: {
-    category: string;
-    sub_categories: string[];
-    confidence: number;
-  };
-  sentiment: {
-    polarity: number;
-    subjectivity: number;
-    label: 'positive' | 'negative' | 'neutral';
-    emotion: {
-      joy: number;
-      sadness: number;
-      anger: number;
-      fear: number;
-      surprise: number;
-    };
-  };
-  bias_score: number;
-  fake_news_probability: number;
-  topics: Array<{ name: string; score: number }>;
-  summary_ai: string;
-  entities: {
-    countries: string[];
-    people: string[];
-    organizations: string[];
-  };
-  analyzed_at: Date;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-const analysisSchema = new Schema<IArticleAnalysis>(
+const ArticleAnalysisSchema = new Schema<IArticleAnalysis>(
   {
     article_id: {
       type: Schema.Types.ObjectId,
       ref: 'Article',
       required: true,
       unique: true,
+      index: true,
     },
     classification: {
-      category: String,
-      sub_categories: [String],
-      confidence: Number,
+      category: { type: String, default: 'uncategorized', index: true },
+      sub_categories: { type: [String], default: [] },
+      confidence: { type: Number, default: 0, min: 0, max: 1 },
     },
     sentiment: {
-      polarity: Number,
-      subjectivity: Number,
-      label: { type: String, enum: ['positive', 'negative', 'neutral'] },
-      emotion: {
-        joy: Number,
-        sadness: Number,
-        anger: Number,
-        fear: Number,
-        surprise: Number,
+      label: {
+        type: String,
+        enum: ['positive', 'negative', 'neutral', 'mixed'],
+        default: 'neutral',
+        index: true,
       },
+      polarity: { type: Number, default: 0, min: -1, max: 1 },
     },
-    bias_score: Number,
-    fake_news_probability: Number,
-    topics: [{ name: String, score: Number }],
-    summary_ai: String,
+    bias_score: { type: Number, default: 0, min: 0, max: 1 },
+    fake_news_probability: { type: Number, default: 0, min: 0, max: 1 },
+    topics: [
+      {
+        name: { type: String },
+        score: { type: Number, min: 0, max: 1 },
+        _id: false,
+      },
+    ],
+    summary_ai: { type: String, default: '' },
     entities: {
-      countries: [String],
-      people: [String],
-      organizations: [String],
+      countries: { type: [String], default: [] },
+      people: { type: [String], default: [] },
+      organizations: { type: [String], default: [] },
     },
-    analyzed_at: { type: Date, default: Date.now },
+    risk_score: { type: Number, default: 0, min: 0, max: 100 },
+    analyzed_at: { type: Date, default: Date.now, index: true },
+    ai_model: { type: String, default: 'unknown' },
+    token_usage: {
+      prompt_tokens: { type: Number, default: 0 },
+      completion_tokens: { type: Number, default: 0 },
+      total_tokens: { type: Number, default: 0 },
+    },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 );
 
+// Compound indexes for dashboard queries
+ArticleAnalysisSchema.index({ 'classification.category': 1, analyzed_at: -1 });
+ArticleAnalysisSchema.index({ 'sentiment.label': 1, analyzed_at: -1 });
 
-analysisSchema.index({ 'classification.category': 1 });
-analysisSchema.index({ 'sentiment.label': 1 });
-analysisSchema.index({ analyzed_at: -1 });
-analysisSchema.index({ 'entities.countries': 1 });
-
-export const ArticleAnalysis = model<IArticleAnalysis>('ArticleAnalysis', analysisSchema);
+export const ArticleAnalysis = model<IArticleAnalysis>('ArticleAnalysis', ArticleAnalysisSchema);
