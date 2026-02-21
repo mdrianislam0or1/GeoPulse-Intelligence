@@ -2,6 +2,7 @@ import express from 'express';
 import { adminRoutes } from '../app/modules/Admin/admin.routes';
 import { authRoutes } from '../app/modules/Auth/auth.routes';
 import { crisisRoutes } from '../app/modules/CrisisManagement/crisis.routes';
+import { cronRoutes } from '../app/modules/Cron/cron.routes';
 import { dashboardRoutes } from '../app/modules/Dashboard/dashboard.routes';
 import { geoRoutes } from '../app/modules/GeoIntelligence/geo.routes';
 import { analysisRoutes } from '../app/modules/NewsAnalysis/analysis.routes';
@@ -34,6 +35,9 @@ const moduleRoutes = [
 
   // ─── Admin ──────────────────────────────────────────────────
   { path: '/admin', route: adminRoutes },
+
+  // ─── Vercel Cron Jobs ───────────────────────────────────────
+  { path: '/cron', route: cronRoutes },
 ];
 
 moduleRoutes.forEach(route => {

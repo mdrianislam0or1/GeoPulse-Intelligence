@@ -1,7 +1,6 @@
 {
   "version": 2,
-  "name": "geopulse-intelligence-fe",
-
+  "name": "geopulse-intelligence-be",
   "builds": [
     {
       "src": "dist/server.js",
@@ -13,5 +12,13 @@
       "src": "/(.*)",
       "dest": "dist/server.js"
     }
+  ],
+
+   "crons": [
+    {
+      "path": "/api/cron/master",
+      "schedule": "0 3 * * *"
+    }
   ]
+
 }

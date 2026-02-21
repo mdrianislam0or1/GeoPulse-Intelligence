@@ -44,10 +44,18 @@ async function bootstrap() {
     await seedCountries();
     logger.info('✅ Countries seeded');
 
-    // ✅ INITIALIZE CRON JOBS
-    initIngestionCron();
-    initAnalysisCron();
-    initRetentionCron();
+    // ✅ INITIALIZE CRON JOBS (only in non-serverless envs)
+    // On Vercel, crons are triggered via HTTP by vercel.json cron entries.
+    // Locally, node-cron handles the scheduling.
+    const isVercel = !!process.env.VERCEL;
+    if (!isVercel) {
+      initIngestionCron();
+      initAnalysisCron();
+      initRetentionCron();
+      logger.info('✅ Cron jobs initialized (local mode)');
+    } else {
+      logger.info('☁️  Vercel detected — crons managed by vercel.json (HTTP endpoints)');
+    }
 
   } catch (error) {
     logger.error('❌ Failed to start server:', error);
