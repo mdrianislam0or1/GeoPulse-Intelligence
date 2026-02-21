@@ -63,7 +63,7 @@ app.get('/', (req: Request, res: Response) => {
   logger.info('Root API accessed');
   res.status(httpStatus.OK).json({
     success: true,
-    message: 'Welcome to Portfolio Platform API',
+    message: 'Welcome to GeoPulse Intelligence API',
     version: '1.0.0',
     docs: '/api-docs',
   });

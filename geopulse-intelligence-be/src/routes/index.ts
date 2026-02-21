@@ -6,6 +6,7 @@ import { analyticsRoutes } from '../app/modules/GeoIntelligence/analytics.routes
 import { geoRoutes } from '../app/modules/GeoIntelligence/geo.routes';
 import { analysisRoutes } from '../app/modules/NewsAnalysis/analysis.routes';
 import { ingestionRoutes } from '../app/modules/NewsIngestion/ingestion.routes';
+import { userRoutes } from '../app/modules/User/user.routes';
 
 const router = express.Router();
 
@@ -14,6 +15,11 @@ const moduleRoutes = [
   {
     path: '/auth',
     route: authRoutes,
+  },
+  // ─── User Management ─────────────────────────────────────────
+  {
+    path: '/users',
+    route: userRoutes,
   },
   // ─── GeoPulse Intelligence ──────────────────────────────────
   {

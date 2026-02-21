@@ -1,0 +1,554 @@
+{
+	"info": {
+		"_postman_id": "geopulse-collection-id",
+		"name": "GeoPulse Intelligence API",
+		"description": "Comprehensive API collection for GeoPulse Intelligence platform. Includes Auth, User Management, News Ingestion, AI Analysis, Geo Intelligence, and Crisis Management.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullName\": \"John Doe\",\n    \"username\": \"johndoe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"Password123!\",\n    \"confirmPassword\": \"Password123!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"if (pm.response.code === 200) {",
+									"    if (response.data && response.data.token) {",
+									"        pm.collectionVariables.set(\"access_token\", response.data.token);",
+									"    }",
+									"    if (response.data && response.data.refreshToken) {",
+									"        pm.collectionVariables.set(\"refresh_token\", response.data.refreshToken);",
+									"    }",
+									"    if (response.data && response.data.user && response.data.user.userId) {",
+									"        pm.collectionVariables.set(\"user_id\", response.data.user.userId);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john@example.com\",\n    \"password\": \"Password123!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"verification_token_here\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/verify-email",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"verify-email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"if (pm.response.code === 200) {",
+									"    pm.collectionVariables.set(\"access_token\", response.data.token);",
+									"    pm.collectionVariables.set(\"refresh_token\", response.data.refreshToken);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refreshToken\": \"{{refresh_token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Me",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Management",
+			"item": [
+				{
+					"name": "Get Watchlist",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/watchlist",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"watchlist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add to Watchlist",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"if (pm.response.code === 201) {",
+									"    pm.collectionVariables.set(\"resource_id\", response.data._id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"country\": \"USA\",\n    \"type\": \"country\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/watchlist",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"watchlist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Alerts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/users/alerts?limit=20&is_read=false",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"alerts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "20"
+								},
+								{
+									"key": "is_read",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Preferences",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Updated\",\n    \"phone\": \"+1234567890\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/preferences",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"preferences"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "News Ingestion",
+			"item": [
+				{
+					"name": "Search Articles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ingestion/articles?q=war&limit=10",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ingestion",
+								"articles"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "war"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch All Sources (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ingestion/fetch-all",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ingestion",
+								"fetch-all"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Crisis Management",
+			"item": [
+				{
+					"name": "Get Crisis Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/crisis/events",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"crisis",
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Crisis (Admin)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();",
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    const id = response.data?._id || response.data?.id;",
+									"    if (id) pm.collectionVariables.set(\"resource_id\", id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Major Earthquake in Capital\",\n    \"type\": \"natural\",\n    \"severity\": \"critical\",\n    \"countries_affected\": [\"USA\", \"CAN\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/crisis/events",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"crisis",
+								"events"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Geo Intelligence",
+			"item": [
+				{
+					"name": "Get Countries",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/geo/countries",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"geo",
+								"countries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stability Index",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/geo/stability-index/USA",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"geo",
+								"stability-index",
+								"USA"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Analytics",
+			"item": [
+				{
+					"name": "Stability Trends",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/analytics/trends/weekly",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"analytics",
+								"trends",
+								"weekly"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generate PDF Report (Admin)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"country_code\": \"USA\",\n    \"title\": \"Weekly Stability Report\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/analytics/generate-report",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"analytics",
+								"generate-report"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "refresh_token",
+			"value": ""
+		},
+		{
+			"key": "user_id",
+			"value": ""
+		},
+		{
+			"key": "resource_id",
+			"value": ""
+		}
+	]
+}

@@ -72,7 +72,7 @@ const analysisSchema = new Schema<IArticleAnalysis>(
   { timestamps: true },
 );
 
-analysisSchema.index({ article_id: 1 });
+
 analysisSchema.index({ 'classification.category': 1 });
 analysisSchema.index({ 'sentiment.label': 1 });
 analysisSchema.index({ analyzed_at: -1 });

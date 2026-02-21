@@ -1,6 +1,8 @@
 import express from 'express';
 import { auth } from '../../../middleware/auth';
+import validateRequest from '../../../middleware/validation.middleware';
 import { ingestionController } from './ingestion.controller';
+import { articleSearchSchema } from './ingestion.validation';
 
 const router = express.Router();
 
@@ -45,5 +47,12 @@ router.get('/api-usage', auth(), ingestionController.getApiUsage);
  * @access Admin
  */
 router.post('/toggle/:source', auth('admin'), ingestionController.toggleSource);
+
+/**
+ * @route  GET /api/ingestion/articles
+ * @desc   Search/filter ingested articles with pagination
+ * @access Private
+ */
+router.get('/articles', auth(), validateRequest(articleSearchSchema), ingestionController.getArticles);
 
 export const ingestionRoutes = router;

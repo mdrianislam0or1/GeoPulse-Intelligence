@@ -1,5 +1,5 @@
-
 import axios from 'axios';
+import config from '../../config';
 import logger from '../../utils/logger';
 
 interface IOpenRouterMessage {
@@ -47,7 +47,7 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
  * Validate OpenRouter API configuration
  */
 const validateConfig = (): void => {
-  if (!process.env.OPENROUTER_API_KEY) {
+  if (!config.openrouter.api_key) {
     throw new Error('OPENROUTER_API_KEY is not configured in environment variables');
   }
 };
@@ -83,6 +83,11 @@ export const generateResponse = async (
         timestamp: new Date().toISOString(),
       });
 
+      const apiKey = config.openrouter.api_key;
+      if (!apiKey) {
+        throw new Error('OPENROUTER_API_KEY is not configured');
+      }
+
       const response = await axios.post(
         'https://openrouter.ai/api/v1/chat/completions',
         {
@@ -93,9 +98,9 @@ export const generateResponse = async (
         },
         {
           headers: {
-            'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-            'HTTP-Referer': process.env.SITE_URL || 'https://portfolio-me.com',
-            'X-Title': 'Portfolio AI Assistant',
+            'Authorization': `Bearer ${apiKey.trim()}`,
+            'HTTP-Referer': process.env.SITE_URL || 'https://geopulse-intelligence.com',
+            'X-Title': 'GeoPulse Intelligence',
             'Content-Type': 'application/json',
           },
           timeout: 60000, // 60 second timeout

@@ -3,6 +3,7 @@ import httpStatus from 'http-status';
 import catchAsync from '../../../utils/catchAsync';
 import sendResponse from '../../../utils/sendResponse';
 import { ingestionService, SourceName } from './ingestion.service';
+import { Article } from './models/Article';
 
 const VALID_SOURCES: SourceName[] = ['newsapi', 'currentsapi', 'gnews', 'rss2json'];
 
@@ -88,6 +89,60 @@ const toggleSource = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// GET /api/ingestion/articles
+const getArticles = catchAsync(async (req: Request, res: Response) => {
+  const {
+    q,
+    source_api,
+    language,
+    country,
+    from,
+    to,
+    is_analyzed,
+    limit = '20',
+    page = '1',
+  } = req.query as Record<string, string>;
+
+  const pageNum = Math.max(1, parseInt(page, 10) || 1);
+  const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20));
+  const skip = (pageNum - 1) * limitNum;
+
+  const filter: Record<string, any> = {};
+
+  if (q) {
+    filter.$text = { $search: q };
+  }
+  if (source_api) filter.source_api = source_api;
+  if (language)   filter.language = language;
+  if (country)    filter.country = country.toLowerCase();
+  if (is_analyzed !== undefined) filter.is_analyzed = is_analyzed === 'true';
+  if (from || to) {
+    filter.published_at = {};
+    if (from) filter.published_at.$gte = new Date(from);
+    if (to)   filter.published_at.$lte = new Date(to);
+  }
+
+  const [articles, total] = await Promise.all([
+    Article.find(filter)
+      .sort(q ? { score: { $meta: 'textScore' } } : { published_at: -1 })
+      .skip(skip)
+      .limit(limitNum)
+      .select('-__v')
+      .lean(),
+    Article.countDocuments(filter),
+  ]);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Articles retrieved',
+    data: {
+      articles,
+      pagination: { total, page: pageNum, limit: limitNum, pages: Math.ceil(total / limitNum) },
+    },
+  });
+});
+
 export const ingestionController = {
   fetchAll,
   fetchOne,
@@ -95,4 +150,5 @@ export const ingestionController = {
   getStatus,
   getApiUsage,
   toggleSource,
+  getArticles,
 };
