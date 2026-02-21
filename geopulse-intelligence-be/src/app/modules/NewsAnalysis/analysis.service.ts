@@ -8,7 +8,12 @@ import { Article } from '../NewsIngestion/models/Article';
 import type { IArticleAnalysis } from './analysis.interface';
 import { ArticleAnalysis } from './models/ArticleAnalysis';
 
-const AI_MODEL = 'mistralai/mistral-7b-instruct';
+// const PRIMARY_MODEL = 'mistralai/mistral-7b-instruct:free';
+// const FALLBACK_MODEL = 'google/gemini-flash-1.5-free';
+
+// ✅ New (working free models)
+const PRIMARY_MODEL = 'mistralai/mistral-small-3.1-24b-instruct:free';
+const FALLBACK_MODEL = 'google/gemini-2.0-flash-lite-001';
 
 const ANALYSIS_PROMPT = `You are a news intelligence analyst. Analyze this news article and return a JSON object with exactly these fields:
 {
@@ -80,7 +85,7 @@ const analyzeArticle = async (articleId: string): Promise<IArticleAnalysis | nul
         { role: 'system', content: ANALYSIS_PROMPT },
         { role: 'user', content: contentForAnalysis },
       ],
-      AI_MODEL,
+      PRIMARY_MODEL,
     );
 
     const aiContent = aiResponse.choices?.[0]?.message?.content || '';
@@ -117,7 +122,7 @@ const analyzeArticle = async (articleId: string): Promise<IArticleAnalysis | nul
       },
       risk_score: Math.min(100, Math.max(0, parsed.risk_score || 0)),
       analyzed_at: new Date(),
-      ai_model: AI_MODEL,
+      ai_model: PRIMARY_MODEL,
       token_usage: {
         prompt_tokens: aiResponse.usage?.prompt_tokens || 0,
         completion_tokens: aiResponse.usage?.completion_tokens || 0,
@@ -138,10 +143,78 @@ const analyzeArticle = async (articleId: string): Promise<IArticleAnalysis | nul
 
     return analysis;
   } catch (error: any) {
-    logger.error(`[Analysis] AI analysis failed for ${articleId}: ${error.message}`);
-    // Mark as analyzed to prevent infinite retries
-    article.is_analyzed = true;
-    await article.save();
+    if (error.status === 401) {
+      logger.error(`[Analysis] Authentication failed with OpenRouter: ${error.message}`);
+      return null; // Don't retry auth errors
+    }
+
+    logger.warn(`[Analysis] Primary model failed, trying fallback: ${error.message}`);
+
+    try {
+      // Retry with fallback model
+      const aiResponse = await generateResponse(
+        [
+          { role: 'system', content: ANALYSIS_PROMPT },
+          { role: 'user', content: contentForAnalysis },
+        ],
+        FALLBACK_MODEL,
+      );
+
+      const aiContent = aiResponse.choices?.[0]?.message?.content || '';
+      const parsed = parseAIResponse(aiContent);
+
+      if (parsed) {
+        // Create analysis record with fallback model
+        const analysis = await ArticleAnalysis.create({
+          article_id: article._id,
+          classification: {
+            category: parsed.category || 'uncategorized',
+            sub_categories: parsed.sub_categories || [],
+            confidence: Math.min(1, Math.max(0, parsed.confidence || 0)),
+          },
+          sentiment: {
+            label: parsed.sentiment?.label || 'neutral',
+            polarity: Math.min(1, Math.max(-1, parsed.sentiment?.polarity || 0)),
+          },
+          bias_score: Math.min(1, Math.max(0, parsed.bias_score || 0)),
+          fake_news_probability: Math.min(1, Math.max(0, parsed.fake_news_probability || 0)),
+          topics: (parsed.topics || []).slice(0, 10),
+          summary_ai: parsed.summary || '',
+          entities: {
+            countries: parsed.entities?.countries || [],
+            people: parsed.entities?.people || [],
+            organizations: parsed.entities?.organizations || [],
+          },
+          risk_score: Math.min(100, Math.max(0, parsed.risk_score || 0)),
+          analyzed_at: new Date(),
+          ai_model: FALLBACK_MODEL,
+          token_usage: {
+            prompt_tokens: aiResponse.usage?.prompt_tokens || 0,
+            completion_tokens: aiResponse.usage?.completion_tokens || 0,
+            total_tokens: aiResponse.usage?.total_tokens || 0,
+          },
+        });
+
+        article.is_analyzed = true;
+        article.entities = {
+          countries: parsed.entities?.countries || [],
+          people: parsed.entities?.people || [],
+          organizations: parsed.entities?.organizations || [],
+        };
+        await article.save();
+
+        logger.info(`[Analysis] Article analyzed via fallback: ${article.title.slice(0, 50)}...`);
+        return analysis;
+      }
+    } catch (fallbackError: any) {
+      logger.error(`[Analysis] Fallback analysis also failed: ${fallbackError.message}`);
+    }
+
+    // Mark as analyzed (ONLY if not an auth error) to prevent infinite retries on malformed docs
+    if (error.status !== 401) {
+      article.is_analyzed = true;
+      await article.save();
+    }
     return null;
   }
 };
