@@ -334,10 +334,13 @@ class RateLimiter {
 
   private processQueue() {
     if (this.running >= this.concurrency || this.queue.length === 0) return;
+
+    // Spread requests to stay under RPM limit
+    // If we're the only request, no delay needed
+    const delay = this.running === 0 ? 0 : (60000 / this.requestsPerMinute);
+
     this.running++;
     const task = this.queue.shift()!;
-    // Spread requests to stay under RPM limit
-    const delay = (60000 / this.requestsPerMinute) * this.running;
     setTimeout(task, delay);
   }
 }
@@ -359,6 +362,10 @@ const validateConfig = (): void => {
   if (!config.openrouter.api_key) {
     throw new Error('OPENROUTER_API_KEY is not configured');
   }
+
+  const key = config.openrouter.api_key.trim();
+  const masked = `${key.slice(0, 10)}...${key.slice(-4)}`;
+  logger.info(`🔌 OpenRouter initialized with key: ${masked}`);
 };
 
 // ─── Core Request (single attempt, no retry) ──────────────────────────────────
@@ -459,7 +466,10 @@ export const generateResponse = async (
 
     // All models failed
     const errorMsg = lastError?.response?.data?.error?.message || lastError?.message || 'All models failed';
-    throw new Error(`OpenRouter: All models exhausted. Last error: ${errorMsg}`);
+    const status = lastError?.response?.status;
+    const error: any = new Error(`OpenRouter: All models exhausted. Last error: ${errorMsg}`);
+    error.status = status;
+    throw error;
   });
 };
 

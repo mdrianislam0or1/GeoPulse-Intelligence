@@ -122,7 +122,7 @@ const analyzeArticle = async (articleId: string): Promise<IArticleAnalysis | nul
       },
       risk_score: Math.min(100, Math.max(0, parsed.risk_score || 0)),
       analyzed_at: new Date(),
-      ai_model: PRIMARY_MODEL,
+      ai_model: aiResponse.model, // Use the model that actually worked
       token_usage: {
         prompt_tokens: aiResponse.usage?.prompt_tokens || 0,
         completion_tokens: aiResponse.usage?.completion_tokens || 0,
@@ -143,78 +143,18 @@ const analyzeArticle = async (articleId: string): Promise<IArticleAnalysis | nul
 
     return analysis;
   } catch (error: any) {
-    if (error.status === 401) {
+    const status = error.status || error.response?.status;
+
+    if (status === 401) {
       logger.error(`[Analysis] Authentication failed with OpenRouter: ${error.message}`);
       return null; // Don't retry auth errors
     }
 
-    logger.warn(`[Analysis] Primary model failed, trying fallback: ${error.message}`);
+    logger.warn(`[Analysis] Analysis failed: ${error.message}`);
 
-    try {
-      // Retry with fallback model
-      const aiResponse = await generateResponse(
-        [
-          { role: 'system', content: ANALYSIS_PROMPT },
-          { role: 'user', content: contentForAnalysis },
-        ],
-        FALLBACK_MODEL,
-      );
-
-      const aiContent = aiResponse.choices?.[0]?.message?.content || '';
-      const parsed = parseAIResponse(aiContent);
-
-      if (parsed) {
-        // Create analysis record with fallback model
-        const analysis = await ArticleAnalysis.create({
-          article_id: article._id,
-          classification: {
-            category: parsed.category || 'uncategorized',
-            sub_categories: parsed.sub_categories || [],
-            confidence: Math.min(1, Math.max(0, parsed.confidence || 0)),
-          },
-          sentiment: {
-            label: parsed.sentiment?.label || 'neutral',
-            polarity: Math.min(1, Math.max(-1, parsed.sentiment?.polarity || 0)),
-          },
-          bias_score: Math.min(1, Math.max(0, parsed.bias_score || 0)),
-          fake_news_probability: Math.min(1, Math.max(0, parsed.fake_news_probability || 0)),
-          topics: (parsed.topics || []).slice(0, 10),
-          summary_ai: parsed.summary || '',
-          entities: {
-            countries: parsed.entities?.countries || [],
-            people: parsed.entities?.people || [],
-            organizations: parsed.entities?.organizations || [],
-          },
-          risk_score: Math.min(100, Math.max(0, parsed.risk_score || 0)),
-          analyzed_at: new Date(),
-          ai_model: FALLBACK_MODEL,
-          token_usage: {
-            prompt_tokens: aiResponse.usage?.prompt_tokens || 0,
-            completion_tokens: aiResponse.usage?.completion_tokens || 0,
-            total_tokens: aiResponse.usage?.total_tokens || 0,
-          },
-        });
-
-        article.is_analyzed = true;
-        article.entities = {
-          countries: parsed.entities?.countries || [],
-          people: parsed.entities?.people || [],
-          organizations: parsed.entities?.organizations || [],
-        };
-        await article.save();
-
-        logger.info(`[Analysis] Article analyzed via fallback: ${article.title.slice(0, 50)}...`);
-        return analysis;
-      }
-    } catch (fallbackError: any) {
-      logger.error(`[Analysis] Fallback analysis also failed: ${fallbackError.message}`);
-    }
-
-    // Mark as analyzed (ONLY if not an auth error) to prevent infinite retries on malformed docs
-    if (error.status !== 401) {
-      article.is_analyzed = true;
-      await article.save();
-    }
+    // Mark as analyzed (ONLY if not an auth error) to prevent infinite retries on malformed docs or persistent API issues
+    article.is_analyzed = true;
+    await article.save();
     return null;
   }
 };
