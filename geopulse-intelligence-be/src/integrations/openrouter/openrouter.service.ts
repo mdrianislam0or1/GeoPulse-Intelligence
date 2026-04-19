@@ -442,7 +442,9 @@ export const generateResponse = async (
         }
 
         if (status === 401) {
-          throw new Error('Invalid OpenRouter API key. Check OPENROUTER_API_KEY.');
+          const apiError = error.response?.data?.error?.message || 'Unauthorized';
+          logger.error(`❌ OpenRouter Authentication Failed: ${apiError}`);
+          throw new Error(`Invalid OpenRouter API key. API said: "${apiError}". Check your OPENROUTER_API_KEY.`);
         }
 
         // For 5xx errors, wait briefly then try next model
